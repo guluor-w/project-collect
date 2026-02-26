@@ -1,0 +1,175 @@
+2026-01-29 11:56:46 - myapp - DEBUG - Attachment found:
+2026-01-29 11:56:46 - myapp - DEBUG - Attachment found:
+2026-01-29 11:56:46 - myapp - DEBUG - Attachment found:
+2026-01-29 11:56:53 - myapp - DEBUG - Attachment found:
+2026-01-29 11:56:53 - myapp - DEBUG - Attachment found:
+2026-01-29 11:56:53 - myapp - DEBUG - Keyword hit: '机器人' in text
+2026-01-29 11:56:54 - myapp - WARNING - downloaded attachment: https://zfcg.czt.fujian.gov.cn/gpx-public-file?accessCode=eyJhbGciOiJNRDUiLCJ0eXBlIjoiNCJ9.c99a8b01b3e9d24ce3bd4e866e23eb1c -> ccgp\data\attachments\835bf117524a\gpx-public-file.bin
+2026-01-29 11:56:54 - myapp - WARNING - downloaded attachment: https://download.ccgp.gov.cn/oss/download?uuid=7665a536-abfa-4a0d-bf88-b7dfc8 -> ccgp\data\attachments\835bf117524a\download.bin
+2026-01-29 11:57:00 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "福建省特种设备检验研究院国家机器人中心物业管理服务公开招标，预算260万元，服务期限两年。",
+  "requirement_desc": "本项目旨在为福建省特种设备检验研究院国家机器人中心提供物业管理服务，服务地点位于泉州市洛江区万安街道办事处杏宅社区塘西村相邻两个地块，建筑面积共25859.82平方米，土地面积约40亩。服务内容包括但不限于国家机器人中心2026-2027年的物业管理，要求供应商具备《中华人民共和国政府采购法》第二十二条规定的资格条件，不接受联合体投标。项目预算为260万元，服务期限自合同签订之日起两年。供应商需在福建省政府采购网免费申请账号并下载招标文件，投标保证金为0元。项目不接受进口产品，无节能产品、环境标志产品等特殊要求。"
+}
+---
+2026-01-29 11:57:06 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:06 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:06 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:06 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:06 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:06 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:06 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:06 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:12 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:20 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:26 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:31 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:31 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:38 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:38 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:44 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:44 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:51 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:51 - myapp - DEBUG - Attachment found:
+2026-01-29 11:57:51 - myapp - DEBUG - Keyword hit: '智能' in text
+2026-01-29 11:57:51 - myapp - WARNING - download attachment failed: 查看 -> No connection adapters were found for 'javascript:void(0)'
+2026-01-29 11:57:51 - myapp - WARNING - downloaded attachment: https://download.ccgp.gov.cn/oss/download?uuid=11f2049a-f26e-4237-83ac-cebc5b -> ccgp\data\attachments\7959c1c57309\download.bin
+2026-01-29 11:57:56 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "葫芦岛市中心医院提升传染病防控综合服务能力，采购医疗设备及服务，预算742.92万元。",
+  "requirement_desc": "葫芦岛市中心医院传染病防控综合服务能力提升项目旨在通过采购一系列医疗设备和系统，增强医院的传染病防控能力。项目预算为742.92万元，涉及设备包括流式细胞仪、生物显微镜、微生物样本处理系统等，共计60余项，均要求符合国家相关标准，部分设备不允许进口。项目要求供应商具备有效的二类医疗器械经营备案凭证，并需执行中小微企业、节能产品及环境标志产品的相关政策。合同履行期限为合同签订后60日内。供应商需在线上获取招标文件，并在截止时间前递交投标文件。项目不接受联合体投标。"
+}
+---
+2026-01-29 11:58:03 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:03 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:17 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:17 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:30 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:36 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:44 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:50 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:50 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:50 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:50 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:50 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:50 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:50 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:50 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:50 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:50 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:57 - myapp - DEBUG - Attachment found:
+2026-01-29 11:58:57 - myapp - DEBUG - Keyword hit: 'AI' in text
+2026-01-29 11:58:57 - myapp - WARNING - downloaded attachment: https://zfcg.henan.gov.cn/xygh/egp/jd/rzjg/rzjgxx/ShowPicListNew.html -> ccgp\data\attachments\c1dad6c7f71b\ShowPicListNew.html
+2026-01-29 11:59:02 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "信阳艺术职业学院需建设新数据中心机房并搬迁旧机房，涉及货物采购、运输、安装、调试及装修工程，预算208.04万元。",
+  "requirement_desc": "信阳艺术职业学院建设数据中心新机房及搬迁数据中心旧机房项目，包括相关货物的采购、运输、安装、调试、售后服务以及配套的装修工程。项目要求在合同签订后60天内完成交货及安装调试、装修，质量需符合国家及行业标准，质保期为三年。不接受联合体投标和进口产品，也不专门面向中小企业。投标人需满足《中华人民共和国政府采购法》第二十二条规定，落实政府采购政策，包括节约能源、保护环境等。特定资格要求包括单位负责人不得为同一人或存在控股、管理关系的不同单位参加同一合同项下的政府采购活动，且不得列入失信被执行人等名单。"
+}
+---
+2026-01-29 11:59:09 - myapp - DEBUG - Attachment found:
+2026-01-29 11:59:09 - myapp - DEBUG - Attachment found:
+2026-01-29 11:59:16 - myapp - DEBUG - Attachment found:
+2026-01-29 11:59:16 - myapp - DEBUG - Attachment found:
+2026-01-29 11:59:16 - myapp - DEBUG - Keyword hit: '智能' in text
+2026-01-29 11:59:16 - myapp - WARNING - downloaded attachment: https://www.zcygov.cn/bid-enroll/acquirepurfile/launch/7324818439959478370 -> ccgp\data\attachments\f8f998f9069a\7324818439959478370.bin
+2026-01-29 11:59:16 - myapp - WARNING - downloaded attachment: https://zcy-gov-open-doc.oss-cn-north-2-gov-1.aliyuncs.com/1024FPA/undefined/330105/10008699025/20261/d87cf386-508a-48de-b998-c5331bfce551.docx -> ccgp\data\attachments\f8f998f9069a\d87cf386-508a-48de-b998-c5331bfce551.docx
+2026-01-29 11:59:21 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "2026年度在建工地项目建筑垃圾管理辅助服务，预算300万元，要求供应商提供建筑垃圾管理辅助服务，合同履约期限为一年。",
+  "requirement_desc": "本项目旨在为杭州市余杭区人民政府仓前街道办事处提供2026年度在建工地项目建筑垃圾管理辅助服务，预算金额为300万元人民币，合同履约期限为一年。供应商需根据招标文件第三部分采购需求提供服务，包括但不限于建筑垃圾的分类、收集、运输、处理等管理辅助工作，确保建筑垃圾得到有效管理，减少环境污染，提高资源利用率。项目接受联合体投标，供应商需满足《中华人民共和国政府采购法》第二十二条规定，未被列入失信被执行人等名单，且应符合中小企业政策要求。项目以电子招投标形式进行，依托政采云平台完成招投标活动，不接受纸质投标文件。供应商需注册账号、申领CA数字证书、安装政采云电子交易客户端，并按照平台要求制作和提交电子投标文件。项目实施后，需进行验收和测评，确保服务质量满足采购需求。"
+}
+---
+2026-01-29 11:59:28 - myapp - DEBUG - Attachment found:
+2026-01-29 11:59:28 - myapp - DEBUG - Attachment found:
+2026-01-29 11:59:28 - myapp - DEBUG - Attachment found:
+2026-01-29 11:59:28 - myapp - DEBUG - Keyword hit: '智能' in text
+2026-01-29 11:59:28 - myapp - WARNING - downloaded attachment: https://www.zcygov.cn/bid-enroll/acquirepurfile/launch/7324330595026206738 -> ccgp\data\attachments\b5befed2365a\7324330595026206738.bin
+2026-01-29 11:59:28 - myapp - WARNING - downloaded attachment: https://zcy-gov-open-doc.oss-cn-north-2-gov-1.aliyuncs.com/1024FPA/undefined/330603/10007089071/20261/6954b404-ba68-46b8-85db-e79b94f70446.docx -> ccgp\data\attachments\b5befed2365a\6954b404-ba68-46b8-85db-e79b94f70446.docx
+2026-01-29 11:59:28 - myapp - WARNING - downloaded attachment: https://zcy-gov-open-doc.oss-cn-north-2-gov-1.aliyuncs.com/1024FPA/undefined/330603/10007089071/20261/857b5575-e9e7-426c-b280-c61fab045ce6.pdf -> ccgp\data\attachments\b5befed2365a\857b5575-e9e7-426c-b280-c61fab045ce6.pdf
+2026-01-29 11:59:32 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "绍兴市柯桥区小百花越剧艺术传习中心公开招标吴凤花艺术专辑制作项目，预算50万元，要求供应商满足政府采购法规定并专门面向中小企业。",
+  "requirement_desc": "本项目为吴凤花艺术专辑制作项目（第三次），由绍兴市柯桥区小百花越剧艺术传习中心负责采购，预算金额为50万元人民币，最高限价同样为50万元。项目要求供应商满足《中华人民共和国政府采购法》第二十二条规定，并且未被列入失信被执行人等不良记录名单。项目专门面向中小企业，要求服务全部由符合政策要求的中小企业承接，并提供中小企业声明函。具体的采购需求、规格描述、项目基本概况介绍以及合同履约期限等详细信息详见招标文件。供应商需在政采云平台线上获取招标文件，并在截止时间前递交投标文件。项目不接受联合体投标。"
+}
+---
+2026-01-29 11:59:39 - myapp - DEBUG - Attachment found:
+2026-01-29 11:59:39 - myapp - DEBUG - Attachment found:
+2026-01-29 11:59:55 - myapp - DEBUG - Attachment found:
+2026-01-29 11:59:55 - myapp - DEBUG - Attachment found:
+2026-01-29 12:00:01 - myapp - DEBUG - Attachment found:
+2026-01-29 12:00:29 - myapp - DEBUG - Attachment found:
+2026-01-29 12:00:29 - myapp - DEBUG - Keyword hit: '智能' in text
+2026-01-29 12:00:29 - myapp - WARNING - downloaded attachment: http://ccgp-hebei.gov.cn/BidDingAnncFiles/654048f9-e7ed-4381-fd12-e23846e37bce.doc -> ccgp\data\attachments\bada91cf9cc4\654048f9-e7ed-4381-fd12-e23846e37bce.doc
+2026-01-29 12:00:34 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "河北迁安经济开发区化工集中区（南部片区）需建设智能化综合监管平台及封闭园区，预算499.97万元，要求15日内完工并提供一年运维服务。",
+  "requirement_desc": "河北迁安经济开发区化工集中区（南部片区）智能化综合监管平台及封闭园区建设项目，旨在通过智能化手段提升化工集中区的安全管理水平和运营效率。项目预算为499.97万元人民币，要求A包中标方在合同签订后15日内完成平台建设并负责系统运行后一年的运维服务，B包中标方在合同签订后15日内完成设备的供货、运输安装及调试，并保证验收合格。项目不接受联合体投标，且A包预留给小微企业的比例为100%，监狱企业、残疾人福利性单位视同为小微企业。项目要求投标人满足《中华人民共和国政府采购法》第二十二条规定，并落实节能环保等政府采购政策。项目实施需使用企业CA，未办理CA的投标人需及时办理以免影响项目参与。项目联系人为梁海明，联系电话为0315-5351099。"
+}
+---
+2026-01-29 12:00:41 - myapp - DEBUG - Attachment found:
+2026-01-29 12:00:41 - myapp - DEBUG - Attachment found:
+2026-01-29 12:00:47 - myapp - DEBUG - Attachment found:
+2026-01-29 12:00:47 - myapp - DEBUG - Keyword hit: '智能' in text
+2026-01-29 12:00:47 - myapp - WARNING - downloaded attachment: https://zfcg.henan.gov.cn/xygh/egp/jd/rzjg/rzjgxx/ShowPicListNew.html -> ccgp\data\attachments\b97f69153ada\ShowPicListNew.html
+2026-01-29 12:00:57 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "新乡市卫滨区机关事务中心需采购新乡市卫滨区机关食堂餐饮服务项目，预算335.52万元，服务期限2年。",
+  "requirement_desc": "新乡市卫滨区机关事务中心公开招标新乡市卫滨区机关食堂餐饮服务项目，预算金额为335.52万元，服务期限为签订合同之日起2年。该项目不接受联合体投标，不接受进口产品，且专门面向中小微企业采购。投标人需具有有效的餐饮服务许可证或食品经营许可证，并满足信誉要求，未被列入失信被执行人名单。采购需求具体内容详见采购文件第五章项目服务需求。投标人应在新乡市公共资源交易中心获取招标文件，并在截止时间前递交投标文件。项目实施后，需进行验收与测评以确保服务质量。"
+}
+---
+2026-01-29 12:01:05 - myapp - DEBUG - Attachment found:
+2026-01-29 12:01:05 - myapp - DEBUG - Attachment found:
+2026-01-29 12:01:11 - myapp - DEBUG - Attachment found:
+2026-01-29 12:01:11 - myapp - DEBUG - Attachment found:
+2026-01-29 12:01:17 - myapp - DEBUG - Attachment found:
+2026-01-29 12:01:31 - myapp - DEBUG - Attachment found:
+2026-01-29 12:02:05 - myapp - DEBUG - Keyword hit: '智能' in text
+2026-01-29 12:02:10 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "南宁市江南区人民医院诊疗服务能力改造提升项目，需采购医用气体、手术室灯床塔等设备，预算268万元。",
+  "requirement_desc": "本项目旨在提升南宁市江南区人民医院的诊疗服务能力，具体需求为医用气体、手术室灯床塔等设备采购。项目预算为268万元人民币，要求供应商具备建筑机电安装工程专业承包三级及以上资质，并持有有效的安全生产许可证。相关设备需符合《医疗器械监督管理条例》规定的医疗器械经营备案凭证或经营许可证，且经营范围包含采购标的。项目不接受联合体投标，合同履约期限为自签订合同之日起30日历天内交货完毕。供应商需在广西政府采购云平台线上获取招标文件，并在截止时间前递交投标文件。项目将通过该平台实行在线电子投标。"
+}
+---
+2026-01-29 12:02:17 - myapp - DEBUG - Attachment found:
+2026-01-29 12:02:17 - myapp - DEBUG - Attachment found:
+2026-01-29 12:02:32 - myapp - DEBUG - Attachment found:
+2026-01-29 12:02:32 - myapp - DEBUG - Attachment found:
+2026-01-29 12:02:38 - myapp - DEBUG - Attachment found:
+2026-01-29 12:02:38 - myapp - DEBUG - Attachment found:
+2026-01-29 12:02:44 - myapp - DEBUG - Attachment found:
+2026-01-29 12:02:49 - myapp - DEBUG - Attachment found:
+2026-01-29 12:02:49 - myapp - DEBUG - Attachment found:
+2026-01-29 12:02:49 - myapp - DEBUG - Attachment found:
+2026-01-29 12:02:57 - myapp - DEBUG - Attachment found:
+2026-01-29 12:02:57 - myapp - DEBUG - Attachment found:
+2026-01-29 12:03:03 - myapp - DEBUG - Attachment found:
+2026-01-29 12:03:03 - myapp - DEBUG - Attachment found:
+2026-01-29 12:03:34 - myapp - DEBUG - Attachment found:
+2026-01-29 12:03:34 - myapp - DEBUG - Attachment found:
+2026-01-29 12:03:34 - myapp - DEBUG - Keyword hit: '智能' in text
+2026-01-29 12:03:34 - myapp - WARNING - downloaded attachment: https://www.zcygov.cn/bid-enroll/acquirepurfile/launch/7324170103911088198 -> ccgp\data\attachments\eafe74f34922\7324170103911088198.bin
+2026-01-29 12:03:34 - myapp - WARNING - downloaded attachment: https://zcy-gov-open-doc.oss-cn-north-2-gov-1.aliyuncs.com/1024FPA/undefined/330699/10007034486/20261/53f23073-f251-453d-a7ce-b0073e42f232.docx -> ccgp\data\attachments\eafe74f34922\53f23073-f251-453d-a7ce-b0073e42f232.docx
+2026-01-29 12:03:42 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "绍兴市机关后勤保障中心拟采购2026年人社大楼安保保洁服务，预算206.92万元。",
+  "requirement_desc": "绍兴市机关后勤保障中心2026年人社大楼（咨询委）安保保洁服务项目，预算金额为2069232元，最高限价相同。项目编号为330600252140020000061-2026-01-0009，服务内容和要求详见采购文件。本项目接受联合体投标，专门面向中小企业，要求服务全部由符合政策要求的中小企业承接，并提供中小企业声明函。供应商需满足《中华人民共和国政府采购法》第二十二条规定，未被列入失信被执行人、重大税收违法失信主体、政府采购严重违法失信行为记录名单。合同履约期限按双方合同约定条款执行。供应商需通过政采云平台在线申请获取采购文件，并在截止时间前递交投标文件。项目将依托政府采购云平台进行电子招投标活动，不接受纸质投标文件。"
+}
+---
+2026-01-29 12:03:49 - myapp - DEBUG - Attachment found:
+2026-01-29 12:03:49 - myapp - DEBUG - Attachment found:
+2026-01-29 12:03:49 - myapp - DEBUG - Attachment found:
+2026-01-29 12:03:49 - myapp - DEBUG - Attachment found:
+2026-01-29 12:03:49 - myapp - DEBUG - Attachment found:
+2026-01-29 12:03:49 - myapp - DEBUG - Attachment found:
+2026-01-29 12:03:55 - myapp - DEBUG - Attachment found:
+2026-01-29 12:03:55 - myapp - DEBUG - Keyword hit: '智能' in text
+2026-01-29 12:03:58 - myapp - WARNING - downloaded attachment: https://shanxisheng-zfcgdzmcgov.cn/gpx-bid-file/141001000/gpfa_compilingBid/8a753e189b02ac03019c0781975d7978.zip?accessCode=65e33a6d6678d0d96d594afdb08fcd57 -> ccgp\data\attachments\a766fee9b7b8\8a753e189b02ac03019c0781975d7978.zip
+2026-01-29 12:04:08 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "临汾市行政审批服务管理局拟采购建设工程消防设计审查验收技术性公共服务，以保证消防设计审查及消防验收工作的质量，提高工作效率。",
+  "requirement_desc": "临汾市行政审批服务管理局建设工程消防设计审查验收技术性公共服务项目旨在委托具备相应能力的技术服务机构，对市审批局权限范围内的房屋市政类特殊建设工程开展消防设计审查、消防验收现场评定，以及其他建设工程开展消防验收备案抽中后现场检查。项目要求供应商根据《中华人民共和国消防法》及相关法规文件，出具特殊建设工程消防设计审查技术合格意见书、特殊建设消防验收现场评定合格意见书和其他建设工程消防备案现场检查合格意见书，作为出具建设工程消防设计审查、消防验收、消防验收备案意见的主要依据。供应商需满足特定资格要求，包括独立法人资格、行业甲级工程设计资质、技术负责人和项目负责人的专业资格要求、专业技术人员人数要求、工程设计收入要求、工作场所建筑面积要求、技术管理和质量保证体系等。项目框架协议期限为2年，供应商需通过山西省政府采购电子卖场获取征集文件，并在规定时间内递交响应文件。"
+}
+---
+2026-01-29 12:04:14 - myapp - DEBUG - successfully read attachments 1 files.
+2026-01-29 12:04:14 - myapp - DEBUG - 
+[OK] saved: ccgp/data/tender_items.csv, items=10

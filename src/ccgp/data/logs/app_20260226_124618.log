@@ -1,0 +1,280 @@
+2026-02-26 12:46:21 - DEBUG - filtering the announcement: ent.title=2026年残疾人运动员集训服务—田径（投掷）、射箭公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194580.htm
+2026-02-26 12:46:25 - DEBUG - filtering the announcement: ent.title=2026年残疾人运动员集训服务-游泳公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194583.htm
+2026-02-26 12:46:29 - DEBUG - filtering the announcement: ent.title=广西众联工程项目管理有限公司关于青秀山智慧化提升项目（GXZC2026-G1-000247-GXZL）的招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194567.htm
+2026-02-26 12:46:29 - DEBUG - Keyword hit: '智能' in sentence: '4.支持智能交互'
+2026-02-26 12:46:29 - WARNING - downloaded attachment: https://obs.gcy.zfcg.gxzf.gov.cn/guangxi-gov-open-doc/1024FPA/450105/10012574908/20262/a1fd0cee-de0f-4b07-b4e3-882e1a352eb0.docx -> src\ccgp\data\attachments\37c8e07f0489_20260226\采购需求.docx
+2026-02-26 12:46:29 - WARNING - extracted text from attachment: 采购需求.docx (4416 chars)
+2026-02-26 12:46:36 - DEBUG - LLM response:
+{
+  "requirement_brief": "青秀山智慧化提升项目需采购人形机器人、四足机器人及智能翻译机器人，预算400万元。",
+  "requirement_desc": "广西壮族自治区文化和旅游厅旨在通过青秀山智慧化提升项目，采购包括3台人形机器人1、1台人形机器人2、5台四足机器人和3台智能翻译机器人在内的智能设备，以增强青秀山的智能化水平。项目预算为400万元，要求中标方在合同签订后60天内完成安装并交付使用。人形机器人1需满足29个以上自由度，能负载3kg以上；人形机器人2需满足40个以上自由度，支持智能交互；四足机器人需具备12个以上自由度，能负载8kg以上，具备一定的速度和跳跃能力；智能翻译机器人需支持多语种AI透明屏一体机，具备高分辨率和透明度。所有设备需满足节能、环保、安全等政府采购政策要求，并提供相应的认证证书或检测报告。项目不接受联合体投标，且对投标人的资格有明确规定，包括符合《中华人民共和国政府采购法》第二十二条的规定等。"
+}
+---
+2026-02-26 12:46:40 - DEBUG - filtering the announcement: ent.title=兰州市公安局交通管理支队18条未移交道路交通安全设施补建项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194560.htm
+2026-02-26 12:46:42 - DEBUG - filtering the announcement: ent.title=百色市政府集中采购中心关于2026年物业服务采购项目的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194556.htm
+2026-02-26 12:46:45 - DEBUG - filtering the announcement: ent.title=西昌怀远学校体育器材采购项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194546.htm
+2026-02-26 12:46:48 - DEBUG - filtering the announcement: ent.title=河北省自然资源卫星遥感应用项目的应用软件项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194548.htm
+2026-02-26 12:46:51 - DEBUG - filtering the announcement: ent.title=河北省自然资源卫星遥感应用等12个项目的车辆及其他运输机械租赁服务项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194545.htm
+2026-02-26 12:46:51 - DEBUG - Keyword hit: '智能' in sentence: '采购需求：1标段：河北省自然资源低空智能监管技术支撑（总体运行服务）、农村占用耕地建房核查、整改及成果汇总项目(南片)等6个项目车辆及其他运输机械租赁服务；2标段：土地执法省级核查(唐山市、承德市)与全省自然资源督察技术支撑、河北省省级以上开发区土地数字化管理技术服务等6个项目车辆及其他运输机械租赁服务'
+2026-02-26 12:46:56 - DEBUG - LLM response:
+{
+  "requirement_brief": "河北省自然资源卫星遥感应用等12个项目需租赁车辆及其他运输机械，预算232.3万元，分为两个标段，不接受联合体投标。",
+  "requirement_desc": "河北省自然资源卫星遥感应用等12个项目的车辆及其他运输机械租赁服务项目，预算总额为232.3万元人民币，分为两个标段，1标段预算122.9万元，2标段预算109.4万元。项目内容包括河北省自然资源低空智能监管技术支撑等6个项目和土地执法省级核查等6个项目的运输机械租赁服务。服务期限自合同签订之日起至2026年12月31日。本项目不接受联合体投标，要求供应商具有《道路运输经营许可证》或《备案通知书》。项目专门面向小微企业采购，且要求供应商通过“信用中国”网站和中国政府采购网查询信用记录，无失信记录。本项目实行盲评，即投标文件的商务标和技术标分开制作，评标委员会按要求对商务标采取明标评审、对技术标采取暗标评审。供应商应在河北省公共资源交易服务平台进行注册并下载招标文件及相关资料。"
+}
+---
+2026-02-26 12:46:59 - DEBUG - filtering the announcement: ent.title=河北省城市国土空间监测项目牵头及数据生产项目的应用软件项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194547.htm
+2026-02-26 12:47:03 - DEBUG - filtering the announcement: ent.title=衡水市冀州区民政局本级冀州区民政局精神障碍社区康复服务项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194544.htm
+2026-02-26 12:47:07 - DEBUG - filtering the announcement: ent.title=新疆维吾尔自治区妇幼保健院（新疆维吾尔自治区第八人民医院）布草洗涤服务项目（三次）公开... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194535.htm
+2026-02-26 12:47:10 - DEBUG - filtering the announcement: ent.title=新疆医科大学第一附属医院抗A抗B血型定型试剂(单克隆抗体)采购项目（四次）公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194532.htm
+2026-02-26 12:47:12 - DEBUG - filtering the announcement: ent.title=贵阳市不动产登记中心关于不动产继承登记引入公证核实提升服务水平项目的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194523.htm
+2026-02-26 12:47:16 - DEBUG - filtering the announcement: ent.title=三门峡市陕州区林业局陕州区2025年省级科学绿化示范项目（国有三门峡市陕州区甘山林场退化林... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194520.htm
+2026-02-26 12:47:19 - DEBUG - filtering the announcement: ent.title=北京市怀柔区人民法院食堂食材采购项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194525.htm
+2026-02-26 12:47:21 - DEBUG - filtering the announcement: ent.title=浙江天册工程管理有限公司关于安吉县水利项目档案整理服务政府采购项目的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194516.htm
+2026-02-26 12:47:25 - DEBUG - filtering the announcement: ent.title=南安市码头中心卫生院医用彩超机采购项目公开招标招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194511.htm
+2026-02-26 12:47:27 - DEBUG - filtering the announcement: ent.title=神池县人民医院提高临聘用人员生活保障项目的采购公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194504.htm
+2026-02-26 12:47:30 - DEBUG - filtering the announcement: ent.title=江岸区塔子湖街社区卫生服务中心江岸区塔子湖街社区卫生服务中心连湖院区设备采购项目公开招... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194479.htm
+2026-02-26 12:47:33 - DEBUG - filtering the announcement: ent.title=浙江中磊工程咨询有限公司关于嘉兴市内河水路反走私智控（二期）采购项目(第二次)的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194478.htm
+2026-02-26 12:47:37 - DEBUG - filtering the announcement: ent.title=三星堆博物馆“云冈石窟——始建于北魏平城时代的世界文化遗产”（暂定名）展览文物包装运输... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194486.htm
+2026-02-26 12:47:39 - DEBUG - filtering the announcement: ent.title=关于2026年水利系统生态联勤服务政府采购项目（重新采购）的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194465.htm
+2026-02-26 12:47:42 - DEBUG - filtering the announcement: ent.title=积石山保安族东乡族撒拉族自治县城市管理综合行政执法队积石山县大河家垃圾填埋场渗滤液处理... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194456.htm
+2026-02-26 12:47:45 - DEBUG - filtering the announcement: ent.title=西安市灞桥区政务服务中心政务中心人力资源服务项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194453.htm
+2026-02-26 12:47:48 - DEBUG - filtering the announcement: ent.title=温泉镇辅助安保项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194434.htm
+2026-02-26 12:47:52 - DEBUG - filtering the announcement: ent.title=浙江省成套招标代理有限公司关于杭州市审计局2026-2028年度计算机技术协助审计服务的公开招标... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194440.htm
+2026-02-26 12:47:55 - DEBUG - filtering the announcement: ent.title=兰州新区西岔综合门诊部兰州新区西岔综合门诊部物业及安保服务采购项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194427.htm
+2026-02-26 12:47:58 - DEBUG - filtering the announcement: ent.title=北京市海淀区三山五园文化艺术中心（北京市海淀区博物馆）申报“海淀区三山五园文化艺术中心... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194432.htm
+2026-02-26 12:48:01 - DEBUG - filtering the announcement: ent.title=北京大运河博物馆（首都博物馆东馆）气体灭火钢瓶检测公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194433.htm
+2026-02-26 12:48:04 - DEBUG - filtering the announcement: ent.title=机关食堂托管服务公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194395.htm
+2026-02-26 12:48:06 - DEBUG - filtering the announcement: ent.title=浙江中际工程项目管理有限公司关于2026-2027年重油项目采购（第二次）的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194393.htm
+2026-02-26 12:48:08 - DEBUG - filtering the announcement: ent.title=乌海市公安局监所看护管理支队后勤管理服务项目(二次)招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194386.htm
+2026-02-26 12:48:12 - DEBUG - filtering the announcement: ent.title=宁夏回族自治区公安厅新一代网上督察系统改造项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194391.htm
+2026-02-26 12:48:12 - DEBUG - Keyword hit: '智能' in sentence: '在统一开放的应用支撑平台和信息资源上，适配改造系统功能主要包含：视频督察子系统、语音督察子系统、综合应用子系统、现场督察子系统及民警维权子系统，重建系统功能主要包含：警务监督智能预警、信访举报分析研判、大屏实战应用，具体详见项目说明和采购需求'
+2026-02-26 12:48:12 - WARNING - download attachment failed: 招标文件正文.pdf -> 403 Client Error: Forbidden for url: https://download.ccgp.gov.cn/oss/download?uuid=c839886f-bf1b-4dfe-ab16-2ff082
+2026-02-26 12:48:18 - DEBUG - LLM response:
+{
+  "requirement_brief": "宁夏回族自治区公安厅新一代网上督察系统改造项目，预算142.56万元，旨在升级现有系统，实现数据连通和功能适配改造。",
+  "requirement_desc": "宁夏回族自治区公安厅新一代网上督察系统改造项目的目标是依据项目建设规划，对现有的网上督察系统进行改造升级。项目要求按照“一个系统，一池数据，多个场景”的构想，构建基础支撑能力体系，实现市县区公安机关督察业务数据的连通，并与公安厅警务云及大数据资源平台对接，实现三级应用的贯穿。改造内容包括视频督察子系统、语音督察子系统、综合应用子系统、现场督察子系统及民警维权子系统，以及警务监督智能预警、信访举报分析研判、大屏实战应用等功能。项目预算为142.56万元，要求自合同签订之日起120天内完成软件开发、试运行和验收。项目不接受联合体投标，且专门面向中小企业，要求供应商提供《中小企业声明函》。"
+}
+---
+2026-02-26 12:48:22 - DEBUG - filtering the announcement: ent.title=吉林中元智信建设项目管理有限公司关于长春市绿园区环卫设备更新项目（一）二次的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194384.htm
+2026-02-26 12:48:24 - DEBUG - filtering the announcement: ent.title=云南省国土资源规划设计研究院全民所有自然资源资产所有权委托代理综合应用项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194383.htm
+2026-02-26 12:48:26 - DEBUG - filtering the announcement: ent.title=广州金良工程咨询有限公司关于柳州市疾病预防控制中心试剂耗材配送服务（LZZC2026-G3-990046-... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194379.htm
+2026-02-26 12:48:30 - DEBUG - filtering the announcement: ent.title=呼和浩特市动物疫病预防控制中心2025年第二批物资采购招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194381.htm
+2026-02-26 12:48:33 - DEBUG - filtering the announcement: ent.title=普宁市2025年其他国土绿化项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194361.htm
+2026-02-26 12:48:33 - DEBUG - Keyword hit: '智慧' in sentence: '广东政府采购智慧云平台（https://gdgpo.czt.gd.gov.cn/cms-gd/site/guangdong/yhdly/index.html）（注：本项目为远程电子开标，电子投标文件在线提交，网上远程解密）'
+2026-02-26 12:48:34 - WARNING - downloaded attachment: https://gdgpo.czt.gd.gov.cn/gpx-bid-file/445281/gpx-tender/2026/2/26/8a7eaa579c42e757019c97d9bf4c1f95.zip?accessCode=15b940f4f91117a6ae677b8abb1cd68b -> src\ccgp\data\attachments\688943ae918c_20260226\普宁市2025年其他国土绿化项目招标文件（2026022602）.zip
+2026-02-26 12:48:39 - WARNING - extracted text from attachment: 普宁市2025年其他国土绿化项目招标文件（2026022602）.zip (105778 chars)
+2026-02-26 12:48:39 - WARNING - downloaded attachment: https://gdgpo.czt.gd.gov.cn/gpx-bid-file/ZF_JGBM_000009/440101/2024/12/1/project/gpx-template/8a7e20cc9c33c73f019c97e1c2477caf.pdf?accessCode=e84f8bbdac980aadfc4135be859f5f7f -> src\ccgp\data\attachments\688943ae918c_20260226\工程量清单.pdf
+2026-02-26 12:48:39 - WARNING - no text extracted: name=工程量清单.pdf ext=.pdf size=57760B path=src\ccgp\data\attachments\688943ae918c_20260226\工程量清单.pdf url=https://gdgpo.czt.gd.gov.cn/gpx-bid-file/ZF_JGBM_000009/440101/2024/12/1/project/gpx-template/8a7e20cc9c33c73f019c97e1c2477caf.pdf?accessCode=e84f8bbdac980aadfc4135be859f5f7f
+2026-02-26 12:48:39 - WARNING - downloaded attachment: https://gdgpo.czt.gd.gov.cn/gpx-bid-file/ZF_JGBM_000009/440101/2024/12/1/project/gpx-template/8a7e08429c33c7a6019c97e214bd7b00.pdf?accessCode=540a64d839f4bfef6cc8036e370fe8de -> src\ccgp\data\attachments\688943ae918c_20260226\企业信用自查承诺函.pdf
+2026-02-26 12:48:39 - WARNING - extracted text from attachment: 企业信用自查承诺函.pdf (415 chars)
+2026-02-26 12:48:46 - DEBUG - LLM response:
+{
+  "requirement_brief": "普宁市2025年其他国土绿化项目招标，预算514.46万元，旨在提升9125亩林地，包括林分优化提升3375亩和森林抚育5750亩。",
+  "requirement_desc": "普宁市2025年其他国土绿化项目的目标是通过造林服务提升9125亩林地，其中林分优化提升3375亩，森林抚育5750亩。项目分布在普宁市多个镇和农场，涉及人工造林、退化林修复和森林抚育三种作业设计类型。人工造林将选择适宜造林的宜林地，退化林修复将改善现有林分组成结构，森林抚育则通过割灌除草、松土扩穴等措施调整林分生长空间。项目要求投标人具备有效的《造林绿化施工资质证书》，不接受联合体投标。项目预算为514.46万元，合同履行期限为240个日历天，款项以人民币转账方式支付，预付款25%，进度款60%，项目完成后支付余款15%。项目要求投标人具有良好的商业信誉和健全的财务会计制度，且近三年内无重大违法记录。"
+}
+---
+2026-02-26 12:48:48 - DEBUG - filtering the announcement: ent.title=滇中新区2026年宣传合作项目的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194363.htm
+2026-02-26 12:48:51 - DEBUG - filtering the announcement: ent.title=护眼灯安装画安装图纸 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194359.htm
+2026-02-26 12:48:54 - DEBUG - filtering the announcement: ent.title=实景三维“云踏勘”、空间数据分析及推介图件制作公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194380.htm
+2026-02-26 12:48:58 - DEBUG - filtering the announcement: ent.title=淮安市公安局法制综合应用平台项目采购公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194322.htm
+2026-02-26 12:49:00 - DEBUG - filtering the announcement: ent.title=常熟市殡仪馆(常熟市殡仪服务中心)关于常熟市殡仪馆殡葬延伸服务（2026年-2028年）项目的招标... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194329.htm
+2026-02-26 12:49:03 - DEBUG - filtering the announcement: ent.title=永川区体育中心、棠城体育馆2026年物业管理服务(YCQ26C00001)公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194327.htm
+2026-02-26 12:49:07 - DEBUG - filtering the announcement: ent.title=《太仓市国土空间总体规划（2021-2035年）》动态维护项目采购公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194325.htm
+2026-02-26 12:49:10 - DEBUG - filtering the announcement: ent.title=汤旺县供热服务中心采购供热原煤项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194315.htm
+2026-02-26 12:49:12 - DEBUG - filtering the announcement: ent.title=依安县乡村振兴服务中心2026年依安县牛产业粪肥处理加工设备采购项目(二次)招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194310.htm
+2026-02-26 12:49:14 - DEBUG - filtering the announcement: ent.title=河北省全民所有自然资源资产清查（县级实物量清查、价值量核算及成果形成提交）公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194293.htm
+2026-02-26 12:49:19 - DEBUG - filtering the announcement: ent.title=室外厕所维修改造画图纸 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194285.htm
+2026-02-26 12:49:22 - DEBUG - filtering the announcement: ent.title=杭州聚升工程咨询有限公司关于2026年度全区应急广播系统维护采购项目的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194288.htm
+2026-02-26 12:49:25 - DEBUG - filtering the announcement: ent.title=2026年度《福州日报》宣传服务单一来源公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194283.htm
+2026-02-26 12:49:29 - DEBUG - filtering the announcement: ent.title=东城区电子政务信息安全运维服务公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194286.htm
+2026-02-26 12:49:33 - DEBUG - filtering the announcement: ent.title=文山市妇幼保健计划生育服务中心（文山市妇幼保健院）食品配送及厨工 采购项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194259.htm
+2026-02-26 12:49:37 - DEBUG - filtering the announcement: ent.title=合肥市妇幼保健院生殖检验等一批试剂配送服务（2次）第1-3包公开招标公告[2026] url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194258.htm
+2026-02-26 12:49:40 - DEBUG - filtering the announcement: ent.title=茂名市第一职业技术学校2026年度物业管理服务(二次)招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194252.htm
+2026-02-26 12:49:40 - DEBUG - Keyword hit: '智慧' in sentence: '进行咨询或通过广东政府采购智慧云平台运维服务说明中提供的其他服务方式获取帮助'
+2026-02-26 12:49:41 - WARNING - downloaded attachment: https://gdgpo.czt.gd.gov.cn/gpx-bid-file/440901/gpx-tender/2026/2/26/8a7e8bdf9c42e616019c97c30ba3695c.zip?accessCode=36137e08d7c954b5888644aecdfb4383 -> src\ccgp\data\attachments\339147a4d631_20260226\茂名市第一职业技术学校2026年度物业管理服务(二次)招标文件（2026022601）.zip
+2026-02-26 12:49:47 - WARNING - extracted text from attachment: 茂名市第一职业技术学校2026年度物业管理服务(二次)招标文件（2026022601）.zip (128111 chars)
+2026-02-26 12:49:47 - WARNING - downloaded attachment: https://gdgpo.czt.gd.gov.cn/gpx-bid-file/ZF_JGBM_000009/440901/2026/2/4/8a7efa459bea1204019bfd8fccaf0ed0/gpx-tender/8a7e3ee499200e20019c27dcffce455b.docx?accessCode=1da333a54990702ff2d7133a53ec4f45 -> src\ccgp\data\attachments\339147a4d631_20260226\茂名市政府采购供应商资格信用承诺函.docx
+2026-02-26 12:49:47 - WARNING - extracted text from attachment: 茂名市政府采购供应商资格信用承诺函.docx (507 chars)
+2026-02-26 12:49:48 - WARNING - downloaded attachment: https://gdgpo.czt.gd.gov.cn/gpx-bid-file/ZF_JGBM_000009/440901/2026/2/26/8a7e05659c359444019c97b0bc2d5134/gpx-tender/8a7ebfc29c33c7f5019c97b86d5e755d.pdf?accessCode=204de02c04969f1c995fa2999c1ed408 -> src\ccgp\data\attachments\339147a4d631_20260226\代理协议.pdf
+2026-02-26 12:49:48 - WARNING - no text extracted: name=代理协议.pdf ext=.pdf size=1426121B path=src\ccgp\data\attachments\339147a4d631_20260226\代理协议.pdf url=https://gdgpo.czt.gd.gov.cn/gpx-bid-file/ZF_JGBM_000009/440901/2026/2/26/8a7e05659c359444019c97b0bc2d5134/gpx-tender/8a7ebfc29c33c7f5019c97b86d5e755d.pdf?accessCode=204de02c04969f1c995fa2999c1ed408
+2026-02-26 12:49:53 - DEBUG - LLM response:
+{
+  "requirement_brief": "茂名市第一职业技术学校2026年度物业管理服务项目，预算280万元，需提供校园安全保卫、清洁卫生、绿化美化、垃圾清理等全方位物业管理服务。",
+  "requirement_desc": "茂名市第一职业技术学校2026年度物业管理服务项目，预算280万元，服务期限一年。项目涵盖校园安全保卫、清洁卫生、绿化美化、垃圾清理与转运、劳动教育支持、临时性任务和应急性工作、资料整理、水电设备维护、门窗台凳等设备维护、小型修缮、宿舍管理等全方位物业管理服务。要求供应商具备独立承担民事责任能力、良好税收和社保缴纳记录、商业信誉和财务制度、专业技术能力，近三年无重大违法记录，未被列入失信名单，不处于禁止参加政府采购活动期间。服务报价包含所有费用，按月支付，需提供保安服务许可证或承诺备案自行招用保安。项目要求供应商提供全面物业管理服务，确保校园环境安全、整洁、有序，提升学校整体形象和师生满意度。"
+}
+---
+2026-02-26 12:49:56 - DEBUG - filtering the announcement: ent.title=贵阳市体育局关于2026贵阳马拉松赛赛事运营的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194255.htm
+2026-02-26 12:49:59 - DEBUG - filtering the announcement: ent.title=2026年高丽营镇级道路重点区域和金马工业区保洁服务项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194264.htm
+2026-02-26 12:50:03 - DEBUG - filtering the announcement: ent.title=教学楼老化电路维修更换画图纸 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194251.htm
+2026-02-26 12:50:06 - DEBUG - filtering the announcement: ent.title=广东产品质量监督检验研究院科学城总部及琶洲基地业务用车社会化租赁服务采购项目（0809-2641... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194243.htm
+2026-02-26 12:50:06 - DEBUG - Keyword hit: '智慧' in sentence: '进行咨询或通过广东政府采购智慧云平台运维服务说明中提供的其他服务方式获取帮助'
+2026-02-26 12:50:07 - WARNING - downloaded attachment: https://gdgpo.czt.gd.gov.cn/gpx-bid-file/440001/gpx-tender/2026/2/26/8a7e8bdf9c42e616019c9765325632da.zip?accessCode=51320ee1247b8ab769b372e61b3181d5 -> src\ccgp\data\attachments\4ecdfbe4f263_20260226\广东产品质量监督检验研究院科学城总部及琶洲基地业务用车社会化租赁服务采购项目招标文件（2026021101）.zip
+2026-02-26 12:50:14 - WARNING - extracted text from attachment: 广东产品质量监督检验研究院科学城总部及琶洲基地业务用车社会化租赁服务采购项目招标文件（2026021101）.zip (139713 chars)
+2026-02-26 12:50:15 - WARNING - downloaded attachment: https://gdgpo.czt.gd.gov.cn/gpx-bid-file/ZF_JGBM_000009/440101/2024/12/1/project/gpx-template/8a7ebfc29c33c7f5019c97c8121878a7.pdf?accessCode=f1864508a76de582e09654c19484a302 -> src\ccgp\data\attachments\4ecdfbe4f263_20260226\委托协议3020000101.pdf
+2026-02-26 12:50:15 - WARNING - no text extracted: name=委托协议3020000101.pdf ext=.pdf size=331632B path=src\ccgp\data\attachments\4ecdfbe4f263_20260226\委托协议3020000101.pdf url=https://gdgpo.czt.gd.gov.cn/gpx-bid-file/ZF_JGBM_000009/440101/2024/12/1/project/gpx-template/8a7ebfc29c33c7f5019c97c8121878a7.pdf?accessCode=f1864508a76de582e09654c19484a302
+2026-02-26 12:50:15 - WARNING - downloaded attachment: https://gdgpo.czt.gd.gov.cn/gpx-bid-file/ZF_JGBM_000009/440101/2024/12/1/project/gpx-template/8a7e056c9c33c7b2019c97c82f887831.docx?accessCode=c04ae836c989e20a1cc32200f9aa278b -> src\ccgp\data\attachments\4ecdfbe4f263_20260226\中小企业声明函填写参考格式.docx
+2026-02-26 12:50:15 - WARNING - extracted text from attachment: 中小企业声明函填写参考格式.docx (569 chars)
+2026-02-26 12:50:20 - DEBUG - LLM response:
+{
+  "requirement_brief": "广东产品质量监督检验研究院需租赁业务用车，服务期限2年，预算160万元。",
+  "requirement_desc": "广东产品质量监督检验研究院科学城总部及琶洲基地业务用车社会化租赁服务采购项目，旨在为该院提供科学城总部及琶洲基地的业务用车租赁服务，服务期限为2年，预算金额为160万元人民币。服务内容包括不定量、不定期租用5座小轿车或5座SUV、6-9座商务车、10-19座中巴车、20座以上大巴车等车型，以满足全年业务需求。投标人需具备车辆租赁、运输、实际承运经验和能力，并需持有交通管理部门核发的有效《道路运输经营许可证》。服务标准需符合汽车行业相关法律、政府规章及行业机构管理流程及规范。项目不接受联合体投标，且特别面向中小企业。合同履行期限为一年一签，第二年根据财政预算及中标人履约情况确定是否续签。"
+}
+---
+2026-02-26 12:50:24 - DEBUG - filtering the announcement: ent.title=大悟县第一中学功能室新建项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194234.htm
+2026-02-26 12:50:26 - DEBUG - filtering the announcement: ent.title=镇远县农业农村局关于镇远县2026年辣椒种植良种良法推广项目的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194220.htm
+2026-02-26 12:50:29 - DEBUG - filtering the announcement: ent.title=河北省石家庄水文勘测研究中心2026年地下水动态监控运维公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194204.htm
+2026-02-26 12:50:33 - DEBUG - filtering the announcement: ent.title=河北省地矿局第七地质大队（河北省地质矿产勘查开发局雄安地质调查监测中心）车辆及其他运输... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194205.htm
+2026-02-26 12:50:36 - DEBUG - filtering the announcement: ent.title=孝感市残疾人联合会本级孝感市残疾人托养中心运营公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194199.htm
+2026-02-26 12:50:40 - DEBUG - filtering the announcement: ent.title=遂宁市船山区中医医院两专科一中心医疗教学设施设备采购项目(二次)招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194198.htm
+2026-02-26 12:50:43 - DEBUG - filtering the announcement: ent.title=浙江金穗工程项目管理有限公司关于闻堰街道全域未来社区全过程咨询服务采购项目的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194185.htm
+2026-02-26 12:50:46 - DEBUG - filtering the announcement: ent.title=永泰县2026-2027年度地灾治理勘查、设计及地形测量等技术服务公开招标招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194181.htm
+2026-02-26 12:50:50 - DEBUG - filtering the announcement: ent.title=新乡市自然资源和规划局新乡市矿产资源总体规划（2026-2030年）编制项目-公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194173.htm
+2026-02-26 12:50:54 - DEBUG - filtering the announcement: ent.title=驻马店市中心医院中药饮片供应服务采购项目（二次）-公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194167.htm
+2026-02-26 12:50:58 - DEBUG - filtering the announcement: ent.title=沈阳医学院附属中心医院购置医疗设备(超声电子上消化道内窥镜系统)项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194161.htm
+2026-02-26 12:50:58 - DEBUG - Keyword hit: '智能' in sentence: '智能扫查技术，一次按键自动识别结节，并对病灶进行自动描记、测量、超声诊断描述等分析'
+2026-02-26 12:51:04 - DEBUG - LLM response:
+{
+  "requirement_brief": "沈阳医学院附属中心医院需购置超声电子上消化道内窥镜系统，预算225万元，要求满足一系列技术规格和系统要求。",
+  "requirement_desc": "沈阳医学院附属中心医院拟购置超声电子上消化道内窥镜系统一套，预算225万元。项目要求供应商提供的设备需满足以下技术规格和系统要求：主机成像系统需具备≥20英寸液晶显示器、角度可调的≥13英寸液晶触摸屏操作面板、脉冲反向谐波成像单元等；成像技术需支持造影成像技术、弹性成像技术、智能扫查技术等；图像存储需数字化捕捉、回放、存储静、动态图像，电影回放≥480秒，硬盘≥1600G；系统通用功能需主机探头接口≥5个，超宽频带探头，频率范围包含1MHz-17MHz等。配置要求至少包含彩超主机1台、超声探头3个、扇扫超声内镜探头1个、台车1台。合同履行期限为签订合同后30日内。供应商需满足《中华人民共和国政府采购法》第二十二条规定，并具备有效期内的《医疗器械经营许可证》或《医疗器械经营备案凭证》等。"
+}
+---
+2026-02-26 12:51:07 - DEBUG - filtering the announcement: ent.title=包头稀土高新技术产业开发区社会事务局（教育局）稀土高新区初中升学考试体测设备采购项目招... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194160.htm
+2026-02-26 12:51:07 - DEBUG - Keyword hit: 'AI' in sentence: '室内AI体育测训一体机-'
+2026-02-26 12:51:07 - WARNING - downloaded attachment: https://download.ccgp.gov.cn/oss/download?uuid=36e364fb-cf99-435d-b1bd-d4f291 -> src\ccgp\data\attachments\3ea77b4a7016_20260226\稀土高新区初中升学考试体测设备采购项目（BTZCXTS-G-H-26001320260224001）-文件集.zip
+2026-02-26 12:51:11 - WARNING - extract_text_from_file failed: 稀土高新区初中升学考试体测设备采购项目（BTZCXTS-G-H-26001320260224001）-文件集.zip -> Failed to open ZIP file: Failed to open DOCX file: file 'src\ccgp\data\attachments\3ea77b4a7016_20260226\_unzipped\附件\中小企业声明函.docx' is not a Word file, content type is 'application/vnd.openxmlformats-officedocument.themeManager+xml'
+2026-02-26 12:51:18 - DEBUG - LLM response:
+{
+  "requirement_brief": "包头稀土高新区教育局需采购初中升学考试体测设备，预算120万元，包括体育学科大数据平台、AI体育测训一体机等。",
+  "requirement_desc": "包头稀土高新技术产业开发区社会事务局（教育局）为满足初中升学考试体测需求，计划采购一批体测设备，预算金额为120万元人民币。采购范围包括体育学科大数据平台4套、室内AI体育测训一体机-旗舰版（含屏）4套、AI肺活量测试仪配件8套、AI坐位体前屈测试仪配件4套、AI身高体重测试仪配件4套、室外AI短跑测试屏4套、室外AI长跑测试屏4套、跑步检测拓展配件包4套、室外跑步配套立杆（跑道终点长杆）8套、室外AI体测屏-引体向上4台等。所有设备均需满足采购文件中的技术规格、参数及要求。合同履行期限为签订合同后两个月内完成供货安装及调试。供应商需满足《中华人民共和国政府采购法》第二十二条规定的条件，并提供相关声明函。项目不接受联合体投标。"
+}
+---
+2026-02-26 12:51:22 - DEBUG - filtering the announcement: ent.title=浙江建诚工程管理咨询有限公司关于绍兴第二医院医共体平水分院分院负压救护车采购项目的公开... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194152.htm
+2026-02-26 12:51:25 - DEBUG - filtering the announcement: ent.title=首都绿色文化碑林绿化养护和森林资源管护项目其他林业服务采购项目设施维护公开招标公告（二次） url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194164.htm
+2026-02-26 12:51:28 - DEBUG - filtering the announcement: ent.title=尚志市苇河镇中心卫生院CT管球进行采购单一来源公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194125.htm
+2026-02-26 12:51:32 - DEBUG - filtering the announcement: ent.title=唐山市中医医院医疗责任险（双盲评审）公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194122.htm
+2026-02-26 12:51:34 - DEBUG - filtering the announcement: ent.title=唐山市丰润区中医医院救治能力提升项目信息化设备采购公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194117.htm
+2026-02-26 12:51:37 - DEBUG - filtering the announcement: ent.title=唐山市丰润区中医医院救治能力提升项目医疗设备采购公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194121.htm
+2026-02-26 12:51:41 - DEBUG - filtering the announcement: ent.title=四川大学附属实验小学明德学校学校教师营养餐大宗食品原材料配送服务（2026.3-2027.3）招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194108.htm
+2026-02-26 12:51:45 - DEBUG - filtering the announcement: ent.title=乔泰工程管理集团有限公司关于高质量发展示范项目-长春市中心医院拟采购流式细胞分析仪1台、... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194113.htm
+2026-02-26 12:51:47 - DEBUG - filtering the announcement: ent.title=汤阴县民政局汤阴县贫困精神重残人员集中托养照护项目（二次）-公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194110.htm
+2026-02-26 12:51:49 - DEBUG - filtering the announcement: ent.title=巴东县人民医院2026物业管理服务采购项目公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194103.htm
+2026-02-26 12:51:53 - DEBUG - filtering the announcement: ent.title=郸城县应急管理局关于郸城县应急物资仓储物流设施建设项目施工图设计和预算编制采购项目-公开... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194098.htm
+2026-02-26 12:51:55 - DEBUG - filtering the announcement: ent.title=里水镇2026年道路及桥梁小修养护服务项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194093.htm
+2026-02-26 12:51:55 - DEBUG - Keyword hit: '智慧' in sentence: '进行咨询或通过广东政府采购智慧云平台运维服务说明中提供的其他服务方式获取帮助'
+2026-02-26 12:51:56 - WARNING - downloaded attachment: https://gdgpo.czt.gd.gov.cn/gpx-bid-file/440605/gpx-tender/2026/2/26/8a7e99b19c42e7b1019c978cd4d61041.zip?accessCode=bff125982641f8160d23f9f93b86ade4 -> src\ccgp\data\attachments\4e90e34872bc_20260226\里水镇2026年道路及桥梁小修养护服务项目招标文件（2026022501）.zip
+2026-02-26 12:52:04 - WARNING - extracted text from attachment: 里水镇2026年道路及桥梁小修养护服务项目招标文件（2026022501）.zip (173564 chars)
+2026-02-26 12:52:11 - WARNING - downloaded attachment: https://gdgpo.czt.gd.gov.cn/gpx-bid-file/ZF_JGBM_000009/440101/2024/12/1/project/gpx-template/8a7e056c9c33c7b2019c9792d9876abf.pdf?accessCode=937207a2f8c040d6a88fa8f07d96f558 -> src\ccgp\data\attachments\4e90e34872bc_20260226\里水镇2026年道路及桥梁小修养护服务项目维修单价书.pdf
+2026-02-26 12:52:11 - WARNING - no text extracted: name=里水镇2026年道路及桥梁小修养护服务项目维修单价书.pdf ext=.pdf size=9635803B path=src\ccgp\data\attachments\4e90e34872bc_20260226\里水镇2026年道路及桥梁小修养护服务项目维修单价书.pdf url=https://gdgpo.czt.gd.gov.cn/gpx-bid-file/ZF_JGBM_000009/440101/2024/12/1/project/gpx-template/8a7e056c9c33c7b2019c9792d9876abf.pdf?accessCode=937207a2f8c040d6a88fa8f07d96f558
+2026-02-26 12:52:17 - WARNING - downloaded attachment: https://gdgpo.czt.gd.gov.cn/gpx-bid-file/ZF_JGBM_000009/440101/2024/12/1/project/gpx-template/8a7ee7ed9c33c776019c979388726a66.pdf?accessCode=2535babc20f358369711f53418615154 -> src\ccgp\data\attachments\4e90e34872bc_20260226\委托协议.pdf
+2026-02-26 12:52:17 - WARNING - no text extracted: name=委托协议.pdf ext=.pdf size=7818947B path=src\ccgp\data\attachments\4e90e34872bc_20260226\委托协议.pdf url=https://gdgpo.czt.gd.gov.cn/gpx-bid-file/ZF_JGBM_000009/440101/2024/12/1/project/gpx-template/8a7ee7ed9c33c776019c979388726a66.pdf?accessCode=2535babc20f358369711f53418615154
+2026-02-26 12:52:23 - DEBUG - LLM response:
+{
+  "requirement_brief": "里水镇2026年道路及桥梁小修养护服务项目，预算960万元，分三个片区，各片区预算320万元，服务期限1年或直至项目实际结算金额累计达到320万元。",
+  "requirement_desc": "佛山市南海区里水镇城建和水务办公室针对里水镇2026年道路及桥梁小修养护服务项目进行公开招标，项目预算总额为960万元，分为三个采购包，每个包预算320万元，服务期限为自合同签订生效之日起1年，或项目实际结算金额累计达到320万元时，合同自动终止，以先到者为准。该项目旨在对里水镇城区片区、盐南片区和和顺片区的道路及桥梁进行小修养护服务，确保道路及桥梁的安全和正常使用。投标人需满足《中华人民共和国政府采购法》第二十二条规定的条件，并具备市政公用工程施工总承包三级或以上资质及有效的安全生产许可证。项目不接受联合体投标，且特别要求投标人为中小企业，属于建筑行业的范畴。中标供应商需按照采购文件的技术规格、参数及要求执行服务，并在合同履行期间保持良好的服务状态和质量，直至合同终止。"
+}
+---
+2026-02-26 12:52:25 - DEBUG - filtering the announcement: ent.title=临平北路食堂社会化服务的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194041.htm
+2026-02-26 12:52:29 - DEBUG - filtering the announcement: ent.title=518号食堂社会化服务的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194057.htm
+2026-02-26 12:52:31 - DEBUG - filtering the announcement: ent.title=新港路食堂社会化服务的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194053.htm
+2026-02-26 12:52:35 - DEBUG - filtering the announcement: ent.title=518号食堂社会化服务的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194039.htm
+2026-02-26 12:52:38 - DEBUG - filtering the announcement: ent.title=宇航大厦食堂社会化服务的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194051.htm
+2026-02-26 12:52:41 - DEBUG - filtering the announcement: ent.title=同江市园林养护中心2025年住建项目-同江市中华文化园公共卫生间采购项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26194016.htm
+2026-02-26 12:52:44 - DEBUG - filtering the announcement: ent.title=黄山市2026年度普通国省干线公路养护工程检测服务框架协议采购项目封闭式征集公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26193997.htm
+2026-02-26 12:52:47 - DEBUG - filtering the announcement: ent.title=合肥市妇幼保健院生殖检验等一批试剂配送服务第1-3包公开招标公告[2025] url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26193994.htm
+2026-02-26 12:52:50 - DEBUG - filtering the announcement: ent.title=黎平县人民医院关于黎平县人民医院新院搬迁医疗设备集中采购项目（第五批）C包二次的公开招标... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26193991.htm
+2026-02-26 12:52:52 - DEBUG - filtering the announcement: ent.title=阿拉善左旗公安局执法执勤用车采购招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26193970.htm
+2026-02-26 12:52:56 - DEBUG - filtering the announcement: ent.title=安阳县城市管理局道路清扫保洁项目-公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26193967.htm
+2026-02-26 12:53:00 - DEBUG - filtering the announcement: ent.title=宣恩县2025年度中央财政森林可持续经营项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26193964.htm
+2026-02-26 12:53:04 - DEBUG - filtering the announcement: ent.title=丽水市莲都区公共资源交易中心关于丽水市莲都区联城街道社区卫生服务中心物业管理项目的公开... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26193943.htm
+2026-02-26 12:53:07 - DEBUG - filtering the announcement: ent.title=赣州行致远项目管理有限公司关于赣州市工业和信息化局赣州市印制电路板行业场景数字化（“一... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26193915.htm
+2026-02-26 12:53:11 - DEBUG - filtering the announcement: ent.title=银川市妇幼保健院检验试剂及耗材项目第二批（五、六、七标段）项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26193904.htm
+2026-02-26 12:53:14 - DEBUG - filtering the announcement: ent.title=银川市妇幼保健院检验试剂及耗材项目第二批(一、二、三、四标段)项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202602/t20260226_26193900.htm
+2026-02-26 12:53:14 - DEBUG - successfully read 8 attachments.
+2026-02-26 12:53:14 - DEBUG - [OK] saved: src/ccgp/data/tender_items.csv, items=9
+2026-02-26 12:53:22 - DEBUG - filtering the announcement: ent.title=国家税务总局海宁市税务局2026-2027年食堂食材采购与配送服务项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260226_26194563.htm
+2026-02-26 12:53:26 - DEBUG - filtering the announcement: ent.title=2025年天津大学校园更新项目-能源站提升改造设计公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260226_26194555.htm
+2026-02-26 12:53:30 - DEBUG - filtering the announcement: ent.title=国家税务总局桐乡市税务局2026-2027年食堂食材采购及配送服务项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260226_26194462.htm
+2026-02-26 12:53:32 - DEBUG - filtering the announcement: ent.title=国家税务总局广东清远高新技术产业开发区税务局2026年食堂食材采购及配送服务项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260226_26194408.htm
+2026-02-26 12:53:35 - DEBUG - filtering the announcement: ent.title=中国农业大学国家农业科学曲周观测实验站建设工程施工招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260226_26194232.htm
+2026-02-26 12:53:39 - DEBUG - filtering the announcement: ent.title=辽宁省消防救援总队训保支队2026年食材配送服务采购项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260226_26194114.htm
+2026-02-26 12:53:41 - DEBUG - filtering the announcement: ent.title=土壤生态环境数字监管平台建设（一）公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260226_26194080.htm
+2026-02-26 12:53:45 - DEBUG - filtering the announcement: ent.title=zycgr22011902行政办公区家具采购项目招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260226_26194056.htm
+2026-02-26 12:53:49 - DEBUG - filtering the announcement: ent.title=塔城地区消防救援支队塔城市消防救援大队2026年主副食品采购项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260226_26193957.htm
+2026-02-26 12:53:53 - DEBUG - filtering the announcement: ent.title=国家税务总局嘉善县税务局2026-2027年食堂食材采购及配送服务项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260226_26193945.htm
+2026-02-26 12:53:57 - DEBUG - filtering the announcement: ent.title=北京理工大学基础教育管理中心物业保安服务采购项目招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260226_26193858.htm
+2026-02-26 12:53:59 - DEBUG - filtering the announcement: ent.title=中国民用航空东北地区空中交通管理局漠河等两部航管雷达建设工程设计招标项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260226_26193829.htm
+2026-02-26 12:54:03 - DEBUG - filtering the announcement: ent.title=北京国家会计学院租赁车辆（大型车）服务采购项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26193321.htm
+2026-02-26 12:54:06 - DEBUG - filtering the announcement: ent.title=中国科学院赣江创新研究院强磁场测试系统公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26193299.htm
+2026-02-26 12:54:09 - DEBUG - filtering the announcement: ent.title=中国科学院赣江创新研究院极低温试验系统公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26193296.htm
+2026-02-26 12:54:11 - DEBUG - filtering the announcement: ent.title=中国医学科学院肿瘤医院医学中心软硬件及服务采购项目招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26193193.htm
+2026-02-26 12:54:11 - DEBUG - Keyword hit: '大数据' in sentence: '第1包：日志审计,维保服务,密码机,医疗敏感数据识别与脱敏系统,单点登录平台,网络集成服务,第2包：大数据平台'
+2026-02-26 12:54:11 - WARNING - downloaded attachment: https://download.ccgp.gov.cn/oss/download?uuid=b4868361-3b9e-412f-b825-e4d8d1 -> src\ccgp\data\attachments\3212c4c9e32f_20260226\中国医学科学院肿瘤医院医学中心软硬件及服务采购项目采购文件.pdf
+2026-02-26 12:54:13 - WARNING - extracted text from attachment: 中国医学科学院肿瘤医院医学中心软硬件及服务采购项目采购文件.pdf (60577 chars)
+2026-02-26 12:54:20 - DEBUG - LLM response:
+{
+  "requirement_brief": "中国医学科学院肿瘤医院医学中心软硬件及服务采购项目，预算794万元，分两包招标，涉及日志审计、维保服务、密码机等及大数据平台的供应、运输、安装调试、培训及售后服务。",
+  "requirement_desc": "本项目旨在为中国医学科学院肿瘤医院医学中心采购软硬件及服务，预算794万元，分为两个包进行招标。第1包包括日志审计、维保服务、密码机、医疗敏感数据识别与脱敏系统、单点登录平台和网络集成服务，预算443万元；第2包为大数据平台，预算351万元。项目要求供应商提供相关货物和服务的供应、运输、安装调试、培训及售后服务，履约时间为合同签订后30个自然日内完成安装调试并具备验收条件。项目不接受联合体投标，且对投标人有特殊要求无。此外，项目还涉及政府采购政策、信用记录查询、节能环保要求、本国产品标准政策等非功能需求。供应商需通过中央政府采购网获取招标文件，并采用电子采购系统（国e采）进行网上投标。"
+}
+---
+2026-02-26 12:54:24 - DEBUG - filtering the announcement: ent.title=北方民族大学智慧校园全域数据管理和分析平台建设（二期）项目招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26193160.htm
+2026-02-26 12:54:24 - DEBUG - Keyword hit: '智能' in sentence: '北方民族大学智慧校园全域数据管理和分析平台建设（二期）项目采购内容包含数据安全治理服务（统一身份认证平台及身份治理，含单点登录、认证管理、身份管理、审计、系统设置、自服务、应用网关等模块）、非结构化数据治理服务（AI应用开发平台相关，包含AI应用开发平台底座、通用智能问答模块、智能问数模块、AI后台管理系统等模块；数据应用及指标体系建设，包含部门数据看板、院系数据画像、领导驾驶舱、师生画像、校园指标构建等模块）、持续化数据治理服务（融合门户及低代码平台，含信息与服务融合、个性化要求、消息中心、消息与待办、日程中心、资讯中心、搜索中心、办事中心、个人中心、效能监督、基于企业微信的移动校园、运营中心、数据看板、AI唤起功能、数据交互、表单设计、工作流设计、报表引擎、协同开发、AI能力、系统集成与扩展、平台管理、部署模式、服务与生态、流程及应用服务开发等模块）等，'
+2026-02-26 12:54:29 - DEBUG - LLM response:
+{
+  "requirement_brief": "北方民族大学智慧校园全域数据管理和分析平台建设（二期）项目，预算209.47万元，包含数据安全治理、非结构化数据治理、持续化数据治理等服务。",
+  "requirement_desc": "北方民族大学智慧校园全域数据管理和分析平台建设（二期）项目，预算209.47万元，旨在提升校园数据管理和分析能力。项目采购内容包括数据安全治理服务（统一身份认证平台及身份治理等模块）、非结构化数据治理服务（AI应用开发平台相关模块、数据应用及指标体系建设等模块）和持续化数据治理服务（融合门户及低代码平台等模块）。项目要求供应商提供在中华人民共和国境内注册的法人或其他组织的营业执照等证明材料，具有良好的商业信誉和健全的财务会计制度，具备履行合同所必需的设备和专业技术能力，具有依法缴纳税收和社会保障资金的良好记录，参加采购活动前三年内在经营活动中没有重大违法记录。合同履行期限为自合同签订之日起180日历日完成合同要求的服务。项目不接受联合体投标。"
+}
+---
+2026-02-26 12:54:32 - DEBUG - filtering the announcement: ent.title=阿拉善边境管理支队空气能供暖设备购置项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26193150.htm
+2026-02-26 12:54:32 - DEBUG - Keyword hit: 'AI' in sentence: '现场获取（呼和浩特市新城区水岸小镇世贸D7号楼（AI大模型生态创新中心）11楼）或邮箱获取（nmgmingao@163.com）'
+2026-02-26 12:54:37 - DEBUG - LLM response:
+{
+  "requirement_brief": "阿拉善边境管理支队需购置空气能供暖设备，预算130.75万元，要求设备能在-25℃稳定运行，出水温度不低于45℃，符合国家能效、安全与环保标准。",
+  "requirement_desc": "阿拉善边境管理支队空气能供暖设备购置项目拟购置空气源热泵供热系统设备，包括7台不同功率的空气源热泵主机、28台循环水泵、7个闭式承压水箱等，要求在-25℃环境中稳定运行，出水温度不低于45℃，制热季节性能系数或全年性能系数符合《GB 19577-2024》标准，并提供节能产品认证证书。项目还包括全套系统配件及8套定制配电柜，以及原有供热机组、水泵、管线等设备的拆除和部分区域散热器改造安装工作。所有设备与材料需符合国家相关能效、安全与环保标准，确保系统高效、稳定、安全运行，实现节能减排目标。合同履行期限为签订后45天内完成。"
+}
+---
+2026-02-26 12:54:39 - DEBUG - filtering the announcement: ent.title=上海民航职业技术学院2026年大型校园招聘会场地布展租赁服务采购项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192927.htm
+2026-02-26 12:54:43 - DEBUG - filtering the announcement: ent.title=武汉海关后勤管理中心武汉天河机场海关及武汉邮局海关食堂食材配送服务项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192922.htm
+2026-02-26 12:54:47 - DEBUG - filtering the announcement: ent.title=中国水利学会2026中国水博览会场地租赁与服务公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192910.htm
+2026-02-26 12:54:51 - DEBUG - filtering the announcement: ent.title=国家税务总局蒲城县税务局2026年服务采购项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192905.htm
+2026-02-26 12:54:53 - DEBUG - filtering the announcement: ent.title=中华人民共和国云南出入境边防检查总站文山片区戍边公寓建设项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192893.htm
+2026-02-26 12:54:55 - DEBUG - filtering the announcement: ent.title=北方民族大学科教创新实训平台设备更新项目（三标段）公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192818.htm
+2026-02-26 12:54:59 - DEBUG - filtering the announcement: ent.title=北京大学外国语学院新楼501多功能厅多媒体设备采购项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192801.htm
+2026-02-26 12:55:01 - DEBUG - filtering the announcement: ent.title=北方民族大学科教创新实训平台设备更新项目（五标段）招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192737.htm
+2026-02-26 12:55:01 - DEBUG - Keyword hit: '智能' in sentence: '北方民族大学科教创新实训平台设备更新项目（五标段）采购内容包含智能物流搬运平台、智能巡检机器人、机器人创新设计平台、机器人及人工智能工作站、无人机基础实训平台，'
+2026-02-26 12:55:06 - DEBUG - LLM response:
+{
+  "requirement_brief": "北方民族大学招标更新科教创新实训平台设备，预算210万元，包含智能物流搬运平台等设备，要求45天内完成供货安装调试。",
+  "requirement_desc": "北方民族大学科教创新实训平台设备更新项目（五标段）主要采购内容包括智能物流搬运平台、智能巡检机器人、机器人创新设计平台、机器人及人工智能工作站、无人机基础实训平台等信息化设备。项目要求供应商提供满足技术要求的设备，并在合同签订后45日历日内完成供货、安装及调试工作。项目不接受联合体投标。供应商需满足《政府采购法》第二十二条规定的资格要求，包括提供营业执照、良好商业信誉和财务制度承诺、履行合同所需设备和技术能力证明、依法缴纳税收和社保承诺、无重大违法记录声明等。项目将落实政府采购相关优惠政策。"
+}
+---
+2026-02-26 12:55:10 - DEBUG - filtering the announcement: ent.title=四川大学华西医院基因分析仪等采购项目公开招标采购公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192696.htm
+2026-02-26 12:55:13 - DEBUG - filtering the announcement: ent.title=中国听力语言康复研究中心儿童食堂食品配送采购项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192680.htm
+2026-02-26 12:55:16 - DEBUG - filtering the announcement: ent.title=泉州海关综合技术服务中心食品及其他产品抽检支持服务公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192574.htm
+2026-02-26 12:55:19 - DEBUG - filtering the announcement: ent.title=国家税务总局哈密市税务局机关2026年食堂食材采购项目（第4包）第四次采购公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192494.htm
+2026-02-26 12:55:22 - DEBUG - filtering the announcement: ent.title=电子科技大学2026年学生食堂大宗物资采购项目（第二次）公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192411.htm
+2026-02-26 12:55:25 - DEBUG - filtering the announcement: ent.title=北京大学人民医院病房改造建设及能力提升项目标段一监理采购项目采购公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192233.htm
+2026-02-26 12:55:28 - DEBUG - filtering the announcement: ent.title=2026年花卉绿植采购项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192304.htm
+2026-02-26 12:55:31 - DEBUG - filtering the announcement: ent.title=暨南大学附属第一医院（广州华侨医院）超高清关节镜采购项目（0809-26411GJG101000501）公开... url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26192006.htm
+2026-02-26 12:55:34 - DEBUG - filtering the announcement: ent.title=中国科学院成都分院学术交流中心人才公寓装修改造项目（家具采购）公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26191957.htm
+2026-02-26 12:55:37 - DEBUG - filtering the announcement: ent.title=国家统计局辽宁调查总队辽宁省第四次全国农业普查无人机及其管理系统采购项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26191931.htm
+2026-02-26 12:55:40 - DEBUG - filtering the announcement: ent.title=江南大学（江阴校区）二期项目勘察设计公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26191791.htm
+2026-02-26 12:55:43 - DEBUG - filtering the announcement: ent.title=西安交通大学第二附属医院安科32排 CT维保服务公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26191784.htm
+2026-02-26 12:55:45 - DEBUG - filtering the announcement: ent.title=兰州铁路公安局兰州公安处2026年度兰州地区食材采购配送项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26191675.htm
+2026-02-26 12:55:49 - DEBUG - filtering the announcement: ent.title=国家税务总局平湖市税务局2026-2027年食堂食材采购及配送服务项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26191673.htm
+2026-02-26 12:55:52 - DEBUG - filtering the announcement: ent.title=国家税务总局霸州市税务局健身器材采购项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26191652.htm
+2026-02-26 12:55:55 - DEBUG - filtering the announcement: ent.title=最高人民检察院机关东华门办公区物业管理服务（2026-2029年）采购项目招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26191678.htm
+2026-02-26 12:55:57 - DEBUG - filtering the announcement: ent.title=最高人民检察院机关保安服务（2026-2029年）采购项目招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26191599.htm
+2026-02-26 12:56:00 - DEBUG - filtering the announcement: ent.title=国家税务总局嘉兴市税务局2026-2027年机关食堂食材采购及配送服务项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26191453.htm
+2026-02-26 12:56:04 - DEBUG - filtering the announcement: ent.title=2026年中国工程物理研究院职工医院中药颗粒配送服务（第二次）公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26191455.htm
+2026-02-26 12:56:08 - DEBUG - filtering the announcement: ent.title=zrcgr23120801高通量精密检测前处理智能自动化功能岛采购项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26191389.htm
+2026-02-26 12:56:08 - DEBUG - Keyword hit: '智能' in sentence: 'zrcgr23120801高通量精密检测前处理智能自动化功能岛采购项目公开招标公告'
+2026-02-26 12:56:14 - DEBUG - LLM response:
+{
+  "requirement_brief": "zrcgr23120801高通量精密检测前处理智能自动化功能岛采购项目，预算510万元，采购1套设备，要求4个月内完成安装调试验收。",
+  "requirement_desc": "本项目旨在采购1套高通量精密检测前处理智能自动化功能岛设备，预算金额为人民币510万元。项目要求供应商提供的设备必须满足以下关键技术参数：移液工作站配置96通道机械臂和8通道机械臂，96通道机械臂配备96通道加样器和可旋转抓板机械手，8通道机械臂配备独立8通道加样器和可旋转抓板机械手。设备质保期为硬件部分不少于1年，软件部分不少于1年的免费运维期。项目要求自合同签订日起4个月内完成全部产品的安装、调试、试运行并通过验收，交货地点为海南省三亚市。此外，项目不接受联合体投标，不允许转包和分包。项目资金来源为财政性资金，将采用综合评分法进行评标。"
+}
+---
+2026-02-26 12:56:18 - DEBUG - filtering the announcement: ent.title=广东税务2025年数据库和中间件系统技术支持服务项目招标公告 url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26191345.htm
+2026-02-26 12:56:20 - DEBUG - filtering the announcement: ent.title=中国中医科学院广安门医院十四五国家重点研发计划“中医药现代化”专项复方阿胶浆治疗NSCLC术... url=https://www.ccgp.gov.cn/cggg/zygg/gkzb/202602/t20260225_26191182.htm
+2026-02-26 12:56:20 - DEBUG - successfully read 1 attachments.
+2026-02-26 12:56:20 - DEBUG - [OK] saved: src/ccgp/data/tender_items.csv, items=5

@@ -1,0 +1,213 @@
+2026-01-29 14:38:04 - myapp - DEBUG - Attachment found:
+2026-01-29 14:38:04 - myapp - DEBUG - Attachment found:
+2026-01-29 14:38:11 - myapp - DEBUG - Attachment found:
+2026-01-29 14:38:19 - myapp - DEBUG - Attachment found:
+2026-01-29 14:38:19 - myapp - DEBUG - Attachment found:
+2026-01-29 14:38:19 - myapp - DEBUG - Keyword hit: '大数据' in sentence: '大竹县农业农村局大竹县国家现代农业产业园大数据平台提升建设项目招标公告'
+2026-01-29 14:38:19 - myapp - WARNING - downloaded attachment: https://gpx.ccgp-sichuan.gov.cn/gpx-bid-file/ZF_JGBM_000008/zone/2024/12/15/project/gpx-template/8a69f8d59be10e89019c07a8aa192be5.doc?accessCode=abe1be0083709b13c97a836b37da6dea -> ccgp\data\attachments\a7569f9bf3f9\8a69f8d59be10e89019c07a8aa192be5.doc
+2026-01-29 14:38:20 - myapp - WARNING - downloaded attachment: https://download.ccgp.gov.cn/oss/download?uuid=47683828-1bcf-4257-93ab-8900ed -> ccgp\data\attachments\a7569f9bf3f9\download.bin
+2026-01-29 14:38:25 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "大竹县国家现代农业产业园大数据平台提升建设项目，预算600万元，旨在提升农业产业园的大数据平台能力。",
+  "requirement_desc": "大竹县国家现代农业产业园大数据平台提升建设项目，预算金额为600万元人民币，采购单位为大竹县农业农村局。项目目标是提升大竹县国家现代农业产业园的大数据平台能力，以支持农业产业的现代化发展。项目要求投标人在四川省政府采购一体化平台项目电子化交易系统获取招标文件，并在规定时间内递交投标文件。项目不接受联合体投标，且对投标人的资格有明确要求，包括具有独立承担民事责任的能力、良好的商业信誉和财务会计制度、履行合同所需的设备和专业技术能力等。项目实施服务时间为签订合同后6个月内完成硬件安装及软件部署，运维期限为验收合格之日起3年。具体采购需求详见附件，但附件内容未明确，以招标文件为准。"
+}
+---
+2026-01-29 14:38:39 - myapp - DEBUG - Attachment found:
+2026-01-29 14:38:45 - myapp - DEBUG - Attachment found:
+2026-01-29 14:38:52 - myapp - DEBUG - Attachment found:
+2026-01-29 14:38:52 - myapp - DEBUG - Attachment found:
+2026-01-29 14:38:59 - myapp - DEBUG - Attachment found:
+2026-01-29 14:38:59 - myapp - DEBUG - Attachment found:
+2026-01-29 14:39:11 - myapp - DEBUG - Attachment found:
+2026-01-29 14:39:11 - myapp - DEBUG - Attachment found:
+2026-01-29 14:39:33 - myapp - DEBUG - Attachment found:
+2026-01-29 14:39:33 - myapp - DEBUG - Attachment found:
+2026-01-29 14:39:33 - myapp - DEBUG - Keyword hit: '自动化' in sentence: '山东省滨州市引黄灌溉服务中心韩墩、道旭灌区支渠闸门自动化监控提升改造项目公开招标公告'
+2026-01-29 14:39:33 - myapp - WARNING - downloaded attachment: http://jypt.bzggzyjy.cn/TPFrame/rest/igetattach/getattach?AttachGuid=c1c108cb-6a00-4ea1-9731-f3c817d557e8 -> ccgp\data\attachments\d073b261e38c\getattach.bin
+2026-01-29 14:39:33 - myapp - WARNING - downloaded attachment: http://jypt.bzggzyjy.cn/TPFrame/rest/igetattach/getattach?AttachGuid=bbbf693e-dccc-40e8-84fa-8e9d33a0221a -> ccgp\data\attachments\d073b261e38c\getattach.bin
+2026-01-29 14:39:39 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "山东省滨州市引黄灌溉服务中心韩墩、道旭灌区支渠闸门自动化监控提升改造项目，预算320万元，旨在对47孔闸门进行控制改造，以满足数字孪生灌区平台接入需求。",
+  "requirement_desc": "本项目涉及山东省滨州市引黄灌溉服务中心韩墩、道旭灌区的47孔闸门自动化监控提升改造，具体包括道旭灌区的25孔闸门和韩墩灌区的22孔闸门的控制改造，以及道旭灌区25处支渠闸门控制改造、21处视频监控维修和20处水位维修。改造后的设备需满足数字孪生灌区平台接入需求，合同履行期限自合同签订之日起至供货安装完成并能稳定运行之日止。项目预算为320万元，不接受联合体投标。采购需求包括闸门控制改造、视频监控维修、水位维修等，需符合政府采购政策，包括促进中小企业发展、支持监狱企业发展、促进残疾人就业等政策。项目不接受联合体投标，供应商需在滨州市公共资源交易平台获取招标文件，并在规定时间内递交投标文件。"
+}
+---
+2026-01-29 14:39:46 - myapp - DEBUG - Attachment found:
+2026-01-29 14:39:55 - myapp - DEBUG - Attachment found:
+2026-01-29 14:39:55 - myapp - DEBUG - Attachment found:
+2026-01-29 14:40:00 - myapp - DEBUG - Attachment found:
+2026-01-29 14:40:08 - myapp - DEBUG - Attachment found:
+2026-01-29 14:40:14 - myapp - DEBUG - Attachment found:
+2026-01-29 14:40:14 - myapp - DEBUG - Keyword hit: '智能' in sentence: 'cn/），点击右侧咨询小采，获取采小蜜智能服务管家帮助，或拨打政采云服务热线'
+2026-01-29 14:40:14 - myapp - WARNING - downloaded attachment: https://zcy-gov-open-doc.oss-cn-north-2-gov-1.aliyuncs.com/1024FPA/undefined/220199/10013975870/20261/c1421540-6430-4bc4-bae8-bd10ff02b57d.pdf -> ccgp\data\attachments\e76fb4ff1ef9\c1421540-6430-4bc4-bae8-bd10ff02b57d.pdf
+2026-01-29 14:40:25 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "2026年“长春产业引才全国行”服务采购项目旨在通过专场引才活动，吸引全国重点人才城市及高校区域的人才，实现人才对接及后续跟踪复盘等全流程服务。",
+  "requirement_desc": "2026年“长春产业引才全国行”服务采购项目的目标是委托服务机构在全国重点人才城市及重点高校区域举办专场引才活动，承担执行方案设计、活动执行、宣传推广、人才对接及后续跟踪复盘等全流程服务。项目预算为122万元，服务期限从2026年3月至2026年12月。采购内容要求投标人具备独立法人资格、有效的营业执照，并在人员、设备、资金等方面具有相应的服务能力。投标人还需满足《中华人民共和国政府采购法》第二十二条规定，具有良好的商业信誉和健全的财务会计制度，依法缴纳税收和社会保障资金的良好记录，并提供资格条件承诺函。项目不接受联合体投标，且投标人近三年内不得有重大违法记录，不得为失信被执行人和重大税收违法失信主体名单的投标人。项目的付款方式为合同签订后支付合同价款的30%，合同内容全部完成并验收合格后支付合同价款的70%。项目的招标控制价为122万元，投标报价总价不得超过此限价。"
+}
+---
+2026-01-29 14:40:32 - myapp - DEBUG - Attachment found:
+2026-01-29 14:40:39 - myapp - DEBUG - Attachment found:
+2026-01-29 14:40:39 - myapp - DEBUG - Attachment found:
+2026-01-29 14:40:39 - myapp - DEBUG - Keyword hit: '智能' in sentence: 'cn/），点击右侧咨询小采，获取采小蜜智能服务管家帮助，或拨打政采云服务热线95763获取热线服务帮助'
+2026-01-29 14:40:39 - myapp - WARNING - downloaded attachment: https://www.zcygov.cn/bid-enroll/acquirepurfile/launch/7324810438437765193 -> ccgp\data\attachments\961d57fb7140\7324810438437765193.bin
+2026-01-29 14:40:41 - myapp - WARNING - download attachment failed: 杭淳开高速瑶琳镇东琳村古树迁移项目-招标文件.docx -> file too large > 20971520 bytes: https://zcy-gov-open-doc.oss-cn-north-2-gov-1.aliyuncs.com/1024FPA/undefined/459900/10010072532/20261/3100b6f9-58c8-4d5c-b953-4f9455b99407.docx
+2026-01-29 14:40:45 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "杭淳开高速瑶琳镇东琳村古树迁移项目，预算36万元，需在15天内完成古树移植，养护期五年。",
+  "requirement_desc": "本项目为杭淳开高速瑶琳镇东琳村古树迁移项目，预算金额为36万元，最高限价也为36万元。项目要求投标人在合同签订生效之日起15个日历天内完成古树移植工作，移植工作完成后养护期为五年，自古树移植通过验收之日起计算。项目不接受联合体投标。供应商需满足《中华人民共和国政府采购法》第二十二条规定，未被列入失信被执行人、重大税收违法失信主体、政府采购严重违法失信行为记录名单。供应商应符合中小企业要求，并上传《中小企业声明函》。项目编号为330122265050010000005。"
+}
+---
+2026-01-29 14:40:53 - myapp - DEBUG - Keyword hit: '智能' in sentence: '智能音箱设备'
+2026-01-29 14:40:58 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "黑龙江工程学院提档升级专业教学实验室项目，预算320万元，涉及多个合同包，采购包括空调、音箱、应用软件、教学仪器等设备及系统。",
+  "requirement_desc": "黑龙江工程学院提档升级专业教学实验室项目旨在通过公开招标方式，采购包括空调机、智能音箱设备、智能建造显示系统、四足机器人、数字孪生数据采集系统、智能图形工作站、智能布线系统、手写板、智能功放设备、智能无人机等在内的多种教学设备和信息化系统，以提升专业教学实验室的设施水平和教学质量。项目分为七个合同包，每个合同包包含不同的采购标的和预算金额，合同履行期限从1个月到6个月不等。项目要求供应商满足《中华人民共和国政府采购法》第二十二条规定，并在规定的时间内通过黑龙江省政府采购网线上提交获取招标文件，于2026年3月9日9时前递交投标文件。项目不接受联合体投标，具体的技术规格、参数及要求详见采购文件。"
+}
+---
+2026-01-29 14:41:10 - myapp - DEBUG - Attachment found:
+2026-01-29 14:41:10 - myapp - DEBUG - Attachment found:
+2026-01-29 14:41:10 - myapp - DEBUG - Keyword hit: '智能' in sentence: 'cn/），点击右侧咨询小采，获取采小蜜智能服务管家帮助，或拨打政采云服务热线95763获取热线服务帮助'
+2026-01-29 14:41:10 - myapp - WARNING - downloaded attachment: https://www.zcygov.cn/bid-enroll/acquirepurfile/launch/7324884921759825953 -> ccgp\data\attachments\5bf450494639\7324884921759825953.bin
+2026-01-29 14:41:10 - myapp - WARNING - downloaded attachment: https://zcy-gov-open-doc.oss-cn-north-2-gov-1.aliyuncs.com/1024FPA/undefined/330304/10011203734/20261/32c83534-3b79-40d7-be44-10c549845ab3.docx -> ccgp\data\attachments\5bf450494639\32c83534-3b79-40d7-be44-10c549845ab3.docx
+2026-01-29 14:41:14 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "本项目旨在采购2026年度露天秸秆禁烧巡查服务，以防止秸秆焚烧造成的环境污染，预算100万元。",
+  "requirement_desc": "浙江华浦工程管理有限公司受舟山市普陀区六横镇人民政府委托，公开招标2026年度露天秸秆禁烧巡查服务。项目预算100万元，服务期限自合同签订之日起至2026年12月31日止。采购需求为不限数量的露天秸秆禁烧巡查服务，具体规格描述或项目基本概况介绍、用途详见采购需求文件。投标人需满足《政府采购法》第二十二条规定，未被列入失信被执行人等名单，且应为中小企业。项目不接受联合体投标，不收取投标保证金。投标人应在政采云平台线上获取招标文件，并在截止时间前在线递交投标文件。项目属于专门面向中小企业采购的预留份额项目，鼓励供应商在线提起询问、质疑和投诉。"
+}
+---
+2026-01-29 14:41:22 - myapp - DEBUG - Attachment found:
+2026-01-29 14:41:22 - myapp - DEBUG - Attachment found:
+2026-01-29 14:41:22 - myapp - DEBUG - Keyword hit: '智能' in sentence: 'cn/），点击右侧咨询小采，获取采小蜜智能服务管家帮助，或拨打政采云服务热线95763获取热线服务帮助'
+2026-01-29 14:41:22 - myapp - WARNING - downloaded attachment: https://www.zcygov.cn/bid-enroll/acquirepurfile/launch/7324896579375071255 -> ccgp\data\attachments\15c75086844d\7324896579375071255.bin
+2026-01-29 14:41:22 - myapp - WARNING - downloaded attachment: https://zcy-gov-open-doc.oss-cn-north-2-gov-1.aliyuncs.com/1024FPA/undefined/339900/10007040676/20261/e8b2f5bb-05c9-40a4-b808-fc27ba346158.docx -> ccgp\data\attachments\15c75086844d\e8b2f5bb-05c9-40a4-b808-fc27ba346158.docx
+2026-01-29 14:41:28 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "杭州市萧山区计生协2026年和2027年计生系列保险项目，预算385万元，旨在为萧山区计生协提供保险服务。",
+  "requirement_desc": "本项目为杭州市萧山区计生协2026年和2027年计生系列保险项目，预算金额为385万元，采购单位为杭州市萧山区卫生健康局。项目需求包括为萧山区计生协提供保险服务，具体保险范围、保险金额、保险期限等详细内容以招标文件为准。投标人必须是经国家保险监督管理机构批准在中华人民共和国境内设立和营业的保险公司，并具有《保险公司法人许可证》或《经营保险业务许可证》。项目接受联合体投标。合同履约期限详见招标文件。项目将依托政采云平台进行电子招投标活动，不接受纸质投标文件。供应商需在政采云平台注册账号、申领CA数字证书、安装政采云电子交易客户端，并按照平台要求制作和提交电子投标文件。项目将依据相关政府采购政策，包括节约资源、保护环境、支持创新、促进中小企业发展等。"
+}
+---
+2026-01-29 14:41:35 - myapp - DEBUG - Attachment found:
+2026-01-29 14:41:35 - myapp - DEBUG - Attachment found:
+2026-01-29 14:41:35 - myapp - DEBUG - Attachment found:
+2026-01-29 14:41:35 - myapp - DEBUG - Keyword hit: '智慧平台' in sentence: '深圳政府采购智慧平台（http'
+2026-01-29 14:41:35 - myapp - WARNING - downloaded attachment: http://zfcg.szggzy.com:8081/TPBidder/CAHandle -> ccgp\data\attachments\308ab6e7d26b\CAHandle.bin
+2026-01-29 14:41:49 - myapp - WARNING - download attachment failed: 深圳智慧采购平台投标文件制作专用软件 -> file too large > 20971520 bytes: http://zfcg.szggzy.com:8081/TPBidder/DownLoad/深圳市智慧采购平台投标文件制作专用软件.zip
+2026-01-29 14:41:49 - myapp - WARNING - downloaded attachment: http://zfcg.szggzy.com:8081/cgxy/013001/list.html -> ccgp\data\attachments\308ab6e7d26b\list.html
+2026-01-29 14:41:56 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "北京中医药大学深圳医院（龙岗）年度采购一次性用品及日杂品，预算120万元，不接受联合体投标，不接受进口产品投标。",
+  "requirement_desc": "北京中医药大学深圳医院（龙岗）进行一次性用品及日杂品的年度采购，预算金额为120万元人民币。该项目不接受联合体投标，也不允许投标人选用进口产品参与投标。潜在投标人需满足《中华人民共和国政府采购法》第二十二条规定，提供相关证明材料，并声明不存在被禁止参与政府采购活动的情况。项目不接受分包，且供应商不得为同一总公司的两个或以上分支机构。中标供应商将负责提供一次性用品及日杂品的供应服务，具体技术需求和合同履行期限详见招标文件用户需求书。投标文件需在2026年02月09日09:00前上传至深圳政府采购智慧平台，开标亦在同一平台进行。项目实施后，需按照招标文件要求进行验收和测评。"
+}
+---
+2026-01-29 14:42:02 - myapp - DEBUG - Attachment found:
+2026-01-29 14:42:02 - myapp - DEBUG - Attachment found:
+2026-01-29 14:42:02 - myapp - DEBUG - Attachment found:
+2026-01-29 14:42:02 - myapp - DEBUG - Keyword hit: '智慧平台' in sentence: '深圳政府采购智慧平台（http'
+2026-01-29 14:42:03 - myapp - WARNING - downloaded attachment: http://zfcg.szggzy.com:8081/TPBidder/CAHandle -> ccgp\data\attachments\e2ed5f668ce5\CAHandle.bin
+2026-01-29 14:42:17 - myapp - WARNING - download attachment failed: 深圳智慧采购平台投标文件制作专用软件 -> file too large > 20971520 bytes: http://zfcg.szggzy.com:8081/TPBidder/DownLoad/深圳市智慧采购平台投标文件制作专用软件.zip
+2026-01-29 14:42:18 - myapp - WARNING - downloaded attachment: http://zfcg.szggzy.com:8081/cgxy/013001/list.html -> ccgp\data\attachments\e2ed5f668ce5\list.html
+2026-01-29 14:42:24 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "深圳市产业园区综合服务中心C1综合服务楼、高新区文体中心物业管理服务项目招标，预算107.96万元，要求提供物业管理服务，不接受联合体投标，禁止转包，不接受进口产品投标。",
+  "requirement_desc": "本项目旨在为深圳市产业园区综合服务中心C1综合服务楼、高新区文体中心提供物业管理服务，预算金额为107.96万元人民币。服务内容包括但不限于综合服务楼和文体中心的日常物业管理，要求投标人具备独立法人资格或具有独立承担民事责任能力的其他组织，并满足《中华人民共和国政府采购法》第二十二条第一款的条件。项目不接受联合体投标，禁止转包，不接受投标人选用进口产品参与投标。投标人需提供电梯维修资质证书扫描件，若选择分包，则分包承担主体不多于1家，且不得再次分包。合同履行期限及详细技术需求将在招标文件用户需求书中明确。项目实施后，需进行验收与测评，确保服务质量符合招标文件要求。"
+}
+---
+2026-01-29 14:42:31 - myapp - DEBUG - Attachment found:
+2026-01-29 14:42:31 - myapp - DEBUG - Attachment found:
+2026-01-29 14:42:31 - myapp - DEBUG - Keyword hit: '智能' in sentence: '3工程师处理故障原则：备份并验证备份有效性；凡事有备份，可回滚；运维自动化，拒绝重复劳动，运维程序化，平台化；运维白盒化，深入理解运维产品；部署容器化，生产和部署环境统一；日志报警自动化；运维智能化；分析历史信息，获得运行趋势，预测未来；交接休假准备充分；日常操作确认机制，所有操作确认后提交；权限设置严格化，避免错误操作'
+2026-01-29 14:42:31 - myapp - WARNING - download attachment failed: 查看 -> No connection adapters were found for 'javascript:void(0)'
+2026-01-29 14:42:31 - myapp - WARNING - downloaded attachment: https://download.ccgp.gov.cn/oss/download?uuid=b4e7dbbb-dbe7-43bf-b68d-b1b5a6 -> ccgp\data\attachments\19e5111f8424\download.bin
+2026-01-29 14:42:39 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "辽阳市公安局“雪亮工程”共享平台建设及总集成项目运维服务项目，预算200万元，旨在升级改造视频运维智慧数据管理平台，增强视频质量诊断等系统功能，提升数据治理和考核评价能力。",
+  "requirement_desc": "辽阳市公安局“雪亮工程”共享平台建设及总集成项目运维服务项目，预算200万元，涉及视频运维智慧数据管理平台专业化升级改造服务，包括算力、存储改造及操作系统和数据库更新。项目要求升级后的系统兼容多种算力和存储，支持高兼容性平台运行，实现数据无损迁移，并提供流媒体转发服务，满足视频质量诊断需求。同时，项目还需增加专业化算力系统和数据存储资源，提升视频运维服务平台功能，包括算力资源监控、前端设备统计等。视频质量诊断平台需支持多种诊断预案和结果导出。此外，项目还涉及视频专网一机一档系统、视图质量诊断服务平台、数据治理服务系统、数据考核评价系统以及计费决算及审计系统的建设和升级，以实现更高效的视频运维服务和数据治理。项目目标是通过技术升级和系统集成，提高辽阳市公安局视频监控系统的运维效率和数据管理能力，确保系统的安全可靠运行。"
+}
+---
+2026-01-29 14:42:45 - myapp - DEBUG - Attachment found:
+2026-01-29 14:42:45 - myapp - DEBUG - Attachment found:
+2026-01-29 14:42:45 - myapp - DEBUG - Attachment found:
+2026-01-29 14:42:45 - myapp - DEBUG - Attachment found:
+2026-01-29 14:42:45 - myapp - DEBUG - Attachment found:
+2026-01-29 14:42:45 - myapp - DEBUG - Attachment found:
+2026-01-29 14:42:52 - myapp - DEBUG - Attachment found:
+2026-01-29 14:42:59 - myapp - DEBUG - Attachment found:
+2026-01-29 14:43:07 - myapp - DEBUG - Attachment found:
+2026-01-29 14:43:13 - myapp - DEBUG - Attachment found:
+2026-01-29 14:43:20 - myapp - DEBUG - Attachment found:
+2026-01-29 14:43:20 - myapp - DEBUG - Attachment found:
+2026-01-29 14:43:20 - myapp - DEBUG - Attachment found:
+2026-01-29 14:43:20 - myapp - DEBUG - Keyword hit: '智能' in sentence: 'cn/），点击右侧咨询小采，获取采小蜜智能服务管家帮助，或拨打政采云服务热线95763获取热线服务帮助'
+2026-01-29 14:43:21 - myapp - WARNING - downloaded attachment: https://www.zcygov.cn/bid-enroll/acquirepurfile/launch/66fe567785cb3d53 -> ccgp\data\attachments\f119e8a9406f\66fe567785cb3d53.bin
+2026-01-29 14:43:21 - myapp - WARNING - downloaded attachment: https://zcy-gov-open-doc.oss-cn-north-2-gov-1.aliyuncs.com/1023FP/330699/10007289172/20261/90bb90b4-89b8-444e-ab1a-4f6cdc7108bf.docx -> ccgp\data\attachments\f119e8a9406f\90bb90b4-89b8-444e-ab1a-4f6cdc7108bf.docx
+2026-01-29 14:43:22 - myapp - WARNING - downloaded attachment: https://zcy-gov-open-doc.oss-cn-north-2-gov-1.aliyuncs.com/1024FPA/330699/10007289172/20261/eadac55f-fee1-465e-abe4-03f03df733d8.pdf -> ccgp\data\attachments\f119e8a9406f\eadac55f-fee1-465e-abe4-03f03df733d8.pdf
+2026-01-29 14:43:27 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "绍兴第二医院医共体总院需对14条奥林巴斯电子内窥镜进行维保服务，预算92万元，最高限价88万元。",
+  "requirement_desc": "绍兴第二医院医共体总院胃肠镜及支气管镜保修项目（第二次）旨在为医院的14条奥林巴斯电子内窥镜提供为期两年的维保服务。项目预算金额为92万元人民币，最高限价为88万元。具体维保的内窥镜型号及内容详见采购文件第三部分。项目要求投标人满足《中华人民共和国政府采购法》第二十二条规定，未被列入失信被执行人、重大税收违法失信主体、政府采购严重违法失信行为记录名单。项目鼓励中小企业参与，要求服务全部由符合政策要求的中小企业承接，并提供中小企业声明函。项目不接受联合体投标。投标人需在政采云平台线上获取招标文件，并在截止时间前递交投标文件。项目将通过政府采购云平台在线开标。中标后，供应商需按照合同要求提供高质量的维保服务，确保内窥镜的正常运行和使用，同时配合采购单位完成项目的验收和测评工作。"
+}
+---
+2026-01-29 14:43:52 - myapp - DEBUG - Attachment found:
+2026-01-29 14:43:52 - myapp - DEBUG - Attachment found:
+2026-01-29 14:43:52 - myapp - DEBUG - Keyword hit: '网络安全' in sentence: '国家认证认可监督管理委员会关于调整网络安全专用产品安全管理有关事项的公告》（2023年第1号）'
+2026-01-29 14:43:52 - myapp - WARNING - downloaded attachment: https://www.ccgp-shaanxi.gov.cn/gpx-bid-file/ZF_JGBM_000003/zone/2025/1/12/project/gpx-template/8a69c21f9a63addd019c0771c80b3e7a.pdf?accessCode=e8d231f5a910b1d0577ce9fb0b02ac33 -> ccgp\data\attachments\6b127e24a9dc\8a69c21f9a63addd019c0771c80b3e7a.pdf
+2026-01-29 14:43:53 - myapp - WARNING - downloaded attachment: https://download.ccgp.gov.cn/oss/download?uuid=f78aaf3d-c755-4025-8708-75bc79 -> ccgp\data\attachments\6b127e24a9dc\download.bin
+2026-01-29 14:44:00 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "商洛市秦岭中段（南麓）水源涵养与生物多样性保护恢复项目（镇安县2025年退化林修复）旨在对退化林进行修复，预算238万元，分30个标段进行，每个标段有具体预算和作业区要求。",
+  "requirement_desc": "本项目覆盖商洛市秦岭中段南麓水源涵养与生物多样性保护恢复，特别是针对镇安县2025年退化林的修复工作。项目预算总额为238万元，分为30个标段执行，每个标段都有明确的预算金额和作业区域。项目要求投标人具备相应的资质和能力，包括但不限于林业相关专业中级及以上职称的项目负责人、必要的设备和技术能力、良好的财务状况和信誉。项目不接受联合体投标，且每个投标人最多只能中标一个标段。具体的技术规格、参数及要求详见采购文件，合同履行期限为90日历天。项目旨在通过退化林修复，改善当地生态环境，促进生物多样性保护，同时响应国家关于政府采购支持中小企业、绿色建材等政策。"
+}
+---
+2026-01-29 14:44:05 - myapp - DEBUG - Attachment found:
+2026-01-29 14:44:12 - myapp - DEBUG - Attachment found:
+2026-01-29 14:44:19 - myapp - DEBUG - Attachment found:
+2026-01-29 14:44:19 - myapp - DEBUG - Attachment found:
+2026-01-29 14:44:26 - myapp - DEBUG - Attachment found:
+2026-01-29 14:44:34 - myapp - DEBUG - Attachment found:
+2026-01-29 14:44:40 - myapp - DEBUG - Attachment found:
+2026-01-29 14:44:46 - myapp - DEBUG - Attachment found:
+2026-01-29 14:44:52 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:11 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:11 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:11 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:19 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:19 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:19 - myapp - DEBUG - Keyword hit: '机器人' in sentence: '福建省特种设备检验研究院国家机器人中心物业管理服务公开招标招标公告'
+2026-01-29 14:45:19 - myapp - WARNING - downloaded attachment: https://zfcg.czt.fujian.gov.cn/gpx-public-file?accessCode=eyJhbGciOiJNRDUiLCJ0eXBlIjoiNCJ9.c99a8b01b3e9d24ce3bd4e866e23eb1c -> ccgp\data\attachments\835bf117524a\gpx-public-file.bin
+2026-01-29 14:45:19 - myapp - WARNING - downloaded attachment: https://download.ccgp.gov.cn/oss/download?uuid=7665a536-abfa-4a0d-bf88-b7dfc8 -> ccgp\data\attachments\835bf117524a\download.bin
+2026-01-29 14:45:23 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "福建省特种设备检验研究院国家机器人中心物业管理服务公开招标，预算260万元，服务期限两年。",
+  "requirement_desc": "本项目旨在为福建省特种设备检验研究院国家机器人中心提供物业管理服务，服务地点位于泉州市洛江区万安街道办事处杏宅社区塘西村相邻两个地块，建筑面积共25859.82平方米，土地面积约40亩。服务内容包括但不限于国家机器人中心2026-2027年物业管理服务，预算金额为260万元，不接受进口产品，不接受联合体投标。供应商需满足《中华人民共和国政府采购法》第二十二条规定，并根据投标格式文件要求提供资格承诺函。合同履行期限自合同签订之日起两年。项目不接受联合体投标，且无特殊资格要求。"
+}
+---
+2026-01-29 14:45:29 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:29 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:29 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:29 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:29 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:29 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:29 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:29 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:35 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:43 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:50 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:56 - myapp - DEBUG - Attachment found:
+2026-01-29 14:45:56 - myapp - DEBUG - Attachment found:
+2026-01-29 14:46:03 - myapp - DEBUG - Attachment found:
+2026-01-29 14:46:03 - myapp - DEBUG - Attachment found:
+2026-01-29 14:46:08 - myapp - DEBUG - Attachment found:
+2026-01-29 14:46:08 - myapp - DEBUG - Attachment found:
+2026-01-29 14:46:15 - myapp - DEBUG - Attachment found:
+2026-01-29 14:46:15 - myapp - DEBUG - Attachment found:
+2026-01-29 14:46:15 - myapp - DEBUG - Keyword hit: '智能' in sentence: '智能防疫消毒机器人'
+2026-01-29 14:46:16 - myapp - WARNING - download attachment failed: 查看 -> No connection adapters were found for 'javascript:void(0)'
+2026-01-29 14:46:16 - myapp - WARNING - downloaded attachment: https://download.ccgp.gov.cn/oss/download?uuid=11f2049a-f26e-4237-83ac-cebc5b -> ccgp\data\attachments\7959c1c57309\download.bin
+2026-01-29 14:46:20 - myapp - DEBUG - LLM response:
+{
+  "requirement_brief": "葫芦岛市中心医院需采购传染病防控综合服务能力提升项目相关设备及服务，预算742.92万元，以增强医院传染病防控能力。",
+  "requirement_desc": "葫芦岛市中心医院传染病防控综合服务能力提升项目旨在通过采购一系列医疗设备和系统，提升医院的传染病防控和医疗服务能力。项目预算为742.92万元，涉及设备包括流式细胞仪、生物显微镜、微生物样本处理系统等38项，以及传染病虚拟仿真平台、MVR虚拟现实训练系统等教学设备。项目要求供应商具备有效的二类医疗器械经营备案凭证，不接受联合体投标。合同履行期限为合同签订后60日内。项目需执行中小微企业、节能产品及环境标志产品的相关政策。供应商需自行办理政府采购CA数字证书，并在辽宁政府采购网电子评审系统上传投标文件。项目不接受进口产品，确保设备国产化。"
+}
+---
+2026-01-29 14:46:20 - myapp - DEBUG - successfully read attachments 2 files.
+2026-01-29 14:46:20 - myapp - DEBUG - 
+[OK] saved: ccgp/data/tender_items.csv, items=14

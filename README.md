@@ -1,0 +1,172 @@
+# CCGP 招标公告采集项目
+
+本项目用于从中国政府采购网（CCGP）查询公开招标公告，提取结构化字段，并可选下载附件、抽取附件文本、调用 LLM 生成需求摘要，最终落盘到 CSV。
+
+## 功能概览
+
+- 采集来源：
+  - 地方公告：`https://www.ccgp.gov.cn/cggg/dfgg/gkzb/index.htm`
+  - 中央公告：`https://www.ccgp.gov.cn/cggg/zygg/gkzb/index.htm`
+- 支持按最近 N 天、最多翻页数控制采集范围，在文件src/ccgp/config.py中进行设置
+```python
+# 收集日期和最大页数
+DAYS = 3
+PAGES = 30
+```
+- 关键词过滤（含排除词）,在文件src/ccgp/config.py中进行增删
+```python
+# 关键词（待增删）
+FILTER_KEYWORDS = [
+    "工业互联网", "智能制造", "智能", "智慧",
+    "人工智能", "AI", "大模型", 
+    "大数据", "数据治理", "数据中台",
+    "机器人", "机器视觉", "自动化",
+    "云计算", "算力", "边缘计算",
+    "物联网", "5G",
+]
+
+# 干扰词汇(待补充)
+FILTER_EXCLUDE_KEYWORDS = [
+    "智能开标", "智能评标", "智能客服", "采小蜜","深圳政府采购智慧平台","智能电子采购系统", "智能服务管家", "自动化学院","智能产业大厦", "项目编号",
+    "依托政采云","具有电子与智能化工程专业承包二级（含）及以上资质",
+]
+
+```
+- 详情页结构化解析（项目名、预算、截止时间、采购单位、联系方式、地址等）
+
+- 可选附件下载与文本抽取（支持`pdf/docx/xlsx/txt/zip`）
+- 可选 LLM 生成：
+  - `requirement_brief`（简要需求）
+  - `requirement_desc`（详细需求）
+
+开关在文件src/ccgp/config.py中进行设置
+```python
+# 开关
+ENABLE_READ_ATTACHMENTS = True
+ENABLE_LLM_REQUIREMENTS = True
+```
+- 输出 CSV 追加写入，日志按时间滚动保存
+
+## 目录结构
+
+```text
+README.md                  # 说明
+src/
+  ccgp_collect.py          # 一次执行两个入口（地方+中央）并清理过期附件
+  ccgp/
+    main.py                # 核心采集流程与 CLI 入口
+    parse_index.py         # 列表页解析
+    parse_detail.py        # 详情页解析 + 附件链接提取
+    tools.py               # HTTP/时间/关键词/CSV/附件处理等工具
+    config.py              # 采集参数、关键词、字段别名、路径等配置
+    model.py               # TenderItem 数据结构
+    llm_requirements.py    # LLM 需求摘要生成
+    data/
+      tender_items.csv     # 输出文件
+      logs/                # 运行日志
+      attachments/         # 附件下载目录
+  utils/
+    mylogger.py            # 日志初始化
+```
+
+## 运行环境
+
+- Python 3.10+
+- Windows / Linux / macOS 均可
+
+安装依赖：
+
+```bash
+pip install -r requirements.txt
+pip install openai PyPDF2 python-docx openpyxl
+```
+
+说明：第二行是附件解析与 LLM 功能需要的额外依赖，未安装时对应功能会报错或不可用。
+
+## 快速开始
+
+- 要一次抓取地方 + 中央，并执行附件目录清理，在根目录执行：
+
+    ```bash
+    python src/ccgp_collect.py
+    ```
+    默认两次调用分别为地方、中央网址，抓取天数和最大翻页数为config中设置的。
+
+- 若想指定网址，在根目录执行：
+
+    ```bash
+    python src/ccgp/main.py
+    ```
+
+    常用参数：
+
+    ```bash
+    python src/ccgp/main.py --start https://www.ccgp.gov.cn/cggg/dfgg/gkzb/index.htm --days 3 --pages 30
+    ```
+
+    参数说明：
+
+    - `--start`：列表页起始 URL
+    - `--days`：仅保留最近 N 天公告
+    - `--pages`：最大翻页数（从 `index.htm` 到 `index_{N-1}.htm`）
+
+
+## 配置项（`src/ccgp/config.py`）
+
+核心配置：
+
+- `DAYS` / `PAGES`：默认采集范围
+- `FILTER_KEYWORDS`：命中关键词
+- `FILTER_EXCLUDE_KEYWORDS`：排除干扰词
+- `FIELD_ALIASES`：详情页字段别名映射（适配不同公告模板）
+- `ENABLE_READ_ATTACHMENTS`：是否下载并解析附件
+- `ENABLE_LLM_REQUIREMENTS`：是否调用 LLM 生成需求摘要
+- `ATTACHMENTS_DIR`：附件目录
+- `CSV_OUTPUT_DIR`：CSV 输出路径
+- `LOGGING_DIR` / `LOGGING_LEVEL`：日志路径与级别
+
+## 输出说明
+
+输出 CSV 默认路径：`src/ccgp/data/tender_items.csv`
+
+字段如下：
+
+- `announcement_title` 需求标题
+- `announcement_url`  需求来源
+- `pub_time`  发布时间
+- `province`  省
+- `city`  市
+- `project_name`  项目名称
+- `requirement_brief`  项目简介
+- `requirement_desc`  项目描述
+- `deadline`  截止时间
+- `company_name`  单位名称
+- `purchasing_unit_contact_number`  单位联系方式
+- `contact_name`  负责人名称
+- `contact_phone`  负责人联系方式
+- `location_text`  详细地址
+- `budget`  预算
+
+## LLM 配置说明
+
+当前 `src/ccgp/llm_requirements.py` 中使用 Moonshot 兼容接口。
+```
+client = OpenAI(
+    api_key=MOONSHOT_API_KEY,
+    base_url=BASE_URL
+)
+```
+
+
+## 日志与附件清理
+
+- 日志文件默认写入 `src/ccgp/data/logs/`，文件名格式：`app_YYYYMMDD_HHMMSS.log`
+- `src/ccgp_collect.py` 在采集完成后会清理超过 `CLEAN_THRESHOLD` 天的附件子目录（目录名需符合 `前缀_YYYYMMDD`）
+
+## 常见问题
+
+- 抓取报 403/超时：可适当增大 `sleep_range`，或降低并发/频率
+- 字段提取为空：公告模板差异导致，优先补充 `FIELD_ALIASES`；若市字段为空，可能是该市为少数名族自治区，格式不是“xx市”的形式出现
+- 提取附件文本失败：下载了不支持的格式或文件过大
+- LLM 失败：检查 API Key、网络可达性、模型名与配额
+

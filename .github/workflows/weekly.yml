@@ -1,0 +1,23 @@
+﻿name: Daily Run
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"  # 每天 00:00 UTC
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run script
+        run: python src/ccgp_collect.py
+

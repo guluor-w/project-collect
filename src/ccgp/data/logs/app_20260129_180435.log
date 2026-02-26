@@ -1,0 +1,108 @@
+2026-01-29 18:04:42 - DEBUG - filtering the announcement: ent.title=舟山建银工程造价审查中心有限公司关于2026年海天大道花海彩林花卉种植项目的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132634.htm
+2026-01-29 18:04:48 - DEBUG - filtering the announcement: ent.title=深圳市南山区前海创新教育集团前湾学校、妈湾学校2026年上半年物业管理服务（A）招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132660.htm
+2026-01-29 18:04:48 - DEBUG - Keyword hit: '智慧平台' in sentence: '深圳政府采购智慧平台（http.//zfcg'
+2026-01-29 18:04:51 - WARNING - download attachment failed: 深圳智慧采购平台投标文件制作专用软件 -> file too large > 36700160 bytes: http://zfcg.szggzy.com:8081/TPBidder/DownLoad/深圳市智慧采购平台投标文件制作专用软件.zip
+2026-01-29 18:04:56 - DEBUG - LLM response:
+{
+  "requirement_brief": "深圳市南山区前海创新教育集团前湾学校、妈湾学校2026年上半年物业管理服务招标，预算159万元，要求提供专业的物业管理服务。",
+  "requirement_desc": "本项目旨在为深圳市南山区前海创新教育集团前湾学校、妈湾学校提供2026年上半年的物业管理服务。服务内容需满足招标文件中的详细要求，包括但不限于校园安全、清洁、绿化养护、设施维护等物业管理基本服务。供应商需具备独立承担民事责任的能力，不接受联合体投标，且不得使用进口产品参与投标。项目不接受有不良信用记录的供应商，包括失信被执行人、重大税收违法案件当事人等。合同履行期限及其他技术需求详见招标文件用户需求书。投标文件需在2026年02月10日08:30前上传至深圳政府采购智慧平台，采用电子投标文件形式。"
+}
+---
+2026-01-29 18:05:03 - DEBUG - filtering the announcement: ent.title=深圳市福田区南华小学租赁校车运营与管理服务项目的招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132659.htm
+2026-01-29 18:05:03 - DEBUG - Keyword hit: '智慧平台' in sentence: '深圳政府采购智慧平台（http.//zfcg'
+2026-01-29 18:05:06 - WARNING - download attachment failed: 深圳智慧采购平台投标文件制作专用软件 -> file too large > 36700160 bytes: http://zfcg.szggzy.com:8081/TPBidder/DownLoad/深圳市智慧采购平台投标文件制作专用软件.zip
+2026-01-29 18:05:10 - DEBUG - LLM response:
+{
+  "requirement_brief": "深圳市福田区南华小学需租赁校车运营与管理服务，预算444万元，不接受联合体投标。",
+  "requirement_desc": "深圳市福田区南华小学现需租赁校车运营与管理服务，项目预算为444万元/年，服务内容及要求详见招标文件。项目不接受联合体投标，且不允许非主体非关键性工作分包，禁止转包。投标供应商需具备独立承担民事责任的能力，且未被列入失信被执行人等名单。项目专门面向中小企业采购，承接服务商需为符合政策要求的中小微企业、残疾人福利性单位或监狱企业。供应商还需具有交通管理部门颁发的《道路运输经营许可证》。合同履行期限及其他详细需求以招标文件用户需求书为准。"
+}
+---
+2026-01-29 18:05:16 - DEBUG - filtering the announcement: ent.title=宝安区教育局教育辅导领域购买社会工作服务项目采购公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132658.htm
+2026-01-29 18:05:16 - DEBUG - Keyword hit: '智慧平台' in sentence: '深圳政府采购智慧平台（http.//zfcg'
+2026-01-29 18:05:18 - WARNING - download attachment failed: 深圳智慧采购平台投标文件制作专用软件 -> file too large > 36700160 bytes: http://zfcg.szggzy.com:8081/TPBidder/DownLoad/深圳市智慧采购平台投标文件制作专用软件.zip
+2026-01-29 18:05:23 - DEBUG - LLM response:
+{
+  "requirement_brief": "宝安区教育局需购买社会工作服务，预算603.1万元，不接受联合体投标，要求供应商具备独立承担民事责任能力，不接受进口产品参与投标。",
+  "requirement_desc": "宝安区教育局教育辅导领域购买社会工作服务项目，预算为603.1万元人民币，旨在通过购买社会工作服务提升教育辅导领域的服务质量。项目不接受联合体投标，且不允许投标人选用进口产品参与投标。供应商必须具备独立承担民事责任的能力，并提供相应的营业执照或事业单位法人证书等证明资料。项目要求供应商不存在被有关部门禁止参与政府采购活动的情况，且未被列入失信被执行人、重大税收违法案件当事人名单、政府采购严重违法失信行为记录名单。中标供应商需按照招标文件用户需求书规定的合同履行期限提供服务。项目的全部需求细节，包括具体的技术需求和服务需求，均在招标文件中详细说明，供应商需仔细阅读并遵守。"
+}
+---
+2026-01-29 18:05:30 - DEBUG - filtering the announcement: ent.title=深圳市龙华区福城街道办事处国有土地管理服务项目（A）招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132651.htm
+2026-01-29 18:05:30 - DEBUG - Keyword hit: '智慧平台' in sentence: '深圳政府采购智慧平台（http.//zfcg'
+2026-01-29 18:05:32 - WARNING - download attachment failed: 深圳智慧采购平台投标文件制作专用软件 -> file too large > 36700160 bytes: http://zfcg.szggzy.com:8081/TPBidder/DownLoad/深圳市智慧采购平台投标文件制作专用软件.zip
+2026-01-29 18:05:37 - DEBUG - LLM response:
+{
+  "requirement_brief": "深圳市龙华区福城街道办事处需采购国有土地管理服务，预算180万元，不接受联合体投标。",
+  "requirement_desc": "深圳市龙华区福城街道办事处国有土地管理服务项目，预算180万元，旨在通过采购专业的国有土地管理服务，提升土地管理效率和规范性。项目不接受联合体投标，不允许分包和转包，要求供应商具备独立承担民事责任的能力，并提供相关证明资料。供应商需满足《中华人民共和国政府采购法》第二十二条第一款的条件，未被列入失信被执行人等名单，并声明不存在被有关部门禁止参与政府采购活动的情况。项目面向中小企业采购，要求投标人提供《保安服务许可证》及跨省服务的备案证明文件。合同履行期限及详细技术需求将在招标文件用户需求书中明确，供应商需按照深圳政府采购智慧平台的操作流程进行投标文件的获取、上传和解密。"
+}
+---
+2026-01-29 18:05:43 - DEBUG - filtering the announcement: ent.title=深圳市中医院福田院区门诊楼4层食堂区域改造工程招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132629.htm
+2026-01-29 18:05:43 - DEBUG - Keyword hit: '智慧平台' in sentence: '深圳政府采购智慧平台（http.//zfcg'
+2026-01-29 18:05:46 - WARNING - download attachment failed: 深圳智慧采购平台投标文件制作专用软件 -> file too large > 36700160 bytes: http://zfcg.szggzy.com:8081/TPBidder/DownLoad/深圳市智慧采购平台投标文件制作专用软件.zip
+2026-01-29 18:05:52 - DEBUG - LLM response:
+{
+  "requirement_brief": "深圳市中医院福田院区门诊楼4层食堂区域改造工程，预算140.64万元，涉及拆除新建天花、照明、排烟及空调等。",
+  "requirement_desc": "本项目为深圳市中医院福田院区门诊楼4层食堂区域改造工程，主要内容包括拆除并新建食堂后厨区域天花、照明、排烟及空调系统；拆除屋面锈蚀彩钢板，新建耐腐蚀压型钢板保温复合屋面板；拆除并新建专家餐厅区域墙面、地面；更换食堂西侧露天区域木塑地板；清理后厨污渍地面、墙面等。项目预算为140.64万元，不接受联合体投标，要求供应商具备建筑装修装饰工程专业承包二级（含）或以上资质及安全生产许可证，且在经营活动中没有重大违法记录。项目不接受总公司与分支机构同时参与投标，也不接受同一总公司有两个或以上分支机构参与投标。合同履行期限详见招标文件用户需求书，项目为专门面向中小微企业采购的项目，供应商需提供符合要求的《中小企业声明函》。"
+}
+---
+2026-01-29 18:05:58 - DEBUG - filtering the announcement: ent.title=香港大学深圳医院直线加速器及绘画系统维修保养服务采购项目（A）招标公告(重新采购第2次) url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132639.htm
+2026-01-29 18:05:58 - DEBUG - Keyword hit: '智慧平台' in sentence: '深圳政府采购智慧平台（http.//zfcg'
+2026-01-29 18:06:00 - WARNING - download attachment failed: 深圳智慧采购平台投标文件制作专用软件 -> file too large > 36700160 bytes: http://zfcg.szggzy.com:8081/TPBidder/DownLoad/深圳市智慧采购平台投标文件制作专用软件.zip
+2026-01-29 18:06:05 - DEBUG - LLM response:
+{
+  "requirement_brief": "香港大学深圳医院需采购直线加速器及绘画系统维修保养服务，预算363万元，不接受联合体投标。",
+  "requirement_desc": "香港大学深圳医院直线加速器及绘画系统维修保养服务采购项目，旨在为医院提供专业的直线加速器维修保养服务，以确保医疗设备的正常运行和使用安全。项目预算为363万元，不接受联合体投标，且不允许分包、转包，禁止使用进口产品参与投标。供应商需具备独立法人资格或具有独立承担民事责任能力的其他组织，并满足《中华人民共和国政府采购法》第二十二条第一款的条件。此外，供应商还须持有监督管理部门签发的涵盖医用高能射线类设备的《医疗器械经营许可证》和生态环境主管部门签发的《辐射安全许可证》，均需在有效期内。项目合同履行期限及其他技术需求详见招标文件用户需求书。"
+}
+---
+2026-01-29 18:06:12 - DEBUG - filtering the announcement: ent.title=2026年市农检中心食堂食材配送服务项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132628.htm
+2026-01-29 18:06:12 - DEBUG - Keyword hit: '智慧平台' in sentence: '深圳政府采购智慧平台（http.//zfcg'
+2026-01-29 18:06:15 - WARNING - download attachment failed: 深圳智慧采购平台投标文件制作专用软件 -> file too large > 36700160 bytes: http://zfcg.szggzy.com:8081/TPBidder/DownLoad/深圳市智慧采购平台投标文件制作专用软件.zip
+2026-01-29 18:06:25 - WARNING - LLM generate requirements failed: https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132628.htm -> Error code: 429 - {'error': {'message': 'The engine is currently overloaded, please try again later', 'type': 'engine_overloaded_error'}}
+2026-01-29 18:06:30 - DEBUG - filtering the announcement: ent.title=深圳市福田区福华小学2026年融合教育服务项目（A）招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132627.htm
+2026-01-29 18:06:30 - DEBUG - Keyword hit: '智慧平台' in sentence: '深圳政府采购智慧平台（http.//zfcg'
+2026-01-29 18:06:33 - WARNING - download attachment failed: 深圳智慧采购平台投标文件制作专用软件 -> file too large > 36700160 bytes: http://zfcg.szggzy.com:8081/TPBidder/DownLoad/深圳市智慧采购平台投标文件制作专用软件.zip
+2026-01-29 18:06:39 - DEBUG - LLM response:
+{
+  "requirement_brief": "深圳市福田区福华小学2026年融合教育服务项目，预算124.78万元，旨在采购特殊教育服务，提升学校融合教育质量。",
+  "requirement_desc": "深圳市福田区福华小学2026年融合教育服务项目，预算为124.78万元，主要采购内容为特殊教育服务，以提升学校融合教育的质量和效果。项目不接受联合体投标，不允许非主体非关键性工作分包，禁止转包。供应商需具备独立承担民事责任的能力，并满足《中华人民共和国政府采购法》第二十二条第一款的条件。项目要求供应商在投标时不存在被有关部门禁止参与政府采购活动的情况，且未被列入失信被执行人、重大税收违法案件当事人名单、政府采购严重违法失信行为记录名单。项目的全部需求详见招标文件，合同履行期限及具体的技术需求（服务需求）将在招标文件用户需求书中明确。中标供应商将负责提供符合要求的融合教育服务，并在项目结束后接受验收与测评。"
+}
+---
+2026-01-29 18:06:47 - DEBUG - filtering the announcement: ent.title=2026年市农检中心食堂烹饪服务项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132637.htm
+2026-01-29 18:06:47 - DEBUG - Keyword hit: '智慧平台' in sentence: '深圳政府采购智慧平台（http.//zfcg'
+2026-01-29 18:06:49 - WARNING - download attachment failed: 深圳智慧采购平台投标文件制作专用软件 -> file too large > 36700160 bytes: http://zfcg.szggzy.com:8081/TPBidder/DownLoad/深圳市智慧采购平台投标文件制作专用软件.zip
+2026-01-29 18:06:59 - WARNING - LLM generate requirements failed: https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132637.htm -> Error code: 429 - {'error': {'message': 'The engine is currently overloaded, please try again later', 'type': 'engine_overloaded_error'}}
+2026-01-29 18:07:06 - DEBUG - filtering the announcement: ent.title=零星驻点修缮项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132625.htm
+2026-01-29 18:07:06 - DEBUG - Keyword hit: '智慧平台' in sentence: '深圳政府采购智慧平台（http.//zfcg'
+2026-01-29 18:07:09 - WARNING - download attachment failed: 深圳智慧采购平台投标文件制作专用软件 -> file too large > 36700160 bytes: http://zfcg.szggzy.com:8081/TPBidder/DownLoad/深圳市智慧采购平台投标文件制作专用软件.zip
+2026-01-29 18:07:19 - WARNING - LLM generate requirements failed: https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132625.htm -> Error code: 429 - {'error': {'message': 'The engine is currently overloaded, please try again later', 'type': 'engine_overloaded_error'}}
+2026-01-29 18:07:26 - DEBUG - filtering the announcement: ent.title=扎鲁特旗人民医院医疗设备采购项目（高端彩色超声诊断设备）招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132611.htm
+2026-01-29 18:07:33 - DEBUG - filtering the announcement: ent.title=西南石油大学校园安保服务采购项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132617.htm
+2026-01-29 18:07:41 - DEBUG - filtering the announcement: ent.title=栾川县废弃矿洞综合应用智慧化平台建设项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132608.htm
+2026-01-29 18:07:47 - DEBUG - filtering the announcement: ent.title=泸州市江阳区应急管理局海普路消防救援站提档升级车辆装备采购项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132623.htm
+2026-01-29 18:07:53 - DEBUG - filtering the announcement: ent.title=宁波国际投资咨询有限公司关于余姚市第四人民医院血透机设备采购项目的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132589.htm
+2026-01-29 18:08:00 - DEBUG - filtering the announcement: ent.title=银川市公安局警保联勤联动指挥调度系统采购项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132585.htm
+2026-01-29 18:08:00 - DEBUG - Keyword hit: 'AI' in sentence: '本项目采购综合指挥调度web系统、综合指挥调度系统数据拓展、AI数据分析核心等内容'
+2026-01-29 18:08:01 - WARNING - downloaded attachment: https://download.ccgp.gov.cn/oss/download?uuid=b1420e0c-2d80-4a0f-8b25-f72919 -> ccgp\data\attachments\06b129e26fc0\download.bin
+2026-01-29 18:08:01 - WARNING - no text extracted: name=招标文件正文.pdf ext=.bin size=776227B path=ccgp\data\attachments\06b129e26fc0\download.bin url=https://download.ccgp.gov.cn/oss/download?uuid=b1420e0c-2d80-4a0f-8b25-f72919
+2026-01-29 18:08:11 - WARNING - LLM generate requirements failed: https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132585.htm -> Error code: 429 - {'error': {'message': 'The engine is currently overloaded, please try again later', 'type': 'engine_overloaded_error'}}
+2026-01-29 18:08:16 - DEBUG - filtering the announcement: ent.title=灵武市职业技术学校数字化校园标杆校建设项目(三标段)智慧显示系统升级改造（重新招标）项目... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132565.htm
+2026-01-29 18:08:24 - DEBUG - filtering the announcement: ent.title=乌鲁木齐市米东区人民医院POCT设备及试剂采购项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132563.htm
+2026-01-29 18:08:29 - DEBUG - filtering the announcement: ent.title=JZFCG-G2026004号许昌市东城区市政管理中心“许昌市东城区市政管理中心东城区交通设施养护项... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132551.htm
+2026-01-29 18:08:37 - DEBUG - filtering the announcement: ent.title=2026年大豆玉米带状复合种植项目物资采购的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132520.htm
+2026-01-29 18:08:44 - DEBUG - filtering the announcement: ent.title=石门街滘心村环境卫生一体化服务采购项目招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132526.htm
+2026-01-29 18:08:51 - DEBUG - filtering the announcement: ent.title=古城北道生活垃圾转运站压缩设备采购项目公开招标公告（双盲评审） url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132507.htm
+2026-01-29 18:08:58 - DEBUG - filtering the announcement: ent.title=2026年金石公路16.136K-18.745K路段养护维修项目等设计服务的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132492.htm
+2026-01-29 18:09:05 - DEBUG - filtering the announcement: ent.title=2026年金石公路7.5K-10.14K路段养护维修项目等设计服务的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132472.htm
+2026-01-29 18:09:13 - DEBUG - filtering the announcement: ent.title=2026年漕廊公路16.45K-17.32K路段养护维修项目等设计服务的公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132471.htm
+2026-01-29 18:09:18 - DEBUG - filtering the announcement: ent.title=重庆市中医院结肠镜系统采购(CQS26A00044)公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132487.htm
+2026-01-29 18:09:23 - DEBUG - filtering the announcement: ent.title=长寿区中医院科教综合楼家具采购项目（二次）(CSQ25A00902)公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132467.htm
+2026-01-29 18:09:29 - DEBUG - filtering the announcement: ent.title=大理市政府采购和出让中心关于DLSJC-202604大理市政务服务中心“一窗受理”综合接件公开招标... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132485.htm
+2026-01-29 18:09:34 - DEBUG - filtering the announcement: ent.title=汕头市中心医院医疗设备更新项目（二）（2026）招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132466.htm
+2026-01-29 18:09:40 - DEBUG - filtering the announcement: ent.title=2026年度林校路街道网格巡查服务项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132444.htm
+2026-01-29 18:09:46 - DEBUG - filtering the announcement: ent.title=自贡市第三人民医院空调、新风、热水系统维保服务招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132439.htm
+2026-01-29 18:09:53 - DEBUG - filtering the announcement: ent.title=临时管控服务项目公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132447.htm
+2026-01-29 18:10:01 - DEBUG - filtering the announcement: ent.title=重庆市中医院盆底“磁电热影”综合治疗系统采购(CQS26A00043)公开招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132435.htm
+2026-01-29 18:10:09 - DEBUG - filtering the announcement: ent.title=射频治疗仪公开招标招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132409.htm
+2026-01-29 18:10:17 - DEBUG - filtering the announcement: ent.title=孟连傣族拉祜族佤族自治县机关事务服务中心政府采购办公室关于孟连县芒信镇2025年示范性国门... url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132416.htm
+2026-01-29 18:10:24 - DEBUG - filtering the announcement: ent.title=西北师范大学致勤楼A区电梯采购安装项目(二次)招标公告 url=https://www.ccgp.gov.cn/cggg/dfgg/gkzb/202601/t20260129_26132399.htm
+2026-01-29 18:10:24 - DEBUG - successfully read 0 attachments.
+2026-01-29 18:10:24 - DEBUG - [OK] saved: ccgp/data/tender_items.csv, items=11
