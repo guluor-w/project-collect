@@ -1,5 +1,33 @@
 import re
+import os
 from datetime import timedelta, timezone
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    v = os.getenv(name)
+    if v is None:
+        return default
+    return v.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _env_int(name: str, default: int) -> int:
+    v = os.getenv(name)
+    if not v:
+        return default
+    try:
+        return int(v)
+    except Exception:
+        return default
+
+
+def _env_float(name: str, default: float) -> float:
+    v = os.getenv(name)
+    if not v:
+        return default
+    try:
+        return float(v)
+    except Exception:
+        return default
 
 # 收集日期和最大页数
 DAYS = 1
@@ -67,8 +95,25 @@ RE_MONEY = re.compile(
 )
 
 # 开关
-ENABLE_READ_ATTACHMENTS = True
-ENABLE_LLM_REQUIREMENTS = True
+ENABLE_READ_ATTACHMENTS = _env_bool("CCGP_ENABLE_ATTACHMENTS", True)
+ENABLE_LLM_REQUIREMENTS = _env_bool("CCGP_ENABLE_LLM", True)
+
+# Runtime tuning knobs for CI / GitHub Actions
+REQUEST_TIMEOUT_SEC = _env_int("CCGP_HTTP_TIMEOUT", 15)
+DOWNLOAD_TIMEOUT_SEC = _env_int("CCGP_DOWNLOAD_TIMEOUT", 30)
+MAX_ATTACHMENTS_PER_NOTICE = _env_int("CCGP_MAX_ATTACHMENTS", 3)
+DETAIL_SLEEP_MIN_SEC = _env_float("CCGP_SLEEP_MIN", 2.0)
+DETAIL_SLEEP_MAX_SEC = _env_float("CCGP_SLEEP_MAX", 4.0)
+SKIP_REPEATED_FAILED_ATTACHMENTS = _env_bool("CCGP_SKIP_REPEAT_FAILED_ATTACHMENTS", True)
+
+# Skip known low-value or problematic attachment links to reduce long waits.
+ATTACHMENT_BLOCKLIST_HOSTS = {
+    "zfcg.szggzy.com",
+}
+ATTACHMENT_BLOCKLIST_KEYWORDS = [
+    "TPBidder/DownLoad",
+    "投标文件制作专用软件",
+]
 
 # 路径保存
 ATTACHMENTS_DIR = "src/ccgp/data/attachments/"

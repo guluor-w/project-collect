@@ -10,7 +10,7 @@
 - 支持按最近 N 天、最多翻页数控制采集范围，在文件src/ccgp/config.py中进行设置
 ```python
 # 收集日期和最大页数
-DAYS = 3
+DAYS = 1
 PAGES = 30
 ```
 - 关键词过滤（含排除词）,在文件src/ccgp/config.py中进行增删
@@ -42,8 +42,8 @@ FILTER_EXCLUDE_KEYWORDS = [
 开关在文件src/ccgp/config.py中进行设置
 ```python
 # 开关
-ENABLE_READ_ATTACHMENTS = True
-ENABLE_LLM_REQUIREMENTS = True
+ENABLE_READ_ATTACHMENTS = _env_bool("CCGP_ENABLE_ATTACHMENTS", True)
+ENABLE_LLM_REQUIREMENTS = _env_bool("CCGP_ENABLE_LLM", True)
 ```
 - 输出 CSV 追加写入，日志按时间滚动保存
 
@@ -93,12 +93,6 @@ pip install openai PyPDF2 python-docx openpyxl
     默认两次调用分别为地方、中央网址，抓取天数和最大翻页数为config中设置的。
 
 - 若想指定网址，在根目录执行：
-
-    ```bash
-    python src/ccgp/main.py
-    ```
-
-    常用参数：
 
     ```bash
     python src/ccgp/main.py --start https://www.ccgp.gov.cn/cggg/dfgg/gkzb/index.htm --days 3 --pages 30
@@ -169,4 +163,51 @@ client = OpenAI(
 - 字段提取为空：公告模板差异导致，优先补充 `FIELD_ALIASES`；若市字段为空，可能是该市为少数名族自治区，格式不是“xx市”的形式出现
 - 提取附件文本失败：下载了不支持的格式或文件过大
 - LLM 失败：检查 API Key、网络可达性、模型名与配额
+
+## 以下为优化速度相关配置（主要用于GitHub Actions）
+### Runtime Env Variables
+
+项目支持通过环境变量覆盖部分运行参数（主要用于 GitHub Actions）：
+
+- `CCGP_ENABLE_ATTACHMENTS`：是否下载并解析附件（`true/false`，默认 `true`）
+- `CCGP_ENABLE_LLM`：是否调用 LLM 生成需求摘要（`true/false`，默认 `true`）
+- `CCGP_HTTP_TIMEOUT`：列表页/详情页请求超时秒数（默认 `15`）
+- `CCGP_DOWNLOAD_TIMEOUT`：附件下载超时秒数（默认 `30`）
+- `CCGP_MAX_ATTACHMENTS`：每条公告最多处理附件数（默认 `3`）
+- `CCGP_SLEEP_MIN`：抓取详情页前最小 sleep 秒数（默认 `2.0`）
+- `CCGP_SLEEP_MAX`：抓取详情页前最大 sleep 秒数（默认 `4.0`）
+- `CCGP_SKIP_REPEAT_FAILED_ATTACHMENTS`：是否跳过已失败过的附件 URL（默认 `true`）
+
+说明：
+
+- 当 `CCGP_ENABLE_ATTACHMENTS=false` 时，将不下载附件，也不会做附件文本提取。
+- 当 `CCGP_ENABLE_LLM=false` 时，`requirement_brief/requirement_desc` 为空字符串。
+
+### Attachment Optimization
+
+为降低 CI 运行时长，附件处理增加了以下优化：
+
+- 附件黑名单跳过（例如 `zfcg.szggzy.com` 与 `TPBidder/DownLoad`）
+- 失败附件 URL 去重（同一次运行中失败后不再重复下载）
+- 限制每条公告最大附件处理数量（由 `CCGP_MAX_ATTACHMENTS` 控制）
+
+### Fast Mode Example
+
+工作流可配置为“快速模式”，示例：
+
+```yaml
+env:
+  CCGP_ENABLE_LLM: "false"
+  CCGP_HTTP_TIMEOUT: "15"
+  CCGP_DOWNLOAD_TIMEOUT: "25"
+  CCGP_MAX_ATTACHMENTS: "2"
+  CCGP_SLEEP_MIN: "0.2"
+  CCGP_SLEEP_MAX: "0.8"
+  CCGP_SKIP_REPEAT_FAILED_ATTACHMENTS: "true"
+```
+
+建议：
+
+- 若主要目标是稳定出数，可先关闭 LLM（`CCGP_ENABLE_LLM=false`）。
+- 若仍耗时偏长，可进一步设置 `CCGP_ENABLE_ATTACHMENTS=false` 进入极限快跑模式。
 

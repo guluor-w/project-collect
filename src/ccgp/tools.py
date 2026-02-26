@@ -10,12 +10,20 @@ import zipfile
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from ccgp.config import PROVINCES, RE_DATE_YMD_HM, RE_MONEY, SG_TZ, FILTER_EXCLUDE_KEYWORDS
+from ccgp.config import (
+    PROVINCES,
+    RE_DATE_YMD_HM,
+    RE_MONEY,
+    SG_TZ,
+    FILTER_EXCLUDE_KEYWORDS,
+    REQUEST_TIMEOUT_SEC,
+    DOWNLOAD_TIMEOUT_SEC,
+)
 from ccgp.model import TenderItem
 from utils.mylogger import get_logger
 
 #------------------------------通用工具函数-----------------------------------#
-def http_get(url: str, session: requests.Session, timeout: int = 30) -> str:
+def http_get(url: str, session: requests.Session, timeout: int = REQUEST_TIMEOUT_SEC) -> str:
     resp = session.get(url, timeout=timeout)
     resp.raise_for_status()
     resp.encoding = resp.apparent_encoding or "utf-8"
@@ -155,6 +163,7 @@ def download_file(
     out_dir: str,
     filename: Optional[str] = None,
     max_bytes: int = 35 * 1024 * 1024,
+    timeout: int = DOWNLOAD_TIMEOUT_SEC,
 ) -> str:
 
     Path(out_dir).mkdir(parents=True, exist_ok=True)
@@ -169,7 +178,7 @@ def download_file(
     if os.path.exists(path) and os.path.getsize(path) > 0:
         return path
 
-    with session.get(url, stream=True, timeout=60) as r:
+    with session.get(url, stream=True, timeout=timeout) as r:
         r.raise_for_status()
         total = 0
         with open(path, "wb") as f:

@@ -5,11 +5,26 @@ on:
   schedule:
     - cron: "0 0 * * *"  # 每天 00:00 UTC
 
+permissions:
+  contents: write
+
 jobs:
   run:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      CCGP_ENABLE_ATTACHMENTS: "true"
+      CCGP_ENABLE_LLM: "true"
+      CCGP_HTTP_TIMEOUT: "15"
+      CCGP_DOWNLOAD_TIMEOUT: "25"
+      CCGP_MAX_ATTACHMENTS: "2"
+      CCGP_SLEEP_MIN: "0.2"
+      CCGP_SLEEP_MAX: "0.8"
+      CCGP_SKIP_REPEAT_FAILED_ATTACHMENTS: "true"
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
 
       - uses: actions/setup-python@v5
         with:
@@ -21,3 +36,22 @@ jobs:
       - name: Run script
         run: python src/ccgp_collect.py
 
+      - name: Commit updated CSV
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/ccgp/data/tender_items.csv
+          if git diff --cached --quiet; then
+            echo "No CSV changes to commit."
+          else
+            git commit -m "chore: update tender_items.csv [skip ci]"
+            git push
+          fi
+
+      - name: Upload logs artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ccgp-logs-${{ github.run_id }}
+          path: src/ccgp/data/logs/
+          if-no-files-found: warn
