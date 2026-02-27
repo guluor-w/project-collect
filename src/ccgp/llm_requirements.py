@@ -76,6 +76,51 @@ def generate_requirements(meta: dict, page_text: str, attachment_texts: list[str
     return _safe_json_loads(txt)
 
 
+def llm_second_filter_by_combined(combined_text: str, title: str = "") -> dict:
+    """
+    LLM second-pass filter.
+    Return shape:
+    {
+      "keep": bool,
+      "reason": str
+    }
+    """
+    if client is None:
+        return {"keep": True, "reason": "skip second filter: MOONSHOT_API_KEY not set"}
+
+    text = (combined_text or "")[:18000]
+    prompt = f"""
+你是政府采购需求筛选员。请判断下面公告是否“应保留为智能化相关主体需求”。
+
+规则：
+1) 若“智能/智慧/AI”等只是宣传词、平台口号、局部修饰（如仅修饰开标系统、客服、楼宇名称、物业/平台名称），应判定为不保留。
+2) 只有当智能化内容构成采购主体目标、核心建设内容或主要交付物时，才判定保留。
+3) 不要因为出现关键词就保留，要看是否是项目主体。
+
+标题：{title}
+文本：
+{text}
+
+仅输出JSON，不要输出其它内容：
+{{
+  "keep": true,
+  "reason": "一句话说明判断依据(25字以内)"
+}}
+""".strip()
+
+    resp = client.chat.completions.create(
+        model="moonshot-v1-32k",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.0,
+    )
+    txt = (resp.choices[0].message.content or "").strip()
+    data = _safe_json_loads(txt)
+
+    keep = bool(data.get("keep", True))
+    reason = str(data.get("reason", "")).strip()
+    return {"keep": keep, "reason": reason}
+
+
 if __name__ == "__main__":
     meta = {
         "title": "示例：教学仪器采购公开招标",

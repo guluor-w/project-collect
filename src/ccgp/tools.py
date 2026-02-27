@@ -65,7 +65,7 @@ def parse_pub_datetime(text: str) -> Optional[datetime]:
 
 def keyword_hit(text: str, keywords: List[str]) -> bool:
     # 将文本分割成句子（简单的句子分割，可根据需要改进）
-    sentences = text.replace('!', ' ').replace('。', ' ').split(' ')
+    sentences = text.replace(';', ' ').replace('。', ' ').split(' ')
     
     for k in keywords:
         for sentence in sentences:

@@ -56,3 +56,11 @@ jobs:
           name: ccgp-logs-${{ github.run_id }}
           path: src/ccgp/data/logs/
           if-no-files-found: warn
+
+      - name: Upload filter trace artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ccgp-filter-trace-${{ github.run_id }}
+          path: src/ccgp/data/filter_trace/
+          if-no-files-found: warn

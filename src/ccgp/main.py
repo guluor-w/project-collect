@@ -1,4 +1,5 @@
 ﻿import argparse
+import csv
 import os
 import random
 import time
@@ -28,7 +29,7 @@ from ccgp.config import (
     SKIP_REPEATED_FAILED_ATTACHMENTS,
     USER_AGENT,
 )
-from ccgp.llm_requirements import generate_requirements
+from ccgp.llm_requirements import generate_requirements, llm_second_filter_by_combined
 from ccgp.model import TenderItem
 from ccgp.parse_detail import parse_detail_page
 from ccgp.parse_index import parse_list_page
@@ -43,6 +44,36 @@ from ccgp.tools import (
     write_csv,
 )
 from utils.mylogger import get_logger, setup_logging
+
+
+def _get_filter_trace_file() -> str:
+    out_dir = "src/ccgp/data/filter_trace"
+    os.makedirs(out_dir, exist_ok=True)
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    return os.path.join(out_dir, f"filter_trace_{ts}.csv")
+
+
+def _flush_filter_trace_csv(path: str, records: dict) -> None:
+    cols = [
+        "title",
+        "url",
+        "is_selected",
+        "not_selected_reason",
+    ]
+    with open(path, "w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=cols)
+        w.writeheader()
+        for rec in records.values():
+            row = {k: rec.get(k, "") for k in cols}
+            w.writerow(row)
+
+
+def _set_trace_result(records: dict, ann_url: str, is_selected: bool, reason: str) -> None:
+    rec = records.get(ann_url)
+    if not rec:
+        return
+    rec["is_selected"] = is_selected
+    rec["not_selected_reason"] = reason if (not is_selected) else ""
 
 
 def _should_skip_attachment(url: str, name: str) -> bool:
@@ -83,6 +114,10 @@ def scrape_ccgp(
     failed_attachment_urls = set()
     count = 0
 
+    filter_trace_file = _get_filter_trace_file()
+    filter_trace_records: dict = {}
+    get_logger().debug(f"filter trace file: {filter_trace_file}")
+
     for list_url in list_urls:
         try:
             list_html = http_get(list_url, session, timeout=REQUEST_TIMEOUT_SEC)
@@ -102,9 +137,17 @@ def scrape_ccgp(
             ann_url = ent["url"]
             if ann_url in seen_urls:
                 continue
+            
+            filter_trace_records[ann_url] = {
+                "title": ent.get("title", ""),
+                "url": ann_url,
+                "is_selected": None,
+                "not_selected_reason": "pending",
+            }
 
             pub_dt = parse_pub_datetime(ent.get("pub_raw", ""))
             if pub_dt and pub_dt < cutoff:
+                _set_trace_result(filter_trace_records, ann_url, False, "older than DAYS window")
                 continue
 
             page_has_recent = True
@@ -114,6 +157,7 @@ def scrape_ccgp(
                 time.sleep(random.uniform(*sleep_range))
                 detail_html = http_get(ann_url, session, timeout=REQUEST_TIMEOUT_SEC)
             except Exception as e:
+                _set_trace_result(filter_trace_records, ann_url, False, f"detail fetch failed: {e}")
                 get_logger().warning(f"detail failed: {ann_url} -> {e}")
                 continue
 
@@ -130,7 +174,33 @@ def scrape_ccgp(
                 f"filtering the announcement: ent.title={ent.get('title', '')} url={ann_url}"
             )
             if not keyword_hit(combined, keywords):
+                _set_trace_result(filter_trace_records, ann_url, False, "round1 keyword filter not matched")
                 continue
+
+            try:
+                second_filter = llm_second_filter_by_combined(
+                    combined_text=combined,
+                    title=ent.get("title", "")
+                )
+                if not second_filter.get("keep", True):
+                    reason = str(second_filter.get("reason", "")).strip()
+                    _set_trace_result(
+                        filter_trace_records,
+                        ann_url,
+                        False,
+                        f"round2 llm rejected: {reason}",
+                    )
+                    get_logger().warning(
+                        f"llm second filter rejected: {ann_url} -> {reason}"
+                    )
+                    continue
+                get_logger().debug(
+                    f"llm second filter passed: {ann_url} -> {second_filter.get('reason', '')}"
+                )
+            except Exception as e:
+                get_logger().warning(f"llm second filter failed, fallback keep: {ann_url} -> {e}")
+
+            _set_trace_result(filter_trace_records, ann_url, True, "")
 
             province = ent.get("region", "") or ""
             prov, city = guess_location(detail.get("location_text", ""))
@@ -249,7 +319,9 @@ def scrape_ccgp(
         if not page_has_recent:
             break
 
+    _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
     get_logger().debug(f"successfully read {count} attachments.")
+    get_logger().debug(f"saved filter trace: {filter_trace_file}, items={len(filter_trace_records)}")
     return results
 
 
