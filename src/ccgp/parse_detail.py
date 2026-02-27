@@ -49,7 +49,6 @@ def extract_ccgp_attachments(soup, page_url: str):
     ALLOWED_EXTENSIONS = {'.pdf', '.docx', '.xlsx', '.txt', '.zip'}
 
     def strip_qs(url: str) -> str:
-        """去掉 ?query 和 #fragment，避免 accessCode 导致的后缀判断失败。"""
         try:
             p = urlsplit(url)
             return f"{p.scheme}://{p.netloc}{p.path}" if p.scheme and p.netloc else p.path
