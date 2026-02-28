@@ -4,9 +4,8 @@
 
 ## 功能概览
 
-- 采集来源：
-  - 地方公告：`https://www.ccgp.gov.cn/cggg/dfgg/gkzb/index.htm`
-  - 中央公告：`https://www.ccgp.gov.cn/cggg/zygg/gkzb/index.htm`
+- 采集来源：https://www.ccgp.gov.cn/
+
 - 支持按最近 N 天、最多翻页数控制采集范围，在文件src/ccgp/config.py中进行设置
 ```python
 # 收集日期和最大页数
@@ -85,24 +84,25 @@ pip install openai PyPDF2 python-docx openpyxl
 
 ## 快速开始
 
-- 要一次抓取地方 + 中央，并执行附件目录清理，在根目录执行：
+- 使用默认模式（推荐，基于 search.ccgp 全文检索预筛选）：
 
     ```bash
-    python src/ccgp_collect.py
+    python src/ccgp_collect.py 
     ```
-    默认两次调用分别为地方、中央网址，抓取天数和最大翻页数为config中设置的。
 
-- 若想指定网址，在根目录执行：
+- 使用旧列表页模式（仅在需要时）：
 
     ```bash
-    python src/ccgp/main.py --start https://www.ccgp.gov.cn/cggg/dfgg/gkzb/index.htm --days 3 --pages 30
+    python src/ccgp_collect.py --no-search 
     ```
 
-    参数说明：
+- 其他参数说明：
 
-    - `--start`：列表页起始 URL
-    - `--days`：仅保留最近 N 天公告
-    - `--pages`：最大翻页数（从 `index.htm` 到 `index_{N-1}.htm`）
+    - `--days`：搜索近 N 天（默认 `3`）
+    - `--pages`：每个关键词最多搜索页数（search 模式）或最大翻页数（旧模式）
+    - `--start`：指定起始网址，仅在 `--no-search` 模式下生效，目前支持：  
+      - 地方公告：`https://www.ccgp.gov.cn/cggg/dfgg/gkzb/index.htm`
+      - 中央公告：`https://www.ccgp.gov.cn/cggg/zygg/gkzb/index.htm`
 
 
 ## 配置项（`src/ccgp/config.py`）
@@ -156,6 +156,9 @@ client = OpenAI(
 
 - 日志文件默认写入 `src/ccgp/data/logs/`，文件名格式：`app_YYYYMMDD_HHMMSS.log`
 - `src/ccgp_collect.py` 在采集完成后会清理超过 `CLEAN_THRESHOLD` 天的附件子目录（目录名需符合 `前缀_YYYYMMDD`）
+- 筛选追踪文件（每次运行新建）：
+  - 路径：`src/ccgp/data/filter_trace/filter_trace_YYYYMMDD_HHMMSS.csv`
+  - 字段：`title`、`url`、`is_selected`、`not_selected_reason`
 
 ## 常见问题
 
@@ -190,6 +193,9 @@ client = OpenAI(
 - 附件黑名单跳过（例如 `zfcg.szggzy.com` 与 `TPBidder/DownLoad`）
 - 失败附件 URL 去重（同一次运行中失败后不再重复下载）
 - 限制每条公告最大附件处理数量（由 `CCGP_MAX_ATTACHMENTS` 控制）
+- Search 预筛选会放慢请求节奏（页间隔、周期性长休眠、关键词间休眠）
+- Search 预筛选会将高频词后置（如 `智能/智慧/自动化`）
+- Search 触发频控后会冷却重试 1 次，仍被拦截则提前结束本轮预筛选
 
 ### Fast Mode Example
 

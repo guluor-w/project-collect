@@ -31,8 +31,8 @@ def _env_float(name: str, default: float) -> float:
 
 # 收集日期和最大页数
 DAYS = 1
-PAGES = 30
-CLEAN_THRESHOLD = 3
+PAGES = 10
+CLEAN_THRESHOLD = 1
 
 # 时区
 SG_TZ = timezone(timedelta(hours=8))
@@ -45,12 +45,12 @@ USER_AGENT = (
 
 # 关键词（待增删）
 FILTER_KEYWORDS = [
-    "工业互联网", "智能制造", "智能", "智慧",
+    "工业互联网", "智能制造", 
     "人工智能", "AI", "大模型", 
     "大数据", "数据治理", "数据中台",
     "机器人", "机器视觉", "自动化",
     "云计算", "算力", "边缘计算",
-    "物联网",
+    "物联网","智能", "智慧",
 ]
 
 # 干扰词汇(待补充)
