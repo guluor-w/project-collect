@@ -137,7 +137,7 @@ def _collect_entries_from_search(
                 break
 
             if ("访问过于频繁" in html) or ("频繁访问" in html) or ("事件ID" in html):
-                cooldown = random.uniform(60, 180)
+                cooldown = random.uniform(150, 380)
                 get_logger().warning(
                     f"search blocked by frequency control: kw={kw} page={page_index}, cooldown={cooldown:.1f}s"
                 )
@@ -184,9 +184,9 @@ def _collect_entries_from_search(
                     keyword_count += 1
 
             # 每页查找之间随机短暂休眠，避免过快访问引发封禁；每10页长休眠一次。
-            time.sleep(random.uniform(1.2, 2.5))
+            time.sleep(random.uniform(5, 8))
             if page_index % 5 == 0:
-                long_pause = random.uniform(5, 8)
+                long_pause = random.uniform(10, 15)
                 get_logger().debug(
                     f"search periodic cooldown: kw={kw} page={page_index} sleep={long_pause:.1f}s"
                 )
