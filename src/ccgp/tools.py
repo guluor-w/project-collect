@@ -142,15 +142,54 @@ def write_csv(items: List[TenderItem], out_path: str) -> None:
     directory = os.path.dirname(out_path)
     if directory and not os.path.exists(directory):
         os.makedirs(directory, exist_ok=True)
+        
     file_exists = os.path.exists(out_path) and os.path.getsize(out_path) > 0
-    mode = "a" if file_exists else "w"
-    with open(out_path, mode, encoding="utf-8-sig", newline="") as f:
+    
+    # 1. 收集所有行数据（含既有数据和新传入的数据）
+    all_rows = []
+    
+    if file_exists:
+        try:
+            with open(out_path, "r", encoding="utf-8-sig", newline="") as f:
+                reader = csv.DictReader(f)
+                all_rows.extend(list(reader))
+        except Exception as e:
+            get_logger().error(f"Error reading existing CSV: {e}")
+            
+    # 追加新传入的项目
+    for it in items:
+        row = asdict(it)
+        all_rows.append({k: row.get(k, "") for k in cols})
+
+    # 2. 根据 announcement_url 去重，保留最新（即列表靠后）读到的项
+    unique_rows = {}
+    for r in all_rows:
+        url = r.get("announcement_url", "")
+        unique_rows[url] = r
+    
+    all_rows = list(unique_rows.values())
+    
+    # 3. 按照 pub_time 降序排序 (越新的越靠前)
+    # 假设 pub_time 是格式为 '%Y-%m-%d %H:%M:%S' 或类似字符串
+    # 无法解析时间的默认放在最后面
+    def sort_key(row):
+        t_str = row.get("pub_time", "")
+        try:
+            # 兼容带有时间或者仅有日期的格式，无法解析的返回极小时间
+            return datetime.strptime(t_str[:16], "%Y-%m-%d %H:%M")
+        except Exception:
+            try:
+                return datetime.strptime(t_str[:10], "%Y-%m-%d")
+            except Exception:
+                return datetime.min
+
+    all_rows.sort(key=sort_key, reverse=True)
+
+    # 4. 全量覆盖写入
+    with open(out_path, "w", encoding="utf-8-sig", newline="") as f:
         w = csv.DictWriter(f, fieldnames=cols)
-        if not file_exists:
-            w.writeheader()
-        for it in items:
-            row = asdict(it)
-            w.writerow({k: row.get(k, "") for k in cols})
+        w.writeheader()
+        w.writerows(all_rows)
 
 #------------------------------和附件相关-----------------------------------#
 def safe_filename(name: str) -> str:
