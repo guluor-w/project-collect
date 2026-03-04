@@ -22,16 +22,12 @@ def build_prompt(meta: dict, page_text: str, attachment_texts: list[str]) -> str
     page_block = clip(page_text, 12000)
 
     return f"""
-你是政府采购/招投标领域的需求分析专家。请基于网页正文和附件内容，输出该项目的需求摘要。
+你是政府采购/招投标领域的AI与信息化需求分析专家。请基于网页正文和附件内容，深入提取总结该项目中【与人工智能应用相关的核心信息】，包括涉及的技术要求、功能要求、性能要求等。
 
 [项目信息]
 - 公告标题: {meta.get("title", "")}
-- 公告URL: {meta.get("url", "")}
 - 项目名称: {meta.get("project_name", "")}
-- 预算: {meta.get("budget", "")}
-- 截止/开标时间: {meta.get("deadline", "")}
 - 采购人: {meta.get("company_name", "")}
-- 联系方式: {meta.get("contact_phone", "")}
 
 [网页正文]
 {page_block}
@@ -40,12 +36,13 @@ def build_prompt(meta: dict, page_text: str, attachment_texts: list[str]) -> str
 {att_block if att_block.strip() else "(无可用附件文本)"}
 
 输出要求:
-1) 仅根据输入信息生成，不得杜撰。
-2) 严格输出 JSON，不要输出额外解释。
-3) JSON 字段格式如下:
+1) 仅根据输入信息生成，不得杜撰。重点关注人工智能能力建设以及落地应用场景等行业应用内容。
+2) 如果整个文档不涉及任何人工智能相关的实质性需求，可以在各个字段中填写“无相关要求”。
+3) 严格输出 JSON 格式，不要输出额外解释、不要带有 markdown 标记。
+4) JSON 字段格式如下:
 {{
-  "requirement_brief": "100字概述",
-  "requirement_desc": "尽量详细(约300字)"
+  "requirement_brief": "AI建设目标及总体概述，150字以内",
+  "requirement_desc": "AI项目详情，包括AI相关技术要求、具体业务场景和功能要求、性能指标要求。1000字以内",
 }}
 """.strip()
 
@@ -90,7 +87,7 @@ def llm_second_filter_by_combined(combined_text: str, title: str = "") -> dict:
 
     text = (combined_text or "")[:18000]
     prompt = f"""
-你是政府采购需求筛选员。请判断下面公告是否“应保留为智能化相关主体需求”。
+你是政府采购需求筛选员。请判断下面公告是否“应保留为智能化业务相关需求”。
 
 规则：
 1) 若“智能/智慧/AI”等只是宣传词、平台口号、局部修饰（如仅修饰开标系统、客服、楼宇名称、物业/平台名称），应判定为不保留。

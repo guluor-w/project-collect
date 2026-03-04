@@ -213,6 +213,14 @@ def scrape_ccgp(
     sleep_range: Tuple[float, float] = (DETAIL_SLEEP_MIN_SEC, DETAIL_SLEEP_MAX_SEC),
     use_search_prefilter: bool = True,
 ) -> List[TenderItem]:
+    """
+    抓取中国政府采购网公告的核心业务流程。
+    主要步骤：
+    1. 根据配置，先从搜索接口(或列表页)收集指定时间范围内的公告条目初步信息。
+    2. 遍历收集到的条目，依次请求公告详情页。
+    3. 基于关键词和LLM进行双重过滤，筛选出符合要求的招标公告。
+    4. 提取详情和附件文本，利用大模型归纳出采购需求。
+    """
     session = requests.Session()
     session.headers.update(
         {
@@ -226,6 +234,9 @@ def scrape_ccgp(
     now = datetime.now(tz=SG_TZ)
     cutoff = now - timedelta(days=days)
 
+    # 第一步：收集公告列表
+    # 如果启用 use_search_prefilter，通过站内搜索接口获取近期公告以缩小范围
+    # 否则，退化为传统方式，从指定列表页逐页爬取
     if use_search_prefilter:
         entries = _collect_entries_from_search(
             session=session,
@@ -258,6 +269,7 @@ def scrape_ccgp(
     filter_trace_records: dict = {}
     get_logger().debug(f"filter trace file: {filter_trace_file}")
 
+    # 第二步：逐个详情页抓取与处理流程
     for ent in entries:
         ann_url = (ent.get("url") or "").strip()
         if not ann_url:
@@ -266,6 +278,7 @@ def scrape_ccgp(
         if ann_url in seen_urls:
             continue
 
+        # 初始化本条过滤追踪记录
         filter_trace_records[ann_url] = {
             "title": ent.get("title", ""),
             "url": ann_url,
@@ -273,6 +286,7 @@ def scrape_ccgp(
             "not_selected_reason": "pending",
         }
 
+        # 时间过滤：对于列表页模式，剔除超过时间窗口的数据
         pub_dt = parse_pub_datetime(ent.get("pub_raw", ""))
         if pub_dt and pub_dt < cutoff and not use_search_prefilter:
             _set_trace_result(filter_trace_records, ann_url, False, "older than DAYS window")
@@ -281,6 +295,7 @@ def scrape_ccgp(
 
         seen_urls.add(ann_url)
 
+        # 抓取详情网页，休眠控制防BAN
         try:
             time.sleep(random.uniform(*sleep_range))
             detail_html = http_get(ann_url, session, timeout=REQUEST_TIMEOUT_SEC)
@@ -290,6 +305,7 @@ def scrape_ccgp(
             _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
             continue
 
+        # 解析详情正文、项目名称等字段
         detail = parse_detail_page(detail_html, page_url=ann_url)
         combined = " ".join(
             [
@@ -302,11 +318,14 @@ def scrape_ccgp(
         get_logger().debug(
             f"filtering the announcement: ent.title={ent.get('title', '')} url={ann_url}"
         )
+        
+        # 第三步：关键过滤 （1）关键字精确过滤
         if not keyword_hit(combined, keywords):
             _set_trace_result(filter_trace_records, ann_url, False, "round1 keyword filter not matched")
             _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
             continue
 
+        # 第三步：关键过滤 （2）大模型进行深度语义过滤
         try:
             second_filter = llm_second_filter_by_combined(
                 combined_text=combined,
@@ -329,8 +348,10 @@ def scrape_ccgp(
         except Exception as e:
             get_logger().warning(f"llm second filter failed, fallback keep: {ann_url} -> {e}")
 
+        # 通过所有验证，标记选定
         _set_trace_result(filter_trace_records, ann_url, True, "")
 
+        # 完善从列表中获取不到的省市信息
         province = ent.get("region", "") or ""
         prov, city = guess_location(detail.get("location_text", ""))
         if not province:
@@ -339,6 +360,7 @@ def scrape_ccgp(
         requirement_brief = ""
         requirement_desc = ""
 
+        # 第四步：若开启，下载附件并提取文本以供需求信息生成
         if ENABLE_READ_ATTACHMENTS:
             attachments = detail.get("attachments", []) or []
             att_texts = []
@@ -353,6 +375,7 @@ def scrape_ccgp(
                 if not a_url:
                     continue
 
+                # 通过黑名单判断是否跳过该附件（如非招投标文件）
                 if _should_skip_attachment(a_url, a_name):
                     get_logger().warning(
                         f"skip attachment by blocklist: name={a_name} url={a_url}"
@@ -397,6 +420,7 @@ def scrape_ccgp(
                     failed_attachment_urls.add(a_url)
                     get_logger().warning(f"download attachment failed: {a_name} -> {e}")
 
+            # 第五步：利用大语言模型提取关键业务需求
             if ENABLE_LLM_REQUIREMENTS:
                 meta = {
                     "title": ent.get("title", ""),
@@ -414,6 +438,7 @@ def scrape_ccgp(
                 except Exception as e:
                     get_logger().warning(f"LLM generate requirements failed: {ann_url} -> {e}")
 
+        # 第六步：保存结构化信息到 results 列表中
         results.append(
             TenderItem(
                 announcement_title=ent.get("title", ""),
