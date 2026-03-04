@@ -2,3 +2,5 @@
 src/ccgp/data/attachments/*
 src/ccgp/data/logs/*
 src/ccgp/data/filter_trace/*
+*.pyc
+.vscode/
