@@ -10,6 +10,7 @@ class TenderItem:
     city: str
 
     project_name: str
+    ai_project_title: str
     requirement_brief: str 
     requirement_desc: str
 

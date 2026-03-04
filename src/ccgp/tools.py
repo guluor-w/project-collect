@@ -133,11 +133,11 @@ def guess_location(addr_text: str) -> Tuple[str, str]:
 
 def write_csv(items: List[TenderItem], out_path: str) -> None:
     cols = [
-        "announcement_title", "announcement_url", "pub_time", "province", "city",
-        "project_name",
-        "requirement_brief", "requirement_desc",
-        "deadline", "company_name", "purchasing_unit_contact_number", "contact_name", "contact_phone",
-        "location_text", "budget",
+        "project_name", "pub_time",
+        "ai_project_title","requirement_brief", "requirement_desc","deadline",
+        "company_name", "contact_name", "contact_phone",
+        "province", "city",
+        "budget","announcement_url"
     ]
     directory = os.path.dirname(out_path)
     if directory and not os.path.exists(directory):

@@ -356,7 +356,7 @@ def scrape_ccgp(
         prov, city = guess_location(detail.get("location_text", ""))
         if not province:
             province = prov
-
+        ai_project_title = ""
         requirement_brief = ""
         requirement_desc = ""
 
@@ -433,6 +433,7 @@ def scrape_ccgp(
                 }
                 try:
                     req = generate_requirements(meta, detail.get("full_text", ""), att_texts)
+                    ai_project_title = req.get("ai_project_title", "")
                     requirement_brief = req.get("requirement_brief", "")
                     requirement_desc = req.get("requirement_desc", "")
                 except Exception as e:
@@ -447,6 +448,7 @@ def scrape_ccgp(
                 province=province,
                 city=city,
                 project_name=detail.get("project_name", "") or ent.get("title", ""),
+                ai_project_title=ai_project_title,
                 requirement_brief=requirement_brief,
                 requirement_desc=requirement_desc,
                 deadline=detail.get("deadline", ""),

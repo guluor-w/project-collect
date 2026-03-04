@@ -41,8 +41,9 @@ def build_prompt(meta: dict, page_text: str, attachment_texts: list[str]) -> str
 3) 严格输出 JSON 格式，不要输出额外解释、不要带有 markdown 标记。
 4) JSON 字段格式如下:
 {{
-  "requirement_brief": "AI建设目标及总体概述，150字以内",
-  "requirement_desc": "AI项目详情，包括AI相关技术要求、具体业务场景和功能要求、性能指标要求。1000字以内",
+  "ai_project_title": "AI项目标题，高度概括，28字以内",
+  "requirement_brief": "AI项目建设目标及总体概述，150字以内",
+  "requirement_desc": "AI项目详情，包括AI相关技术要求、具体业务场景和功能要求、性能指标要求。1000字以内"
 }}
 """.strip()
 

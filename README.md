@@ -34,7 +34,8 @@ FILTER_EXCLUDE_KEYWORDS = [
 - 详情页结构化解析（项目名、预算、截止时间、采购单位、联系方式、地址等）
 
 - 可选附件下载与文本抽取（支持`pdf/docx/xlsx/txt/zip`）
-- 可选 LLM 生成：
+- 可选 LLM 生成:
+  - `ai_project_title`（AI相关标题）
   - `requirement_brief`（简要需求）
   - `requirement_desc`（详细需求）
 
@@ -131,6 +132,7 @@ pip install openai PyPDF2 python-docx openpyxl
 - `province`  省
 - `city`  市
 - `project_name`  项目名称
+- `ai_project_title` AI相关标题
 - `requirement_brief`  项目简介
 - `requirement_desc`  项目描述
 - `deadline`  截止时间
