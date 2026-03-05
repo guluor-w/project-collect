@@ -22,7 +22,7 @@ def _build_desc_prompt(meta: dict, page_text: str, attachment_texts: list[str]) 
     page_block = clip(page_text, 12000)
 
     return f"""
-你是政府采购/招投标领域的AI与信息化需求分析专家。请基于网页正文和附件内容，深入提取总结该项目中【与人工智能应用相关的核心信息】，包括涉及的技术要求、功能要求、性能要求等。
+你是政府采购/招投标领域的AI与信息化需求分析专家。请基于网页正文和附件内容，深入提取总结该项目中与人工智能应用相关的需求信息。
 
 [项目信息]
 - 项目名称: {meta.get("project_name", "")}
