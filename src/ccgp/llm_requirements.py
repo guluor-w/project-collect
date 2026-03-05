@@ -35,41 +35,38 @@ def _build_desc_prompt(meta: dict, page_text: str, attachment_texts: list[str]) 
 {att_block if att_block.strip() else "(无可用附件文本)"}
 
 输出内容要求:
-1) 输出内容尽可能详细。严格按照输入信息生成，不得捏造信息。
+1) 严格按照输入信息生成，不得捏造信息。
 2) 重点关注人工智能能力建设以及落地应用场景等行业应用内容。
-3) 需要输出包括AI相关技术、功能、具体业务场景、性能指标等方面。如不存在相应方面内容，直接跳过不输出，不要输出“无相关要求”或者类似表述。
-4) 不要输出预算、资质、供应商资格等与AI技术要求无关的内容。
-5) 如果输入内容不涉及任何人工智能相关的实质性需求，可以直接输出“无相关要求”。
+3) 希望需要输出内容尽可能详细全面，覆盖AI相关技术、功能、具体业务场景、性能指标等方面内容。但是如果不存在某方面内容，直接跳过该方向，不要使用“无相关要求”或者类似表述。
+4) 不要输出预算、工期、资质、供应商资格等与AI技术要求无关的内容。
+5) 如果检查输入内容全文，发现不涉及任何人工智能相关的实质性需求，直接输出“无相关要求”。
 
 输出格式要求：
-1) 严格输出 JSON 格式，不要输出额外解释、不要带有 markdown 标记。
-2) 1000字以内。
-3) JSON 字段格式如下:
-{{
-  "requirement_desc": "AI项目详情"
-}}
+1) 直接输出纯文本段落。
+2) 不要使用 JSON 格式，不要使用 markdown 标记。
+3) 1000字以内。
 """.strip()
 
 def _build_summary_prompt(project_name: str, requirement_desc: str) -> str:
     return f"""
-你是政府采购/招投标领域的AI与信息化需求分析专家。请根据以下项目名称和项目详情（requirement_desc），生成项目标题和简要概述。
+你是采购/招投标领域的AI与信息化需求分析专家。请根据以下项目名称和项目详情，生成项目标题和简要概述。
 
 [项目名称]
 {project_name}
 
-[项目详情 (requirement_desc)]
+[项目详情]
 {requirement_desc}
 
 输出内容要求:
 1) ai_project_title: AI项目标题，高度概括AI需求相关内容，不需要出现项目期数等信息，28字以内。
-2) requirement_brief: AI项目建设目标及总体概述，150字以内。
+2) requirement_brief: AI项目需求的建设目标及总体概述，150字以内。
 
 输出格式要求：
 1) 严格输出 JSON 格式，不要输出额外解释、不要带有 markdown 标记。
 2) JSON 字段格式如下:
 {{
   "ai_project_title": "AI项目标题",
-  "requirement_brief": "AI项目建设目标及总体概述"
+  "requirement_brief": "AI项目需求的建设目标及总体概述"
 }}
 """.strip()
 
@@ -98,12 +95,7 @@ def generate_requirements(meta: dict, page_text: str, attachment_texts: list[str
     txt_desc = (resp_desc.choices[0].message.content or "").strip()
     get_logger().debug(f"LLM desc response:\n{txt_desc}\n---")
     
-    try:
-        desc_data = _safe_json_loads(txt_desc)
-        requirement_desc = desc_data.get("requirement_desc", "无相关要求")
-    except Exception as e:
-        get_logger().error(f"Failed to parse desc JSON: {e}")
-        requirement_desc = "无相关要求"
+    requirement_desc = txt_desc
 
     if "无相关要求" in requirement_desc:
         return {
