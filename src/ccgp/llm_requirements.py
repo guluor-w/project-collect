@@ -38,7 +38,7 @@ def _build_desc_prompt(meta: dict, page_text: str, attachment_texts: list[str]) 
 1) 严格按照输入信息生成，不得捏造信息。
 2) 重点关注人工智能能力建设以及落地应用场景等行业应用内容。
 3) 希望需要输出内容尽可能详细全面，覆盖AI相关技术、功能、具体业务场景、性能指标等方面内容。但是如果不存在某方面内容，直接跳过该方向，不要使用“无相关要求”或者类似表述。
-4) 不要输出预算、工期、资质、供应商资格等与AI技术要求无关的内容。
+4) 不要输出预算、工期、供应商资格、资质等方面的与AI技术和场景要求无关的内容。
 5) 如果检查输入内容全文，发现不涉及任何人工智能相关的实质性需求，直接输出“无相关要求”。
 
 输出格式要求：
@@ -88,9 +88,8 @@ def generate_requirements(meta: dict, page_text: str, attachment_texts: list[str
     # 1. Generate Requirement Description
     desc_prompt = _build_desc_prompt(meta, page_text, attachment_texts)
     resp_desc = client.chat.completions.create(
-        model="moonshot-v1-32k",
-        messages=[{"role": "user", "content": desc_prompt}],
-        temperature=0.2,
+        model="kimi-k2-thinking",
+        messages=[{"role": "user", "content": desc_prompt}]
     )
     txt_desc = (resp_desc.choices[0].message.content or "").strip()
     get_logger().debug(f"LLM desc response:\n{txt_desc}\n---")
