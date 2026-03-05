@@ -35,11 +35,11 @@ def _build_desc_prompt(meta: dict, page_text: str, attachment_texts: list[str]) 
 {att_block if att_block.strip() else "(无可用附件文本)"}
 
 输出内容要求:
-1) 尽可能详细。严格按照输入信息生成，不得杜撰。
+1) 输出内容尽可能详细。严格按照输入信息生成，不得捏造信息。
 2) 重点关注人工智能能力建设以及落地应用场景等行业应用内容。
 3) 需要输出包括AI相关技术、功能、具体业务场景、性能指标等方面。如不存在相应方面内容，直接跳过不输出，不要输出“无相关要求”或者类似表述。
 4) 不要输出预算、资质、供应商资格等与AI技术要求无关的内容。
-5) 如果整个文档不涉及任何人工智能相关的实质性需求，可以直接输出“无相关要求”。
+5) 如果输入内容不涉及任何人工智能相关的实质性需求，可以直接输出“无相关要求”。
 
 输出格式要求：
 1) 严格输出 JSON 格式，不要输出额外解释、不要带有 markdown 标记。
@@ -61,7 +61,7 @@ def _build_summary_prompt(project_name: str, requirement_desc: str) -> str:
 {requirement_desc}
 
 输出内容要求:
-1) ai_project_title: AI项目标题，高度概括，28字以内。
+1) ai_project_title: AI项目标题，高度概括AI需求相关内容，不需要出现项目期数等信息，28字以内。
 2) requirement_brief: AI项目建设目标及总体概述，150字以内。
 
 输出格式要求：
