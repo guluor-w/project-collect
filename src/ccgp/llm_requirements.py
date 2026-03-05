@@ -12,7 +12,7 @@ BASE_URL = os.getenv("MOONSHOT_BASE_URL", "https://api.moonshot.cn/v1").strip()
 client = OpenAI(api_key=MOONSHOT_API_KEY, base_url=BASE_URL) if MOONSHOT_API_KEY else None
 
 
-def build_prompt(meta: dict, page_text: str, attachment_texts: list[str]) -> str:
+def _build_desc_prompt(meta: dict, page_text: str, attachment_texts: list[str]) -> str:
     def clip(s: str, n: int) -> str:
         return (s or "")[:n]
 
@@ -25,7 +25,6 @@ def build_prompt(meta: dict, page_text: str, attachment_texts: list[str]) -> str
 你是政府采购/招投标领域的AI与信息化需求分析专家。请基于网页正文和附件内容，深入提取总结该项目中【与人工智能应用相关的核心信息】，包括涉及的技术要求、功能要求、性能要求等。
 
 [项目信息]
-- 公告标题: {meta.get("title", "")}
 - 项目名称: {meta.get("project_name", "")}
 - 采购人: {meta.get("company_name", "")}
 
@@ -35,15 +34,42 @@ def build_prompt(meta: dict, page_text: str, attachment_texts: list[str]) -> str
 [附件内容]
 {att_block if att_block.strip() else "(无可用附件文本)"}
 
-输出要求:
-1) 仅根据输入信息生成，不得杜撰。重点关注人工智能能力建设以及落地应用场景等行业应用内容。
-2) 如果整个文档不涉及任何人工智能相关的实质性需求，可以在各个字段中填写“无相关要求”。
-3) 严格输出 JSON 格式，不要输出额外解释、不要带有 markdown 标记。
-4) JSON 字段格式如下:
+输出内容要求:
+1) 尽可能详细。严格按照输入信息生成，不得杜撰。
+2) 重点关注人工智能能力建设以及落地应用场景等行业应用内容。
+3) 需要输出包括AI相关技术、功能、具体业务场景、性能指标等方面。如不存在相应方面内容，直接跳过不输出，不要输出“无相关要求”或者类似表述。
+4) 不要输出预算、资质、供应商资格等与AI技术要求无关的内容。
+5) 如果整个文档不涉及任何人工智能相关的实质性需求，可以直接输出“无相关要求”。
+
+输出格式要求：
+1) 严格输出 JSON 格式，不要输出额外解释、不要带有 markdown 标记。
+2) 1000字以内。
+3) JSON 字段格式如下:
 {{
-  "ai_project_title": "AI项目标题，高度概括，28字以内",
-  "requirement_brief": "AI项目建设目标及总体概述，150字以内",
-  "requirement_desc": "AI项目详情，包括AI相关技术要求、具体业务场景和功能要求、性能指标要求。1000字以内"
+  "requirement_desc": "AI项目详情"
+}}
+""".strip()
+
+def _build_summary_prompt(project_name: str, requirement_desc: str) -> str:
+    return f"""
+你是政府采购/招投标领域的AI与信息化需求分析专家。请根据以下项目名称和项目详情（requirement_desc），生成项目标题和简要概述。
+
+[项目名称]
+{project_name}
+
+[项目详情 (requirement_desc)]
+{requirement_desc}
+
+输出内容要求:
+1) ai_project_title: AI项目标题，高度概括，28字以内。
+2) requirement_brief: AI项目建设目标及总体概述，150字以内。
+
+输出格式要求：
+1) 严格输出 JSON 格式，不要输出额外解释、不要带有 markdown 标记。
+2) JSON 字段格式如下:
+{{
+  "ai_project_title": "AI项目标题",
+  "requirement_brief": "AI项目建设目标及总体概述"
 }}
 """.strip()
 
@@ -62,16 +88,53 @@ def generate_requirements(meta: dict, page_text: str, attachment_texts: list[str
     if client is None:
         raise RuntimeError("MOONSHOT_API_KEY is not set. Configure it via environment variable or GitHub Secret.")
 
-    prompt = build_prompt(meta, page_text, attachment_texts)
-
-    resp = client.chat.completions.create(
+    # 1. Generate Requirement Description
+    desc_prompt = _build_desc_prompt(meta, page_text, attachment_texts)
+    resp_desc = client.chat.completions.create(
         model="moonshot-v1-32k",
-        messages=[{"role": "user", "content": prompt}],
+        messages=[{"role": "user", "content": desc_prompt}],
         temperature=0.2,
     )
-    txt = (resp.choices[0].message.content or "").strip()
-    get_logger().debug(f"LLM response:\n{txt}\n---")
-    return _safe_json_loads(txt)
+    txt_desc = (resp_desc.choices[0].message.content or "").strip()
+    get_logger().debug(f"LLM desc response:\n{txt_desc}\n---")
+    
+    try:
+        desc_data = _safe_json_loads(txt_desc)
+        requirement_desc = desc_data.get("requirement_desc", "无相关要求")
+    except Exception as e:
+        get_logger().error(f"Failed to parse desc JSON: {e}")
+        requirement_desc = "无相关要求"
+
+    if "无相关要求" in requirement_desc:
+        return {
+            "ai_project_title": "无相关要求",
+            "requirement_brief": "无相关要求",
+            "requirement_desc": "无相关要求"
+        }
+
+    # 2. Generate Title and Brief
+    project_name = meta.get("project_name", "") or meta.get("title", "")
+    summary_prompt = _build_summary_prompt(project_name, requirement_desc)
+    
+    resp_summary = client.chat.completions.create(
+        model="moonshot-v1-8k",
+        messages=[{"role": "user", "content": summary_prompt}],
+        temperature=0.2,
+    )
+    txt_summary = (resp_summary.choices[0].message.content or "").strip()
+    get_logger().debug(f"LLM summary response:\n{txt_summary}\n---")
+    
+    try:
+        summary_data = _safe_json_loads(txt_summary)
+    except Exception as e:
+        get_logger().error(f"Failed to parse summary JSON: {e}")
+        summary_data = {}
+
+    return {
+        "ai_project_title": summary_data.get("ai_project_title", ""),
+        "requirement_brief": summary_data.get("requirement_brief", ""),
+        "requirement_desc": requirement_desc
+    }
 
 
 def llm_second_filter_by_combined(combined_text: str, title: str = "") -> dict:
@@ -88,12 +151,12 @@ def llm_second_filter_by_combined(combined_text: str, title: str = "") -> dict:
 
     text = (combined_text or "")[:18000]
     prompt = f"""
-你是政府采购需求筛选员。请判断下面公告是否“应保留为智能化业务相关需求”。
+你是政府采购需求筛选员。请判断下面公告是否为“人工智能业务/产品”或者“智能化业务/产品”相关需求。
 
-规则：
+判断规则：
 1) 若“智能/智慧/AI”等只是宣传词、平台口号、局部修饰（如仅修饰开标系统、客服、楼宇名称、物业/平台名称），应判定为不保留。
 2) 只有当智能化内容构成采购主体目标、核心建设内容或主要交付物时，才判定保留。
-3) 不要因为出现关键词就保留，要看是否是项目主体。
+3) 不要因为出现关键词就保留，要判断“人工智能业务/产品”或者“智能化业务/产品”是否为项目主体。
 
 标题：{title}
 文本：
@@ -125,7 +188,7 @@ if __name__ == "__main__":
         "url": "https://www.ccgp.gov.cn/xxgg/dfgg/gkzb/202601/t20260128_xxxxx.htm",
         "project_name": "某实验小学教学仪器采购",
         "budget": "106.2万元",
-        "deadline": "2026-02-27 10:00",
+        "deadline": "2026-02-27",
         "company_name": "某采购单位",
         "contact_phone": "18120608656",
     }
