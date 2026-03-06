@@ -16,11 +16,11 @@ jobs:
       CCGP_ENABLE_ATTACHMENTS: "true"
       CCGP_ENABLE_LLM: "true"
       MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
-      CCGP_HTTP_TIMEOUT: "15"
-      CCGP_DOWNLOAD_TIMEOUT: "25"
+      CCGP_HTTP_TIMEOUT: "30"
+      CCGP_DOWNLOAD_TIMEOUT: "45"
       CCGP_MAX_ATTACHMENTS: "2"
-      CCGP_SLEEP_MIN: "0.2"
-      CCGP_SLEEP_MAX: "0.8"
+      CCGP_SLEEP_MIN: "1.0"
+      CCGP_SLEEP_MAX: "3.0"
       CCGP_SKIP_REPEAT_FAILED_ATTACHMENTS: "true"
     steps:
       - uses: actions/checkout@v4
@@ -46,6 +46,7 @@ jobs:
             echo "No CSV changes to commit."
           else
             git commit -m "chore: update tender_items.csv [skip ci]"
+            git pull --rebase origin main
             git push
           fi
 

@@ -1,6 +1,7 @@
 import os
 import csv
 import re
+import time
 from dataclasses import asdict
 from datetime import datetime
 from typing import List, Optional, Tuple
@@ -23,11 +24,25 @@ from ccgp.model import TenderItem
 from utils.mylogger import get_logger
 
 #------------------------------通用工具函数-----------------------------------#
-def http_get(url: str, session: requests.Session, timeout: int = REQUEST_TIMEOUT_SEC) -> str:
-    resp = session.get(url, timeout=timeout)
-    resp.raise_for_status()
-    resp.encoding = resp.apparent_encoding or "utf-8"
-    return resp.text
+def http_get(url: str, session: requests.Session, timeout: int = REQUEST_TIMEOUT_SEC, max_retries: int = 3) -> str:
+    last_exc = None
+    
+    for i in range(max_retries):
+        try:
+            resp = session.get(url, timeout=timeout)
+            resp.raise_for_status()
+            resp.encoding = resp.apparent_encoding or "utf-8"
+            return resp.text
+        except requests.RequestException as e:
+            last_exc = e
+            if i < max_retries - 1:
+                sleep_sec = (i + 1) * 2
+                get_logger().warning(f"http_get failed: {url} (attempt {i+1}/{max_retries}) -> {e}. Retry in {sleep_sec}s...")
+                time.sleep(sleep_sec)
+
+    if last_exc:
+        raise last_exc
+    raise RuntimeError(f"http_get failed after {max_retries} retries without exception")
 
 def norm_list_page_urls(start_url: str, max_pages: int = 30) -> List[str]:
     """
