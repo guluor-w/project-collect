@@ -171,6 +171,11 @@ def _collect_entries_from_search(
             entries = parse_search_page(html, base_url="https://search.ccgp.gov.cn/")
             have_find_new = False
 
+            if not entries:
+                if page_index == 1:
+                    get_logger().debug(f"search empty: kw={kw}")
+                break
+
             for ent in entries:
                 ann_url = (ent.get("url") or "").strip()
                 if not ann_url:
