@@ -321,7 +321,7 @@ def scrape_ccgp(
         
         # 第三步：关键过滤 （1）关键字精确过滤
         if not keyword_hit(combined, keywords):
-            _set_trace_result(filter_trace_records, ann_url, False, "round1 keyword filter not matched")
+            _set_trace_result(filter_trace_records, ann_url, False, "第一轮，基于关键词的过滤发现不匹配")
             _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
             continue
 
@@ -337,16 +337,16 @@ def scrape_ccgp(
                     filter_trace_records,
                     ann_url,
                     False,
-                    f"round2 llm rejected: {reason}",
+                    f"使用大模型基于语义分析的被拒绝原因: {reason}",
                 )
-                get_logger().warning(f"llm second filter rejected: {ann_url} -> {reason}")
+                get_logger().warning(f"第二轮，使用大模型基于语义的过滤被拒绝: {ann_url} -> {reason}")
                 _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
                 continue
             get_logger().debug(
-                f"llm second filter passed: {ann_url} -> {second_filter.get('reason', '')}"
+                f"通过大模型基于语义的过滤: {ann_url} -> {second_filter.get('reason', '')}"
             )
         except Exception as e:
-            get_logger().warning(f"llm second filter failed, fallback keep: {ann_url} -> {e}")
+            get_logger().warning(f"大模型第二轮过滤失败，回退保留: {ann_url} -> {e}")
 
         # 通过所有验证，标记选定
         _set_trace_result(filter_trace_records, ann_url, True, "")
