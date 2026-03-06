@@ -137,7 +137,7 @@ def write_csv(items: List[TenderItem], out_path: str) -> None:
         "ai_project_title","requirement_brief", "requirement_desc","deadline",
         "company_name", "contact_name", "contact_phone",
         "province", "city",
-        "budget","announcement_url"
+        "budget","announcement_url","location_text"
     ]
     directory = os.path.dirname(out_path)
     if directory and not os.path.exists(directory):
