@@ -169,10 +169,7 @@ def _collect_entries_from_search(
                     break
 
             entries = parse_search_page(html, base_url="https://search.ccgp.gov.cn/")
-            if not entries:
-                if page_index == 1:
-                    get_logger().debug(f"search empty: kw={kw}")
-                break
+            have_find_new = False
 
             for ent in entries:
                 ann_url = (ent.get("url") or "").strip()
@@ -182,6 +179,14 @@ def _collect_entries_from_search(
                     ent["search_keyword"] = kw
                     dedup[ann_url] = ent
                     keyword_count += 1
+                    have_find_new = True
+
+            if not have_find_new:
+                if page_index == 1:
+                    get_logger().debug(f"search empty: kw={kw}")
+                else:
+                    get_logger().debug(f"search no new entries: kw={kw} page={page_index}")
+                break
 
             # 每页查找之间随机短暂休眠，避免过快访问引发封禁；每10页长休眠一次。
             time.sleep(random.uniform(5, 8))
