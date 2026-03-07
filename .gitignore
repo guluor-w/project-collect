@@ -1,6 +1,6 @@
 ﻿src/ccgp/data/attachments/*
 src/ccgp/data/logs/*
 src/ccgp/data/filter_trace/*
-__pycache__/
-*.py[cod]
-.vscode/
+src/ccgp/__pycache__/*
+src/utils/__pycache__/*
+src/__pycache__/*
