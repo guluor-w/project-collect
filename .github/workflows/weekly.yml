@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 360
     env:
+      TZ: 'Asia/Shanghai'
       CCGP_ENABLE_ATTACHMENTS: "true"
       CCGP_ENABLE_LLM: "true"
       MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
