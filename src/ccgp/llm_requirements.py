@@ -151,7 +151,7 @@ def get_llm_service() -> LLMService:
 # Prompt 构建辅助函数
 # -----------------------------------------------------------------------------
 
-def _build_desc_prompt(meta: dict, page_text: str, attachment_texts: list[str]) -> str:
+def _build_desc_prompt(meta: dict, page_text: str, attachment_texts: list[str]) -> Tuple[str, str]:
     def clip(s: str, n: int) -> str:
         return (s or "")[:n]
 
@@ -163,18 +163,8 @@ def _build_desc_prompt(meta: dict, page_text: str, attachment_texts: list[str]) 
     # 网页正文截取
     page_block = clip(page_text, 40000)
 
-    return f"""
-你是政府采购/招投标领域的AI与信息化需求分析专家。请基于网页正文和附件内容，深入提取总结该项目中与人工智能应用相关的需求信息。
-
-[项目信息]
-- 项目名称: {meta.get("project_name", "")}
-- 采购人: {meta.get("company_name", "")}
-
-[网页正文]
-{page_block}
-
-[附件内容]
-{att_block if att_block.strip() else "(无可用附件文本)"}
+    system_prompt = """
+你是政府采购/招投标领域的AI与信息化需求分析专家。请基于输入的项目资料，深入提取总结该项目中与人工智能应用相关的需求信息。
 
 一、强制规则（必须遵守）
 1) 输出分两部分：先写“背景概述”（可选），再写“AI需求点”。两部分都必须来自原文明确表述，不得推测、补全、联想行业惯例。
@@ -204,15 +194,23 @@ C. 明确提出模型训练/微调/评测/数据标注/模型管理/推理部署
 - 除开头的【背景概述】外，需求条目中仅保留“需求”，不复述背景介绍、现状描述、项目意义；也不要写结论性总结。
 """.strip()
 
-def _build_summary_prompt(project_name: str, requirement_desc: str) -> str:
-    return f"""
-你是采购/招投标领域的AI与信息化需求分析专家。请根据以下项目名称和项目详情，生成项目标题和简要概述。
+    user_prompt = f"""
+[项目信息]
+- 项目名称: {meta.get("project_name", "")}
+- 采购人: {meta.get("company_name", "")}
 
-[项目名称]
-{project_name}
+[网页正文]
+{page_block}
 
-[项目详情]
-{requirement_desc}
+[附件内容]
+{att_block if att_block.strip() else "(无可用附件文本)"}
+""".strip()
+
+    return system_prompt, user_prompt
+
+def _build_summary_prompt(project_name: str, requirement_desc: str) -> Tuple[str, str]:
+    system_prompt = """
+你是采购/招投标领域的AI与信息化需求分析专家。请根据提供的项目信息，生成项目标题和简要概述。
 
 输出内容要求:
 1) ai_project_title: AI项目标题，高度概括AI需求相关内容，不需要出现项目期数等信息，28字以内。
@@ -221,11 +219,21 @@ def _build_summary_prompt(project_name: str, requirement_desc: str) -> str:
 输出格式要求：
 1) 严格输出 JSON 格式，不要输出额外解释、不要带有 markdown 标记。
 2) JSON 字段格式如下:
-{{
+{
   "ai_project_title": "AI项目标题",
   "requirement_brief": "AI项目需求的建设目标及总体概述"
-}}
+}
 """.strip()
+
+    user_prompt = f"""
+[项目名称]
+{project_name}
+
+[项目详情]
+{requirement_desc}
+""".strip()
+
+    return system_prompt, user_prompt
 
 
 def _safe_json_loads(text: str) -> dict:
@@ -255,11 +263,14 @@ def generate_requirements(meta: dict, page_text: str, attachment_texts: list[str
     service = get_llm_service()
 
     # 1. Generate Requirement Description
-    desc_prompt = _build_desc_prompt(meta, page_text, attachment_texts)
+    sys_prompt, user_prompt = _build_desc_prompt(meta, page_text, attachment_texts)
     
-    # 任务类型 "desc" 通常通过长文本模型处理 (如 moonshot-v1-128k, volc-endpoint-long)
+    # 任务类型 "desc" 通常通过带推理能力的长文本模型处理
     txt_desc = service.chat_completion(
-        messages=[{"role": "user", "content": desc_prompt}],
+        messages=[
+            {"role": "system", "content": sys_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
         task_type="desc"
     )
 
@@ -284,11 +295,14 @@ def generate_requirements(meta: dict, page_text: str, attachment_texts: list[str
 
     # 2. Generate Title and Brief
     project_name = meta.get("project_name", "") or meta.get("title", "")
-    summary_prompt = _build_summary_prompt(project_name, requirement_desc)
+    sys_sum_prompt, user_sum_prompt = _build_summary_prompt(project_name, requirement_desc)
     
     # 任务类型 "summary" 可用短文本模型 (如 moonshot-v1-8k, volc-endpoint-short)
     txt_summary = service.chat_completion(
-        messages=[{"role": "user", "content": summary_prompt}],
+        messages=[
+            {"role": "system", "content": sys_sum_prompt},
+            {"role": "user", "content": user_sum_prompt}
+        ],
         task_type="summary"
     )
 
@@ -318,28 +332,34 @@ def llm_second_filter_by_combined(combined_text: str, title: str = "") -> dict:
         return {"keep": True, "reason": "skip: 没有配置大模型KEY"}
 
     text = (combined_text or "")[:18000] # 截断，防止过长
-    prompt = f"""
-你是政府采购需求筛选员。请判断下面公告是否为“人工智能业务/产品”或者“智能化业务/产品”相关需求。
+    
+    system_prompt = """
+你是政府采购需求筛选员。请判断提供的公告内容是否为“人工智能业务/产品”或者“智能化业务/产品”相关需求。
 
 判断规则：
 1) 若“智能/智慧/AI”等只是宣传词、平台口号、局部修饰（如仅修饰开标系统、客服、楼宇名称、物业/平台名称），应判定为不保留。
 2) 只有当智能化内容构成采购主体目标、核心建设内容或主要交付物时，才判定保留。
 3) 不要因为出现关键词就保留，要判断“人工智能业务/产品”或者“智能化业务/产品”是否为项目主体。
 
+仅输出JSON，不要输出其它内容：
+{
+  "keep": true,
+  "reason": "一句话说明判断依据(25字以内)"
+}
+""".strip()
+
+    user_prompt = f"""
 标题：{title}
 文本：
 {text}
-
-仅输出JSON，不要输出其它内容：
-{{
-  "keep": true,
-  "reason": "一句话说明判断依据(25字以内)"
-}}
 """.strip()
 
     # 任务类型 "filter"
     txt = service.chat_completion(
-        messages=[{"role": "user", "content": prompt}],
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
         task_type="filter"
     )
     
