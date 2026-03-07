@@ -72,21 +72,22 @@ def _log_keyword_stats(stats: dict) -> None:
         return
 
     logger = get_logger()
-    logger.info("=" * 90)
-    logger.info(f"{'关键词':<20} | {'发现':<6} | {'详情OK':<6} | {'关键词通过':<10} | {'LLM通过':<8} | {'入库':<6}")
-    logger.info("-" * 90)
+    logger.info("=" * 105)
+    logger.info(f"{'关键词':<20} | {'发现':<6} | {'详情OK':<6} | {'关键词通过':<10} | {'LLM通过':<8} | {'需求明确':<6} | {'入库':<6}")
+    logger.info("-" * 105)
 
     for kw, counts in stats.items():
         found = counts.get("found", 0)
         detail = counts.get("detail_ok", 0)
         kw_pass = counts.get("kw_filter_pass", 0)
         llm_pass = counts.get("llm_filter_pass", 0)
+        req_found = counts.get("req_found", 0)
         saved = counts.get("saved", 0)
 
         logger.info(
-            f"{kw:<20} | {found:<8} | {detail:<8} | {kw_pass:<15} | {llm_pass:<10} | {saved:<6}"
+            f"{kw:<20} | {found:<8} | {detail:<8} | {kw_pass:<15} | {llm_pass:<10} | {req_found:<8} | {saved:<6}"
         )
-    logger.info("=" * 90)
+    logger.info("=" * 105)
 
 
 def _set_trace_result(records: dict, ann_url: str, is_selected: bool, reason: str) -> None:
@@ -305,6 +306,7 @@ def scrape_ccgp(
                 "detail_ok": 0,
                 "kw_filter_pass": 0,
                 "llm_filter_pass": 0,
+                "req_found": 0,
                 "saved": 0,
             }
         keyword_stats[kw]["found"] += 1
@@ -497,6 +499,10 @@ def scrape_ccgp(
                     req = generate_requirements(meta, detail.get("full_text", ""), att_texts)
                     ai_project_title = req.get("ai_project_title", "")
                     requirement_brief = req.get("requirement_brief", "")
+                    
+                    if kw in keyword_stats and "无相关要求" not in requirement_desc:
+                        keyword_stats[kw]["req_found"] += 1
+
                     requirement_desc = req.get("requirement_desc", "")
                 except Exception as e:
                     get_logger().warning(f"LLM 生成需求失败: {ann_url} -> {e}")
