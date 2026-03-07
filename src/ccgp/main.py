@@ -9,6 +9,8 @@ from hashlib import sha1
 from typing import List, Optional, Tuple
 from urllib.parse import urlencode, urlparse
 
+from tqdm import tqdm
+
 from ccgp.config import (
     ATTACHMENT_BLOCKLIST_HOSTS,
     ATTACHMENT_BLOCKLIST_KEYWORDS,
@@ -120,7 +122,8 @@ def _collect_entries_from_search(
     )
 
     stop_all_search = False
-    for kw in norm_keywords:
+    # 使用 tqdm 显示关键词搜索进度
+    for kw in tqdm(norm_keywords, desc="关键词搜索进度", unit="kw"):
         # 已经被封禁了，就不再继续后续关键词的查找。 
         if stop_all_search: 
             break
@@ -278,8 +281,8 @@ def scrape_ccgp(
     filter_trace_records: dict = {}
     get_logger().debug(f"过滤追踪文件: {filter_trace_file}")
 
-    # 第二步：逐个详情页抓取与处理流程
-    for ent in entries:
+    # 使用 tqdm 显示详情页处理进度
+    for ent in tqdm(entries, desc="详情页处理进度", unit="条"):
         ann_url = (ent.get("url") or "").strip()
         if not ann_url:
             continue

@@ -4,3 +4,5 @@ openpyxl==3.1.5
 PyPDF2==3.0.1
 python_docx==1.2.0
 Requests==2.32.5
+tqdm
+
