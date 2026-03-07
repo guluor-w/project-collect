@@ -17,6 +17,8 @@ jobs:
       CCGP_ENABLE_ATTACHMENTS: "true"
       CCGP_ENABLE_LLM: "true"
       MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
+      VOLC_API_KEY: ${{ secrets.VOLC_API_KEY }}
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
       CCGP_HTTP_TIMEOUT: "30"
       CCGP_DOWNLOAD_TIMEOUT: "45"
       CCGP_MAX_ATTACHMENTS: "2"

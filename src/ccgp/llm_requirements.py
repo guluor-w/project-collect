@@ -1,25 +1,167 @@
 ﻿import json
 import os
 import re
+from typing import List, Dict, Optional, Tuple, Any
 
 from openai import OpenAI
-
 from utils.mylogger import get_logger
 
-MOONSHOT_API_KEY = os.getenv("MOONSHOT_API_KEY", "").strip()
-BASE_URL = os.getenv("MOONSHOT_BASE_URL", "https://api.moonshot.cn/v1").strip()
+# -----------------------------------------------------------------------------
+# 配置与模型管理
+# -----------------------------------------------------------------------------
 
-client = OpenAI(api_key=MOONSHOT_API_KEY, base_url=BASE_URL) if MOONSHOT_API_KEY else None
+class LLMProvider:
+    """定义 LLM 服务商配置"""
+    def __init__(self, name: str, api_key: str, base_url: str, models: Dict[str, str]):
+        self.name = name
+        self.api_key = api_key
+        self.base_url = base_url
+        self.models = models
 
+    def get_model(self, task_type: str) -> str:
+        """根据任务类型获取模型名称，如果未找到，则尝试获取 default，最后返回空"""
+        return self.models.get(task_type, self.models.get("default", ""))
+
+    def create_client(self) -> Optional[OpenAI]:
+        if not self.api_key:
+            return None
+        return OpenAI(api_key=self.api_key, base_url=self.base_url)
+
+
+def _load_llm_providers() -> List[LLMProvider]:
+    """
+    加载所有可用的 LLM 服务配置。
+    优先级顺序即为列表顺序。
+    """
+    providers = []
+
+    # 1. Moonshot AI (Kimi) - 优先使用
+    mk = os.getenv("MOONSHOT_API_KEY", "").strip()
+    if mk:
+        providers.append(LLMProvider(
+            name="Moonshot",
+            api_key=mk,
+            base_url="https://api.moonshot.cn/v1",
+            models={
+                "desc": "kimi-k2-thinking",
+                "summary": "moonshot-v1-8k",
+                "filter": "moonshot-v1-32k",
+                "default": "moonshot-v1-32k"
+            }
+        ))
+
+    # 2. Volcengine (Doubao/Ark) - 火山引擎
+    vk = os.getenv("VOLC_API_KEY", "").strip()
+    
+    if vk:
+        providers.append(LLMProvider(
+            name="Volcengine",
+            api_key=vk,
+            base_url="https://ark.cn-beijing.volces.com/api/v3", 
+            models={
+                "desc": "doubao-seed-2-0-pro-260215",
+                "summary": "doubao-seed-2-0-lite-260215",
+                "filter": "doubao-seed-2-0-pro-260215",
+                "default": "doubao-seed-2-0-pro-260215"
+            }
+        ))
+
+    # 3. DeepSeek
+    dk = os.getenv("DEEPSEEK_API_KEY", "").strip()
+    if dk:
+        providers.append(LLMProvider(
+            name="DeepSeek",
+            api_key=dk,
+            base_url="https://api.deepseek.com",
+            models={
+                "desc": "deepseek-reasoner",
+                "summary": "deepseek-chat",
+                "filter": "deepseek-reasoner",
+                "default": "deepseek-reasoner"
+            }
+        ))
+
+    return providers
+
+
+class LLMService:
+    """LLM 服务统一封装，支持故障转移"""
+    
+    def __init__(self):
+        self.providers = _load_llm_providers()
+
+    def chat_completion(self, 
+                       messages: List[Dict[str, str]], 
+                       task_type: str = "default") -> str:
+        """
+        执行 Chat Completion，支持自动重试不同的 Provider。
+        返回生成的文本内容，如果全都失败则通过 get_logger 记录并返回空字符串。
+        """
+        if not self.providers:
+            get_logger().error("No LLM providers configured. Please check environment variables (MOONSHOT_API_KEY, VOLC_API_KEY, etc).")
+            return ""
+
+        last_error = None
+
+        for provider in self.providers:
+            model = provider.get_model(task_type)
+            if not model:
+                # 该 provider 不支持此任务类型，跳过
+                continue
+            
+            try:
+                client = provider.create_client()
+                if not client:
+                    continue
+
+                get_logger().debug(f"Calling LLM: Provider={provider.name}, Model={model}, Task={task_type}")
+                
+                resp = client.chat.completions.create(
+                    model=model,
+                    messages=messages
+                    # 使用供应商的默认 temperature 参数
+                )
+                content = (resp.choices[0].message.content or "").strip()
+                if content:
+                    return content
+                else:
+                    get_logger().warning(f"LLM returned empty content. Provider={provider.name}")
+
+            except Exception as e:
+                get_logger().warning(f"LLM call failed with {provider.name}: {e}")
+                last_error = e
+                # 尝试下一个 provider
+                continue
+        
+        get_logger().error(f"All LLM providers failed. Last error: {last_error}")
+        return ""
+
+
+# 全局单例
+_llm_service = None
+
+def get_llm_service() -> LLMService:
+    global _llm_service
+    if _llm_service is None:
+        _llm_service = LLMService()
+    return _llm_service
+
+
+# -----------------------------------------------------------------------------
+# Prompt 构建辅助函数
+# -----------------------------------------------------------------------------
 
 def _build_desc_prompt(meta: dict, page_text: str, attachment_texts: list[str]) -> str:
     def clip(s: str, n: int) -> str:
         return (s or "")[:n]
 
+    # 附件截取策略：总长度控制 + 单个附件控制
+    # 扩大容量以适配长上下文模型 (128k)，总容量控制在 60k-80k 字符也是安全的
     att_block = "\n\n".join(
-        [f"[附件{i + 1}]\n{clip(t, 8000)}" for i, t in enumerate(attachment_texts) if (t or "").strip()]
+        [f"[附件{i + 1}]\n{clip(t, 25000)}" for i, t in enumerate(attachment_texts) if (t or "").strip()]
     )
-    page_block = clip(page_text, 12000)
+    # 网页正文截取
+    page_block = clip(page_text, 40000)
 
     return f"""
 你是政府采购/招投标领域的AI与信息化需求分析专家。请基于网页正文和附件内容，深入提取总结该项目中与人工智能应用相关的需求信息。
@@ -87,27 +229,49 @@ def _build_summary_prompt(project_name: str, requirement_desc: str) -> str:
 
 
 def _safe_json_loads(text: str) -> dict:
+    if not text:
+        return {}
     try:
         return json.loads(text)
     except json.JSONDecodeError:
         m = re.search(r"\{.*\}", text, flags=re.S)
         if not m:
-            raise
-        return json.loads(m.group(0))
+            return {}
+        try:
+            return json.loads(m.group(0))
+        except:
+            return {}
 
+
+# -----------------------------------------------------------------------------
+# 核心业务逻辑
+# -----------------------------------------------------------------------------
 
 def generate_requirements(meta: dict, page_text: str, attachment_texts: list[str]) -> dict:
-    if client is None:
-        raise RuntimeError("MOONSHOT_API_KEY is not set. Configure it via environment variable or GitHub Secret.")
+    """
+    第一阶段：生成需求描述 (desc)
+    第二阶段：生成标题和摘要 (summary)
+    """
+    service = get_llm_service()
 
     # 1. Generate Requirement Description
     desc_prompt = _build_desc_prompt(meta, page_text, attachment_texts)
-    resp_desc = client.chat.completions.create(
-        model="kimi-k2-thinking",
-        messages=[{"role": "user", "content": desc_prompt}]
+    
+    # 任务类型 "desc" 通常通过长文本模型处理 (如 moonshot-v1-128k, volc-endpoint-long)
+    txt_desc = service.chat_completion(
+        messages=[{"role": "user", "content": desc_prompt}],
+        task_type="desc"
     )
-    txt_desc = (resp_desc.choices[0].message.content or "").strip()
-    get_logger().debug(f"LLM desc response:\n{txt_desc}\n---")
+
+    if not txt_desc:
+        # 失败时返回空结构，避免上层逻辑报错
+        return {
+            "ai_project_title": "",
+            "requirement_brief": "",
+            "requirement_desc": "无法调用LLM生成需求，请检查API Key配置。"
+        }
+
+    # get_logger().debug(f"LLM desc response:\n{txt_desc}\n---") # 可按需开启详细日志
     
     requirement_desc = txt_desc
 
@@ -115,26 +279,22 @@ def generate_requirements(meta: dict, page_text: str, attachment_texts: list[str
         return {
             "ai_project_title": "无相关要求",
             "requirement_brief": "无相关要求",
-            "requirement_desc": "无相关要求"
+            "requirement_desc": requirement_desc
         }
 
     # 2. Generate Title and Brief
     project_name = meta.get("project_name", "") or meta.get("title", "")
     summary_prompt = _build_summary_prompt(project_name, requirement_desc)
     
-    resp_summary = client.chat.completions.create(
-        model="moonshot-v1-8k",
+    # 任务类型 "summary" 可用短文本模型 (如 moonshot-v1-8k, volc-endpoint-short)
+    txt_summary = service.chat_completion(
         messages=[{"role": "user", "content": summary_prompt}],
-        temperature=0.2,
+        task_type="summary"
     )
-    txt_summary = (resp_summary.choices[0].message.content or "").strip()
-    get_logger().debug(f"LLM summary response:\n{txt_summary}\n---")
+
+    # get_logger().debug(f"LLM summary response:\n{txt_summary}\n---")
     
-    try:
-        summary_data = _safe_json_loads(txt_summary)
-    except Exception as e:
-        get_logger().error(f"Failed to parse summary JSON: {e}")
-        summary_data = {}
+    summary_data = _safe_json_loads(txt_summary)
 
     return {
         "ai_project_title": summary_data.get("ai_project_title", ""),
@@ -152,10 +312,12 @@ def llm_second_filter_by_combined(combined_text: str, title: str = "") -> dict:
       "reason": str
     }
     """
-    if client is None:
-        return {"keep": True, "reason": "skip second filter: MOONSHOT_API_KEY not set"}
+    service = get_llm_service()
+    # 如果完全没有配置任何 provider，则默认通过，不阻拦
+    if not service.providers:
+        return {"keep": True, "reason": "skip: 没有配置大模型KEY"}
 
-    text = (combined_text or "")[:18000]
+    text = (combined_text or "")[:18000] # 截断，防止过长
     prompt = f"""
 你是政府采购需求筛选员。请判断下面公告是否为“人工智能业务/产品”或者“智能化业务/产品”相关需求。
 
@@ -175,29 +337,32 @@ def llm_second_filter_by_combined(combined_text: str, title: str = "") -> dict:
 }}
 """.strip()
 
-    resp = client.chat.completions.create(
-        model="moonshot-v1-32k",
+    # 任务类型 "filter"
+    txt = service.chat_completion(
         messages=[{"role": "user", "content": prompt}],
-        temperature=0.0,
+        task_type="filter"
     )
-    txt = (resp.choices[0].message.content or "").strip()
+    
     data = _safe_json_loads(txt)
-
+    
+    # 只要没明确说不 keep，就默认 keep (Fail-Open)
     keep = bool(data.get("keep", True))
-    reason = str(data.get("reason", "")).strip()
+    reason = str(data.get("reason", "API解析失败或未返回reason")).strip()
+    
     return {"keep": keep, "reason": reason}
 
 
 if __name__ == "__main__":
     meta = {
         "title": "示例：教学仪器采购公开招标",
-        "url": "https://www.ccgp.gov.cn/xxgg/dfgg/gkzb/202601/t20260128_xxxxx.htm",
-        "project_name": "某实验小学教学仪器采购",
-        "budget": "106.2万元",
-        "deadline": "2026-02-27",
+        "url": "https://www.ccgp.gov.cn/test",
+        "project_name": "某实验小学AI教学实验室",
         "company_name": "某采购单位",
-        "contact_phone": "18120608656",
+        "contact_phone": "181...",
     }
-    page_text = "这里放公告正文"
-    attachment_texts = ["这里放附件提取文本"]
-    print(generate_requirements(meta, page_text, attachment_texts))
+    page_text = "本项目采购AI教学相关设备，包括大模型推理服务器..."
+    attachment_texts = ["附件内容：服务器参数要求..."]
+    
+    print("Testing generate_requirements...")
+    res = generate_requirements(meta, page_text, attachment_texts)
+    print(res)

@@ -1,6 +1,9 @@
 import re
 import os
 from datetime import timedelta, timezone
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def _env_bool(name: str, default: bool) -> bool:
