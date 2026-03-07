@@ -18,14 +18,14 @@ def should_delete_folder(folder_name: str, days_threshold: int = 3) -> bool:
                 days_diff = (datetime.now() - folder_date).days
                 return days_diff >= days_threshold
     except Exception as e:
-        print(f"failed to parse folder date for {folder_name}: {e}")
+        print(f"解析文件夹日期失败 {folder_name}: {e}")
     return False
 
 
 def cleanup_old_folders(attachments_path: str, days_threshold: int = 3) -> None:
     """Delete old attachment folders after run."""
     if not os.path.exists(attachments_path):
-        print(f"path not exists: {attachments_path}")
+        print(f"路径不存在: {attachments_path}")
         return
 
     cleaned_folders = []
@@ -40,14 +40,14 @@ def cleanup_old_folders(attachments_path: str, days_threshold: int = 3) -> None:
             try:
                 shutil.rmtree(item_path)
                 cleaned_folders.append(item)
-                print(f"deleted expired folder: {item}")
+                print(f"删除过期文件夹: {item}")
             except Exception as e:
-                print(f"failed to delete folder {item}: {e}")
+                print(f"删除文件夹失败 {item}: {e}")
         else:
             kept_folders.append(item)
 
-    print(f"cleaned folders: {len(cleaned_folders)}")
-    print(f"kept folders: {len(kept_folders)}")
+    print(f"已清理文件夹数: {len(cleaned_folders)}")
+    print(f"保留文件夹数: {len(kept_folders)}")
 
 
 def run_multiple_main_calls() -> None:
@@ -61,12 +61,12 @@ def run_multiple_main_calls() -> None:
     use_legacy_list_mode = "--no-search" in original_argv
 
     if not use_legacy_list_mode:
-        print("running search-prefilter mode once (no start_urls loop)")
+        print("运行单次搜索预筛选模式（不轮询 start_urls）")
         try:
             main()
-            print("search-prefilter run completed")
+            print("搜索预筛选运行完成")
         except Exception as e:
-            print(f"search-prefilter run failed: {e}")
+            print(f"搜索预筛选运行失败: {e}")
     else:
         start_urls = [
             "https://www.ccgp.gov.cn/cggg/dfgg/gkzb/index.htm",
@@ -83,21 +83,21 @@ def run_multiple_main_calls() -> None:
             i += 1
 
         for idx, url in enumerate(start_urls, 1):
-            print(f"running legacy list mode {idx}/{len(start_urls)}: {url}")
+            print(f"运行传统列表模式 {idx}/{len(start_urls)}: {url}")
             sys.argv = [original_argv[0], "--start", url] + preserved_args
             try:
                 main()
-                print(f"legacy run {idx} completed")
+                print(f"传统模式运行 {idx} 完成")
             except Exception as e:
-                print(f"legacy run {idx} failed: {e}")
+                print(f"传统模式运行 {idx} 失败: {e}")
 
             if idx < len(start_urls):
                 time.sleep(5)
 
     sys.argv = original_argv
-    print("all runs finished, cleaning old attachment folders...")
+    print("所有运行结束，正在清理旧附件文件夹...")
     cleanup_old_folders(ATTACHMENTS_DIR, CLEAN_THRESHOLD)
-    print("cleanup completed")
+    print("清理完成")
 
 
 if __name__ == "__main__":

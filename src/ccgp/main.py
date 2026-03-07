@@ -3,12 +3,11 @@ import csv
 import os
 import random
 import time
+import requests
 from datetime import datetime, timedelta
 from hashlib import sha1
 from typing import List, Optional, Tuple
 from urllib.parse import urlencode, urlparse
-
-import requests
 
 from ccgp.config import (
     ATTACHMENT_BLOCKLIST_HOSTS,
@@ -117,7 +116,7 @@ def _collect_entries_from_search(
     dedup = {}
     norm_keywords = [k.strip() for k in (keywords or []) if (k or "").strip()]
     get_logger().debug(
-        f"search prefilter start: keywords={len(norm_keywords)} date_range={start_date}..{end_date} max_pages={max_pages}"
+        f"搜索预筛选开始: 关键词数={len(norm_keywords)} 日期={start_date}..{end_date} 最大页数={max_pages}"
     )
 
     stop_all_search = False
@@ -133,19 +132,19 @@ def _collect_entries_from_search(
             try:
                 html = http_get(url, session, timeout=REQUEST_TIMEOUT_SEC)
             except Exception as e:
-                get_logger().warning(f"search page failed: kw={kw} page={page_index} -> {e}")
+                get_logger().warning(f"搜索页请求失败: 关键词={kw} 页码={page_index} -> {e}")
                 break
 
             if ("访问过于频繁" in html) or ("频繁访问" in html) or ("事件ID" in html):
                 cooldown = random.uniform(150, 380)
                 get_logger().warning(
-                    f"search blocked by frequency control: kw={kw} page={page_index}, cooldown={cooldown:.1f}s"
+                    f"搜索因频率限制被阻: 关键词={kw} 页码={page_index}, 冷却={cooldown:.1f}秒"
                 )
                 time.sleep(cooldown)
 
                 if blocked_once_for_kw:
                     get_logger().warning(
-                        f"search blocked twice, stop all search prefilter: kw={kw} page={page_index}"
+                        f"搜索两次被阻，停止所有预筛选: 关键词={kw} 页码={page_index}"
                     )
                     stop_all_search = True
                     break
@@ -156,14 +155,14 @@ def _collect_entries_from_search(
                     html = http_get(url, session, timeout=REQUEST_TIMEOUT_SEC)
                 except Exception as e:
                     get_logger().warning(
-                        f"search retry failed after cooldown: kw={kw} page={page_index} -> {e}"
+                        f"冷却后重试搜索失败: 关键词={kw} 页码={page_index} -> {e}"
                     )
                     stop_all_search = True
                     break
 
                 if ("访问过于频繁" in html) or ("频繁访问" in html) or ("事件ID" in html):
                     get_logger().warning(
-                        f"search still blocked after cooldown retry, stop all search prefilter: kw={kw} page={page_index}"
+                        f"冷却重试后仍被阻止，停止所有预筛选: 关键词={kw} 页码={page_index}"
                     )
                     stop_all_search = True
                     break
@@ -173,7 +172,7 @@ def _collect_entries_from_search(
 
             if not entries:
                 if page_index == 1:
-                    get_logger().debug(f"search empty: kw={kw}")
+                    get_logger().debug(f"搜索结果为空: 关键词={kw}")
                 break
 
             for ent in entries:
@@ -188,9 +187,9 @@ def _collect_entries_from_search(
 
             if not have_find_new:
                 if page_index == 1:
-                    get_logger().debug(f"search empty: kw={kw}")
+                    get_logger().debug(f"搜索结果为空: 关键词={kw}")
                 else:
-                    get_logger().debug(f"search no new entries: kw={kw} page={page_index}")
+                    get_logger().debug(f"搜索无新条目: 关键词={kw} 页码={page_index}")
                 break
 
             # 每页查找之间随机短暂休眠，避免过快访问引发封禁；每10页长休眠一次。
@@ -198,20 +197,20 @@ def _collect_entries_from_search(
             if page_index % 5 == 0:
                 long_pause = random.uniform(10, 15)
                 get_logger().debug(
-                    f"search periodic cooldown: kw={kw} page={page_index} sleep={long_pause:.1f}s"
+                    f"搜索周期性冷却: 关键词={kw} 页码={page_index} 休眠={long_pause:.1f}秒"
                 )
                 time.sleep(long_pause)
 
-        get_logger().debug(f"search keyword done: kw={kw}, new_entries={keyword_count}")
+        get_logger().debug(f"关键词搜索完成: 关键词={kw}, 新增条目={keyword_count}")
         # 每个关键词查找之间随机长休眠，避免过快访问引发封禁；
         # 如果已经被封禁了，就不再继续后续关键词的查找。
         if not stop_all_search:
             kw_pause = random.uniform(5, 8)
-            get_logger().debug(f"search keyword cooldown: kw={kw} sleep={kw_pause:.1f}s")
+            get_logger().debug(f"关键词冷却: 关键词={kw} 休眠={kw_pause:.1f}秒")
             time.sleep(kw_pause)
 
     out = list(dedup.values())
-    get_logger().debug(f"search prefilter done: unique_entries={len(out)}, stopped_early={stop_all_search}")
+    get_logger().debug(f"搜索预筛选完成: 唯一条目数={len(out)}, 是否提前终止={stop_all_search}")
     return out
 
 
@@ -262,7 +261,7 @@ def scrape_ccgp(
             try:
                 list_html = http_get(list_url, session, timeout=REQUEST_TIMEOUT_SEC)
             except Exception as e:
-                get_logger().warning(f"list page failed: {list_url} -> {e}")
+                get_logger().warning(f"列表页请求失败: {list_url} -> {e}")
                 break
             base_url = list_url.rsplit("/", 1)[0] + "/"
             page_entries = parse_list_page(list_html, base_url=base_url)
@@ -277,7 +276,7 @@ def scrape_ccgp(
 
     filter_trace_file = _get_filter_trace_file()
     filter_trace_records: dict = {}
-    get_logger().debug(f"filter trace file: {filter_trace_file}")
+    get_logger().debug(f"过滤追踪文件: {filter_trace_file}")
 
     # 第二步：逐个详情页抓取与处理流程
     for ent in entries:
@@ -311,7 +310,7 @@ def scrape_ccgp(
             detail_html = http_get(ann_url, session, timeout=REQUEST_TIMEOUT_SEC)
         except Exception as e:
             _set_trace_result(filter_trace_records, ann_url, False, f"detail fetch failed: {e}")
-            get_logger().warning(f"detail failed: {ann_url} -> {e}")
+            get_logger().warning(f"详情页请求失败: {ann_url} -> {e}")
             _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
             continue
 
@@ -326,12 +325,12 @@ def scrape_ccgp(
         )
 
         get_logger().debug(
-            f"filtering the announcement: ent.title={ent.get('title', '')} url={ann_url}"
+            f"正在过滤公告: title={ent.get('title', '')} url={ann_url}"
         )
         
         # 第三步：关键过滤 （1）关键字精确过滤
         if not keyword_hit(combined, keywords):
-            _set_trace_result(filter_trace_records, ann_url, False, "第一轮，基于关键词的过滤发现不匹配")
+            _set_trace_result(filter_trace_records, ann_url, False, "基于关键词的过滤发现不匹配")
             _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
             continue
 
@@ -347,16 +346,16 @@ def scrape_ccgp(
                     filter_trace_records,
                     ann_url,
                     False,
-                    f"使用大模型基于语义分析的被拒绝原因: {reason}",
+                    f"基于语义分析被拒绝的原因: {reason}",
                 )
-                get_logger().warning(f"第二轮，使用大模型基于语义的过滤被拒绝: {ann_url} -> {reason}")
+                get_logger().warning(f"基于语义分析的过滤被拒绝: {ann_url} -> {reason}")
                 _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
                 continue
             get_logger().debug(
-                f"通过大模型基于语义的过滤: {ann_url} -> {second_filter.get('reason', '')}"
+                f"通过基于语义的过滤: {ann_url} -> {second_filter.get('reason', '')}"
             )
         except Exception as e:
-            get_logger().warning(f"大模型第二轮过滤失败，回退保留: {ann_url} -> {e}")
+            get_logger().warning(f"基于语义分析的第二轮过滤失败，回退保留: {ann_url} -> {e}")
 
         # 通过所有验证，标记选定
         _set_trace_result(filter_trace_records, ann_url, True, "")
@@ -388,12 +387,12 @@ def scrape_ccgp(
                 # 通过黑名单判断是否跳过该附件（如非招投标文件）
                 if _should_skip_attachment(a_url, a_name):
                     get_logger().warning(
-                        f"skip attachment by blocklist: name={a_name} url={a_url}"
+                        f"因黑名单跳过附件: name={a_name} url={a_url}"
                     )
                     continue
 
                 if SKIP_REPEATED_FAILED_ATTACHMENTS and a_url in failed_attachment_urls:
-                    get_logger().debug(f"skip repeated failed attachment: {a_url}")
+                    get_logger().debug(f"跳过重复失败的附件: {a_url}")
                     continue
 
                 try:
@@ -404,14 +403,14 @@ def scrape_ccgp(
                         filename=a_name,
                         timeout=DOWNLOAD_TIMEOUT_SEC,
                     )
-                    get_logger().warning(f"downloaded attachment: {a_url} -> {local_path}")
+                    get_logger().warning(f"已下载附件: {a_url} -> {local_path}")
 
                     try:
                         text = extract_text_from_file(local_path)
                         if text and text.strip():
                             att_texts.append(text)
                             get_logger().warning(
-                                f"extracted text from attachment: {a_name} ({len(text)} chars)"
+                                f"从附件提取文本: {a_name} ({len(text)} 字符)"
                             )
                             count += 1
                         else:
@@ -421,14 +420,14 @@ def scrape_ccgp(
                                 size = -1
                             ext = (os.path.splitext(local_path)[1] or "").lower()
                             get_logger().warning(
-                                "no text extracted: "
+                                "未提取到文本: "
                                 f"name={a_name} ext={ext} size={size}B path={local_path} url={a_url}"
                             )
                     except Exception as e:
-                        get_logger().warning(f"extract_text_from_file failed: {a_name} -> {e}")
+                        get_logger().warning(f"从文件提取文本失败: {a_name} -> {e}")
                 except Exception as e:
                     failed_attachment_urls.add(a_url)
-                    get_logger().warning(f"download attachment failed: {a_name} -> {e}")
+                    get_logger().warning(f"下载附件失败: {a_name} -> {e}")
 
             # 第五步：利用大语言模型提取关键业务需求
             if ENABLE_LLM_REQUIREMENTS:
@@ -447,7 +446,7 @@ def scrape_ccgp(
                     requirement_brief = req.get("requirement_brief", "")
                     requirement_desc = req.get("requirement_desc", "")
                 except Exception as e:
-                    get_logger().warning(f"LLM generate requirements failed: {ann_url} -> {e}")
+                    get_logger().warning(f"LLM 生成需求失败: {ann_url} -> {e}")
 
         # 第六步：保存结构化信息到 results 列表中
         results.append(
@@ -473,8 +472,8 @@ def scrape_ccgp(
         _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
 
     _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
-    get_logger().debug(f"successfully read {count} attachments.")
-    get_logger().debug(f"saved filter trace: {filter_trace_file}, items={len(filter_trace_records)}")
+    get_logger().debug(f"成功读取 {count} 个附件。")
+    get_logger().debug(f"保存过滤追踪: {filter_trace_file}, 条目数={len(filter_trace_records)}")
     return results
 
 
@@ -501,7 +500,7 @@ def main() -> None:
     )
 
     write_csv(items, CSV_OUTPUT_DIR)
-    get_logger().debug(f"[OK] saved: {CSV_OUTPUT_DIR}, items={len(items)}")
+    get_logger().debug(f"[OK] 保存成功: {CSV_OUTPUT_DIR}, 条目数={len(items)}")
 
 
 if __name__ == "__main__":

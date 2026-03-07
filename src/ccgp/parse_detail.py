@@ -2,7 +2,7 @@ import os
 import re
 from typing import Dict, List
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
+from urllib.parse import urljoin,urlsplit
 
 from ccgp.config import FIELD_ALIASES, RE_DATE_YMD_HM, RE_MONEY
 from ccgp.tools import clean_text, parse_pub_datetime, extract_money
@@ -11,8 +11,9 @@ from utils.mylogger import get_logger
 #------------------------------解析匹配detail页面内容----------------------------------#
 def parse_ccgp_table(soup: BeautifulSoup) -> Dict[str, str]:
     """
-    解析 ccgp 页面常见的 “公告概要” 表格：
-    <td class='title'>字段名</td><td>字段值</td>
+    解析 ccgp 详情页面常见的 “公告概要” 表格：
+    通常结构为: <td class='title'>字段名</td><td>字段值</td>
+    返回一个字典: {字段名: 字段值}
     """
     kv = {}
 
@@ -29,6 +30,9 @@ def parse_ccgp_table(soup: BeautifulSoup) -> Dict[str, str]:
     return kv
 
 def pick_by_alias(kv: Dict[str, str], aliases: List[str]) -> str:
+    """
+    从字典 kv 中，尝试按 aliases 列表顺序查找值，返回找到的第一个非空值。
+    """
     for a in aliases:
         a = a.strip()
         if not a:
@@ -39,10 +43,13 @@ def pick_by_alias(kv: Dict[str, str], aliases: List[str]) -> str:
 
 #---------------------------------分析需求详细描述相关-------------------------------------#
 def extract_ccgp_attachments(soup, page_url: str):
-    import os
-    import re
-    from urllib.parse import urljoin, urlsplit
-
+    """
+    从详情页 soup 中提取可能的附件链接：
+    1. 查找 'a[ignore="1"][href]'
+    2. 查找 'a.bizDownload'（特殊类名）
+    3. 查找任意符合后缀 (.pdf, .docx, .xlsx 等) 的 'a[href]'
+    返回去重后的附件列表 [{"name":..., "url":..., "kind":...}, ...]
+    """ 
     out = []
 
     # 允许的文件后缀（保持你的逻辑）
@@ -171,6 +178,17 @@ def extract_ccgp_attachments(soup, page_url: str):
 
 #---------------------------------分析详情页主流程-------------------------------------#
 def parse_detail_page(detail_html: str, page_url: str) -> Dict[str, str]:
+    """
+    解析详情页 HTML，提取关键字段信息：
+    - full_text: 页面纯文本
+    - project_name: 项目名称
+    - budget: 预算金额
+    - deadline: 截止时间
+    - company_name: 采购单位名称
+    - contact_name/phone: 联系人及电话
+    - locations: 地址信息
+    - attachments: 附件列表
+    """
     soup = BeautifulSoup(detail_html, "lxml")
     full_text = clean_text(soup.get_text(" ", strip=True))
 

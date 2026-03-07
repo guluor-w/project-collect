@@ -10,6 +10,9 @@ import requests
 import zipfile
 from pathlib import Path
 from urllib.parse import urlsplit
+from PyPDF2 import PdfReader
+from docx import Document
+import openpyxl
 
 from ccgp.config import (
     PROVINCES,
@@ -25,6 +28,7 @@ from utils.mylogger import get_logger
 
 #------------------------------通用工具函数-----------------------------------#
 def http_get(url: str, session: requests.Session, timeout: int = REQUEST_TIMEOUT_SEC, max_retries: int = 3) -> str:
+    """发送 HTTP GET 请求，包含重试机制。"""
     last_exc = None
     
     for i in range(max_retries):
@@ -37,12 +41,12 @@ def http_get(url: str, session: requests.Session, timeout: int = REQUEST_TIMEOUT
             last_exc = e
             if i < max_retries - 1:
                 sleep_sec = (i + 1) * 2
-                get_logger().warning(f"http_get failed: {url} (attempt {i+1}/{max_retries}) -> {e}. Retry in {sleep_sec}s...")
+                get_logger().warning(f"HTTP请求失败: {url} (尝试 {i+1}/{max_retries}) -> {e}. {sleep_sec}秒后重试...")
                 time.sleep(sleep_sec)
 
     if last_exc:
         raise last_exc
-    raise RuntimeError(f"http_get failed after {max_retries} retries without exception")
+    raise RuntimeError(f"HTTP请求在重试 {max_retries} 次后失败，无具体异常")
 
 def norm_list_page_urls(start_url: str, max_pages: int = 30) -> List[str]:
     """
@@ -63,6 +67,7 @@ def norm_list_page_urls(start_url: str, max_pages: int = 30) -> List[str]:
     return urls
 
 def parse_pub_datetime(text: str) -> Optional[datetime]:
+    """从类似 'YYYY-MM-DD HH:MM' 的字符串中解析日期时间。"""
     if not text:
         return None
     m = RE_DATE_YMD_HM.search(text)
@@ -79,6 +84,7 @@ def parse_pub_datetime(text: str) -> Optional[datetime]:
         return None
 
 def keyword_hit(text: str, keywords: List[str]) -> bool:
+    """判断文本是否命中关键词列表中的任意一个。支持排除词过滤。"""
     # 将文本分割成句子（简单的句子分割，可根据需要改进）
     sentences = text.replace(';', ' ').replace('。', ' ').split(' ')
     
@@ -98,8 +104,9 @@ def keyword_hit(text: str, keywords: List[str]) -> bool:
 def clean_text(s: str) -> str:
     s = re.sub(r"\s+", " ", s or "").strip()
     return s
-
+    
 def extract_money(text: str) -> str:
+    """从文本中提取并规范化金额数字，默认单位万元。"""
     text = text.replace("人民币", "")
     m = RE_MONEY.search(text)
     
@@ -147,6 +154,7 @@ def guess_location(addr_text: str) -> Tuple[str, str]:
     return prov, city
 
 def write_csv(items: List[TenderItem], out_path: str) -> None:
+    """将列表写入 CSV 文件，包含去重和排序逻辑。"""
     cols = [
         "project_name", "pub_time",
         "ai_project_title","requirement_brief", "requirement_desc","deadline",
@@ -169,7 +177,7 @@ def write_csv(items: List[TenderItem], out_path: str) -> None:
                 reader = csv.DictReader(f)
                 all_rows.extend(list(reader))
         except Exception as e:
-            get_logger().error(f"Error reading existing CSV: {e}")
+            get_logger().error(f"读取现有CSV文件失败: {e}")
             
     # 追加新传入的项目
     for it in items:
@@ -208,6 +216,7 @@ def write_csv(items: List[TenderItem], out_path: str) -> None:
 
 #------------------------------和附件相关-----------------------------------#
 def safe_filename(name: str) -> str:
+    """移除非法字符，生成安全的文件名。"""
     name = re.sub(r"[\\/:*?\"<>|]+", "_", name or "").strip()
     return name[:120] or "file"
 
@@ -219,7 +228,6 @@ def download_file(
     max_bytes: int = 35 * 1024 * 1024,
     timeout: int = DOWNLOAD_TIMEOUT_SEC,
 ) -> str:
-
     Path(out_dir).mkdir(parents=True, exist_ok=True)
     if filename:
         fn = safe_filename(Path(filename).name)
@@ -241,14 +249,14 @@ def download_file(
                     continue
                 total += len(chunk)
                 if total > max_bytes:
-                    raise ValueError(f"file too large > {max_bytes} bytes: {url}")
+                    raise ValueError(f"文件过大 > {max_bytes} 字节: {url}")    
                 f.write(chunk)
     return path
 
 
 def extract_text_from_pdf(path: str) -> str:
-    try:
-        from PyPDF2 import PdfReader
+    """提取 PDF 文件文本内容。"""
+    try:        
         reader = PdfReader(path)
         parts = []
         for p in reader.pages:
@@ -256,24 +264,24 @@ def extract_text_from_pdf(path: str) -> str:
             if t.strip():
                 parts.append(t)
         return "\n".join(parts)
-    except Exception as e:
-        raise ValueError("Failed to open PDF file: " + str(e))
+    except Exception as e:    
+        raise ValueError("打开PDF文件失败: " + str(e))
 
 
 def extract_text_from_docx(path: str) -> str:
+    """提取 DOCX 文件段落文本。"""
     try:
-        from docx import Document
         doc = Document(path)
         parts = [p.text for p in doc.paragraphs if (p.text or "").strip()]
         return "\n".join(parts)
     except Exception as e:
-        raise ValueError("Failed to open DOCX file: " + str(e))
+        raise ValueError("打开DOCX文件失败: " + str(e))    
         
 
 
 def extract_text_from_xlsx(path: str, max_cells: int = 20000) -> str:
+    """提取 XLSX 文件可见单元格内容，行内用 | 分隔。"""
     try:
-        import openpyxl
         wb = openpyxl.load_workbook(path, data_only=True)
         out = []
         cells = 0
@@ -281,7 +289,7 @@ def extract_text_from_xlsx(path: str, max_cells: int = 20000) -> str:
             out.append(f"## Sheet: {ws.title}")
             for row in ws.iter_rows(values_only=True):
                 if cells > max_cells:
-                    out.append("...(truncated)")
+                    out.append("...(已截断)")
                     return "\n".join(out)
                 line = []
                 for v in row:
@@ -295,7 +303,7 @@ def extract_text_from_xlsx(path: str, max_cells: int = 20000) -> str:
                 cells += len(row)
         return "\n".join(out)
     except Exception as e:
-        raise ValueError("Failed to open XLSX file: " + str(e))
+        raise ValueError("打开XLSX文件失败: " + str(e))
 
 
 def extract_text_from_zip(path: str, tmp_dir: str) -> str:
@@ -319,10 +327,11 @@ def extract_text_from_zip(path: str, tmp_dir: str) -> str:
                 texts.append(extract_text_from_file(extracted))
         return "\n".join(texts)
     except Exception as e:
-        raise ValueError("Failed to open ZIP file: " + str(e))
+        raise ValueError("打开ZIP文件失败: " + str(e))
 
 
 def extract_text_from_file(path: str) -> str:
+    """根据文件扩展名分发到对应的文本提取函数。"""
     p = path.lower()
     if p.endswith(".pdf"):
         return extract_text_from_pdf(path)

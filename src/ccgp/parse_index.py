@@ -9,6 +9,10 @@ from ccgp.config import PROVINCES
 
 
 def parse_list_page(list_html: str, base_url: str) -> List[Dict[str, str]]:
+    """
+    解析 CCGP 传统模式的列表页 HTML（如 get_gkzb_index.htm 等）。
+    提取每个 li 条目中的 标题、链接、发布时间、地区等信息。
+    """
     soup = BeautifulSoup(list_html, "lxml")
     out = []
 
@@ -40,6 +44,11 @@ def parse_list_page(list_html: str, base_url: str) -> List[Dict[str, str]]:
 
 
 def parse_search_page(search_html: str, base_url: str = "https://search.ccgp.gov.cn/") -> List[Dict[str, str]]:
+    """
+    解析 CCGP 搜索结果页 HTML。
+    注意：搜索页的链接往往被混淆或存储在 JS 变量 ohtmlurls 中，需要特殊处理。
+    返回条目列表 [{"title":..., "url":..., "pub_iso":..., "region":...}, ...]
+    """
     soup = BeautifulSoup(search_html, "lxml")
     out: List[Dict[str, str]] = []
     seen = set()
