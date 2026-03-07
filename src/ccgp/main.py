@@ -67,6 +67,28 @@ def _flush_filter_trace_csv(path: str, records: dict) -> None:
             w.writerow(row)
 
 
+def _log_keyword_stats(stats: dict) -> None:
+    if not stats:
+        return
+
+    logger = get_logger()
+    logger.info("=" * 90)
+    logger.info(f"{'关键词':<20} | {'发现':<6} | {'详情OK':<6} | {'关键词通过':<10} | {'LLM通过':<8} | {'入库':<6}")
+    logger.info("-" * 90)
+
+    for kw, counts in stats.items():
+        found = counts.get("found", 0)
+        detail = counts.get("detail_ok", 0)
+        kw_pass = counts.get("kw_filter_pass", 0)
+        llm_pass = counts.get("llm_filter_pass", 0)
+        saved = counts.get("saved", 0)
+
+        logger.info(
+            f"{kw:<20} | {found:<8} | {detail:<8} | {kw_pass:<15} | {llm_pass:<10} | {saved:<6}"
+        )
+    logger.info("=" * 90)
+
+
 def _set_trace_result(records: dict, ann_url: str, is_selected: bool, reason: str) -> None:
     rec = records.get(ann_url)
     if not rec:
@@ -272,6 +294,21 @@ def scrape_ccgp(
                 break
             entries.extend(page_entries)
 
+    # 初始化关键词统计
+    keyword_stats = {}
+    for ent in entries:
+        # 如果是列表页爬取，可能没有 search_keyword，给一个默认值
+        kw = ent.get("search_keyword", "list_page_scan")
+        if kw not in keyword_stats:
+            keyword_stats[kw] = {
+                "found": 0,
+                "detail_ok": 0,
+                "kw_filter_pass": 0,
+                "llm_filter_pass": 0,
+                "saved": 0,
+            }
+        keyword_stats[kw]["found"] += 1
+
     results: List[TenderItem] = []
     seen_urls = set()
     failed_attachment_urls = set()
@@ -284,6 +321,7 @@ def scrape_ccgp(
     # 使用 tqdm 显示详情页处理进度
     for ent in tqdm(entries, desc="详情页处理进度", unit="条"):
         ann_url = (ent.get("url") or "").strip()
+        kw = ent.get("search_keyword", "list_page_scan")
         if not ann_url:
             continue
 
@@ -317,6 +355,10 @@ def scrape_ccgp(
             _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
             continue
 
+        # 详情页获取成功计数
+        if kw in keyword_stats:
+            keyword_stats[kw]["detail_ok"] += 1
+
         # 解析详情正文、项目名称等字段
         detail = parse_detail_page(detail_html, page_url=ann_url)
         combined = " ".join(
@@ -336,6 +378,10 @@ def scrape_ccgp(
             _set_trace_result(filter_trace_records, ann_url, False, "基于关键词的过滤发现不匹配")
             _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
             continue
+        
+        # 关键词过滤通过计数
+        if kw in keyword_stats:
+            keyword_stats[kw]["kw_filter_pass"] += 1
 
         # 第三步：关键过滤 （2）大模型进行深度语义过滤
         try:
@@ -349,11 +395,15 @@ def scrape_ccgp(
                     filter_trace_records,
                     ann_url,
                     False,
-                    f"基于语义分析被拒绝的原因: {reason}",
+                    f"通过语义分析，该项目被过滤不保留的原因: {reason}",
                 )
-                get_logger().warning(f"基于语义分析的过滤被拒绝: {ann_url} -> {reason}")
+                get_logger().warning(f"通过语义分析，该项目被过滤不保留: {ann_url} -> {reason}")
                 _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
                 continue
+            
+            # LLM 过滤通过计数
+            if kw in keyword_stats:
+                keyword_stats[kw]["llm_filter_pass"] += 1
             get_logger().debug(
                 f"通过基于语义的过滤: {ann_url} -> {second_filter.get('reason', '')}"
             )
@@ -472,9 +522,14 @@ def scrape_ccgp(
                 budget=detail.get("budget", ""),
             )
         )
+        # 保存计数
+        if kw in keyword_stats:
+            keyword_stats[kw]["saved"] += 1
+
         _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
 
     _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
+    _log_keyword_stats(keyword_stats)
     get_logger().debug(f"成功读取 {count} 个附件。")
     get_logger().debug(f"保存过滤追踪: {filter_trace_file}, 条目数={len(filter_trace_records)}")
     return results
