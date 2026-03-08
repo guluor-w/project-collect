@@ -3,7 +3,7 @@
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 16 * * *"  # 每天北京时间 00:00（UTC 16:00）
+    - cron: "0 20 */3 * *"  # 每三天北京时间 04:00（UTC 20:00）
 
 permissions:
   contents: write
@@ -69,3 +69,4 @@ jobs:
           name: ccgp-filter-trace-${{ github.run_id }}
           path: src/ccgp/data/filter_trace/
           if-no-files-found: warn
+
