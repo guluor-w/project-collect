@@ -3,7 +3,7 @@
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 20 */3 * *"  # 每三天北京时间 04:00（UTC 20:00）
+    - cron: "0 20 * * *"  # 每天北京时间 04:00（UTC 20:00）
 
 permissions:
   contents: write
