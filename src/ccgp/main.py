@@ -7,9 +7,9 @@ import requests
 from datetime import datetime, timedelta
 from hashlib import sha1
 from typing import List, Optional, Tuple
+from tqdm import tqdm
 from urllib.parse import urlencode, urlparse
 
-from tqdm import tqdm
 
 from ccgp.config import (
     ATTACHMENT_BLOCKLIST_HOSTS,
@@ -48,6 +48,25 @@ from utils.mylogger import get_logger, setup_logging
 
 
 SEARCH_BASE_URL = "https://search.ccgp.gov.cn/bxsearch"
+
+
+def _load_processed_urls(csv_file: str) -> set[str]:
+    """帮助加载已经处理过的公告 URL，避免重复处理和保存。"""
+    if not os.path.exists(csv_file):
+        return set()
+
+    seen = set()
+    try:
+        with open(csv_file, "r", encoding="utf-8-sig") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                url = (row.get("announcement_url") or "").strip()
+                if url:
+                    seen.add(url)
+    except Exception as e:
+        get_logger().error(f"Failed to load processed URLs from {csv_file}: {e}")
+        
+    return seen
 
 
 def _get_filter_trace_file() -> str:
@@ -269,6 +288,10 @@ def scrape_ccgp(
     now = datetime.now(tz=SG_TZ)
     cutoff = now - timedelta(days=days)
 
+    # 加载之前处理过的 URL，避免重复处理和保存
+    processed_urls = _load_processed_urls(CSV_OUTPUT_DIR)
+    get_logger().info(f"Loaded {len(processed_urls)} processed URLs from {CSV_OUTPUT_DIR}")
+
     # 第一步：收集公告列表
     # 如果启用 use_search_prefilter，通过站内搜索接口获取近期公告以缩小范围
     # 否则，退化为传统方式，从指定列表页逐页查询
@@ -342,6 +365,11 @@ def scrape_ccgp(
         pub_dt = parse_pub_datetime(ent.get("pub_raw", ""))
         if pub_dt and pub_dt < cutoff and not use_search_prefilter:
             _set_trace_result(filter_trace_records, ann_url, False, "older than DAYS window")
+            _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
+            continue
+
+        if ann_url in processed_urls:
+            _set_trace_result(filter_trace_records, ann_url, False, "processed in prev run")
             _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
             continue
 
