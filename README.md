@@ -1,10 +1,10 @@
 # CCGP 招标公告采集项目
 
-本项目用于从中国政府采购网（CCGP）查询公开招标公告，提取结构化字段，并可选下载附件、抽取附件文本、调用 LLM 生成需求摘要，最终落盘到 CSV。
+本项目用于查询公开招标公告，提取结构化字段，并可选下载附件、抽取附件文本、调用 LLM 生成需求摘要，最终落盘到 CSV。
 
 ## 功能概览
 
-- 采集来源：https://www.ccgp.gov.cn/
+- 采集来源：公开招标公告
 
 - 支持按最近 N 天、最多翻页数控制采集范围，在文件src/ccgp/config.py中进行设置
 ```python
@@ -164,7 +164,7 @@ client = OpenAI(
 
 ## 常见问题
 
-- 抓取报 403/超时：可适当增大 `sleep_range`，或降低并发/频率
+- 查询报 403/超时：可适当增大 `sleep_range`，或降低并发/频率
 - 字段提取为空：公告模板差异导致，优先补充 `FIELD_ALIASES`；若市字段为空，可能是该市为少数名族自治区，格式不是“xx市”的形式出现
 - 提取附件文本失败：下载了不支持的格式或文件过大
 - LLM 失败：检查 API Key、网络可达性、模型名与配额
@@ -179,8 +179,8 @@ client = OpenAI(
 - `CCGP_HTTP_TIMEOUT`：列表页/详情页请求超时秒数（默认 `15`）
 - `CCGP_DOWNLOAD_TIMEOUT`：附件下载超时秒数（默认 `30`）
 - `CCGP_MAX_ATTACHMENTS`：每条公告最多处理附件数（默认 `3`）
-- `CCGP_SLEEP_MIN`：抓取详情页前最小 sleep 秒数（默认 `2.0`）
-- `CCGP_SLEEP_MAX`：抓取详情页前最大 sleep 秒数（默认 `4.0`）
+- `CCGP_SLEEP_MIN`：查询详情页前最小 sleep 秒数（默认 `2.0`）
+- `CCGP_SLEEP_MAX`：查询详情页前最大 sleep 秒数（默认 `4.0`）
 - `CCGP_SKIP_REPEAT_FAILED_ATTACHMENTS`：是否跳过已失败过的附件 URL（默认 `true`）
 
 说明：

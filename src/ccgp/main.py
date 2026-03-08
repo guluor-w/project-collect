@@ -249,7 +249,7 @@ def scrape_ccgp(
     use_search_prefilter: bool = True,
 ) -> List[TenderItem]:
     """
-    抓取中国政府采购网公告的核心业务流程。
+    查询公开公告的核心业务流程。
     主要步骤：
     1. 根据配置，先从搜索接口(或列表页)收集指定时间范围内的公告条目初步信息。
     2. 遍历收集到的条目，依次请求公告详情页。
@@ -271,7 +271,7 @@ def scrape_ccgp(
 
     # 第一步：收集公告列表
     # 如果启用 use_search_prefilter，通过站内搜索接口获取近期公告以缩小范围
-    # 否则，退化为传统方式，从指定列表页逐页爬取
+    # 否则，退化为传统方式，从指定列表页逐页查询
     if use_search_prefilter:
         entries = _collect_entries_from_search(
             session=session,
@@ -298,7 +298,7 @@ def scrape_ccgp(
     # 初始化关键词统计
     keyword_stats = {}
     for ent in entries:
-        # 如果是列表页爬取，可能没有 search_keyword，给一个默认值
+        # 如果是列表页查询，可能没有 search_keyword，给一个默认值
         kw = ent.get("search_keyword", "list_page_scan")
         if kw not in keyword_stats:
             keyword_stats[kw] = {
@@ -347,7 +347,7 @@ def scrape_ccgp(
 
         seen_urls.add(ann_url)
 
-        # 抓取详情网页，休眠控制防BAN
+        # 查询详情网页，休眠控制防BAN
         try:
             time.sleep(random.uniform(*sleep_range))
             detail_html = http_get(ann_url, session, timeout=REQUEST_TIMEOUT_SEC)
