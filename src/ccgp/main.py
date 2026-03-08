@@ -499,11 +499,11 @@ def scrape_ccgp(
                     req = generate_requirements(meta, detail.get("full_text", ""), att_texts)
                     ai_project_title = req.get("ai_project_title", "")
                     requirement_brief = req.get("requirement_brief", "")
+                    requirement_desc = req.get("requirement_desc", "")
                     
                     if kw in keyword_stats and "无相关要求" not in requirement_desc:
                         keyword_stats[kw]["req_found"] += 1
 
-                    requirement_desc = req.get("requirement_desc", "")
                 except Exception as e:
                     get_logger().warning(f"LLM 生成需求失败: {ann_url} -> {e}")
 
