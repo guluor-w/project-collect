@@ -204,23 +204,23 @@ def parse_detail_page(detail_html: str, page_url: str) -> Dict[str, str]:
     # 3) 截止时间（没找到严格的，就用全文找第一个带时分的日期兜底）
     deadline = pick_by_alias(kv, FIELD_ALIASES["deadline"])
     if deadline:
-        # 规范化成 “YYYY年MM月DD日” 优先
+        # 规范化成 “YYYY-MM-DD” 优先
         dt = parse_pub_datetime(deadline)
         if dt:
-            deadline = f"{dt.year}年{dt.month:02d}月{dt.day:02d}日"
+            deadline = f"{dt.year}-{dt.month:02d}-{dt.day:02d}"
         else:
             # 尝试从文本里抽日期时间
             m = RE_DATE_YMD_HM.search(deadline)
             if m:
                 y = int(m.group("y")); mo = int(m.group("m")); d = int(m.group("d"))
-                deadline = f"{y:04d}年{mo:02d}月{d:02d}日"
+                deadline = f"{y:04d}-{mo:02d}-{d:02d}"
 
     else:
         # 兜底：全文找一个可能的截止/开标时间（不保证准确）
         m = RE_DATE_YMD_HM.search(full_text)
         if m:
             y = int(m.group("y")); mo = int(m.group("m")); d = int(m.group("d"))
-            deadline = f"{y:04d}年{mo:02d}月{d:02d}日"
+            deadline = f"{y:04d}-{mo:02d}-{d:02d}"
         else:
             deadline = ""
 
