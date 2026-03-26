@@ -41,6 +41,29 @@ def pick_by_alias(kv: Dict[str, str], aliases: List[str]) -> str:
             return kv[a]
     return ""
 
+
+def normalize_date_ymd(text: str) -> str:
+    """
+    将日期文本统一标准化为 YYYY-MM-DD。
+    解析失败时返回空字符串。
+    """
+    s = clean_text(text or "")
+    if not s:
+        return ""
+
+    dt = parse_pub_datetime(s)
+    if dt:
+        return f"{dt.year:04d}-{dt.month:02d}-{dt.day:02d}"
+
+    m = RE_DATE_YMD_HM.search(s)
+    if not m:
+        return ""
+
+    y = int(m.group("y"))
+    mo = int(m.group("m"))
+    d = int(m.group("d"))
+    return f"{y:04d}-{mo:02d}-{d:02d}"
+
 #---------------------------------分析需求详细描述相关-------------------------------------#
 def extract_ccgp_attachments(soup, page_url: str):
     """
@@ -201,28 +224,25 @@ def parse_detail_page(detail_html: str, page_url: str) -> Dict[str, str]:
     budget_text = pick_by_alias(kv, FIELD_ALIASES["budget"])
     budget = extract_money(budget_text) if budget_text else ""
 
-    # 3) 截止时间（没找到严格的，就用全文找第一个带时分的日期兜底）
+    # 3) 截止时间（统一标准化为 YYYY-MM-DD）
     deadline = pick_by_alias(kv, FIELD_ALIASES["deadline"])
     if deadline:
-        # 规范化成 “YYYY-MM-DD” 优先
-        dt = parse_pub_datetime(deadline)
-        if dt:
-            deadline = f"{dt.year}-{dt.month:02d}-{dt.day:02d}"
-        else:
-            # 尝试从文本里抽日期时间
-            m = RE_DATE_YMD_HM.search(deadline)
-            if m:
-                y = int(m.group("y")); mo = int(m.group("m")); d = int(m.group("d"))
-                deadline = f"{y:04d}-{mo:02d}-{d:02d}"
+        deadline = normalize_date_ymd(deadline)
 
     else:
         # 兜底：全文找一个可能的截止/开标时间（不保证准确）
-        m = RE_DATE_YMD_HM.search(full_text)
-        if m:
-            y = int(m.group("y")); mo = int(m.group("m")); d = int(m.group("d"))
-            deadline = f"{y:04d}-{mo:02d}-{d:02d}"
-        else:
-            deadline = ""
+        deadline = normalize_date_ymd(full_text)
+
+    # 3.1) 其它日期字段（统一标准化为 YYYY-MM-DD）
+    publish_date = normalize_date_ymd(
+        pick_by_alias(kv, ["公告日期", "发布时间", "发布日期", "采购公告日期", "本项目采购公告发布日期"])
+    )
+    bid_open_date = normalize_date_ymd(
+        pick_by_alias(kv, ["开标时间", "开标日期", "开启时间", "响应文件开启时间"])
+    )
+    file_obtain_deadline = normalize_date_ymd(
+        pick_by_alias(kv, ["获取招标文件截止时间", "获取文件截止时间", "文件获取截止时间", "获取时间截止"])
+    )
 
     # 4) 采购人/企业名称（按“采购人”输出）
     company_name = pick_by_alias(kv, FIELD_ALIASES["purchaser_name"])
@@ -255,6 +275,9 @@ def parse_detail_page(detail_html: str, page_url: str) -> Dict[str, str]:
         "project_name": project_name,
         "budget": budget,
         "deadline": deadline,
+        "publish_date": publish_date,
+        "bid_open_date": bid_open_date,
+        "file_obtain_deadline": file_obtain_deadline,
         "company_name": company_name,
         "purchasing_unit_contact_number": purchasing_unit_contact_number,
         "contact_name": contact_name,
