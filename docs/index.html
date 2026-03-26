@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CCGP 招标需求看板</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/style.css" />
+  </head>
+  <body>
+    <div class="bg-glow bg-glow-left" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-right" aria-hidden="true"></div>
+
+    <main class="container">
+      <header class="hero">
+        <p class="hero-subtitle">CCGP 数据展示</p>
+        <h1>招标需求看板</h1>
+        <p class="hero-description">
+          数据源来自 <code>tender_items.csv</code>，支持搜索、排序、分页与筛选。
+        </p>
+      </header>
+
+      <section class="controls" aria-label="筛选与搜索">
+        <div class="control-item search-wrap">
+          <label for="searchInput">搜索</label>
+          <input id="searchInput" type="search" placeholder="输入关键词：项目名、单位、地区、摘要等" />
+        </div>
+
+        <div class="control-item">
+          <label for="provinceFilter">省份</label>
+          <select id="provinceFilter">
+            <option value="">全部</option>
+          </select>
+        </div>
+
+        <div class="control-item">
+          <label for="cityFilter">城市</label>
+          <select id="cityFilter">
+            <option value="">全部</option>
+          </select>
+        </div>
+
+        <div class="control-item">
+          <label for="budgetMinInput">预算区间（万元）</label>
+          <div class="range-inputs">
+            <input id="budgetMinInput" type="number" min="0" step="0.01" placeholder="最小值" />
+            <span class="range-sep">-</span>
+            <input id="budgetMaxInput" type="number" min="0" step="0.01" placeholder="最大值" />
+          </div>
+        </div>
+
+        <div class="control-item checkbox-wrap">
+          <label class="checkbox-label" for="showNoRequirement">
+            <input id="showNoRequirement" type="checkbox" />
+            显示 requirement_desc 为“无相关要求”的条目
+          </label>
+        </div>
+      </section>
+
+      <section class="meta-row" aria-live="polite">
+        <div id="summaryText"></div>
+        <div class="pager-controls">
+          <label for="pageSizeSelect">每页条数</label>
+          <select id="pageSizeSelect">
+            <option value="20">20</option>
+            <option value="50" selected>50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="table-shell">
+        <table id="tenderTable">
+          <thead>
+            <tr>
+              <th data-key="pub_time">发布日期</th>
+              <th data-key="deadline">截止日期</th>
+              <th data-key="project_name">项目标题</th>
+              <th data-key="province_city">地区</th>
+              <th data-key="company_name">采购单位</th>
+              <th data-key="budget">预算</th>
+              <th data-key="requirement_brief">需求摘要</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <div id="emptyState" class="empty-state" hidden>没有匹配的数据。</div>
+      </section>
+
+      <nav class="pagination" aria-label="分页导航">
+        <div id="pageNumbers" class="page-numbers"></div>
+      </nav>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="assets/app.js"></script>
+  </body>
+</html>

@@ -143,6 +143,34 @@ pip install openai PyPDF2 python-docx openpyxl
 - `location_text`  详细地址
 - `budget`  预算
 
+## GitHub Pages 可视化看板
+
+仓库已新增 GitHub Pages 静态页面，默认读取 `tender_items.csv` 并展示为可交互表格。
+
+- 页面源文件：`docs/index.html`
+- 前端脚本：`docs/assets/app.js`
+- 样式文件：`docs/assets/style.css`
+- 页面数据文件（部署时自动生成）：`docs/data/tender_items.csv`
+
+功能说明：
+
+- 解析 `tender_items.csv` 作为主要内容
+- 搜索功能（项目名、地区、单位、摘要等）
+- 列头点击排序（日期、预算、文本列）
+- 分页功能（默认每页 `50` 条，数字页码导航）
+- 筛选功能：默认不显示 `requirement_desc == "无相关要求"` 的条目
+- 省份筛选
+- 城市筛选（随省份联动）
+- 预算区间筛选（单位：万元）
+- 表格仅保留适合展示的核心列，并将公告链接合并到“项目标题”字段
+- 时间列展示精度为“年月日”（`YYYY-MM-DD`）
+
+部署说明：
+
+- 已新增工作流：`.github/workflows/pages.yml`
+- 当 `docs/**` 或 `src/ccgp/data/tender_items.csv` 变化并推送到 `main` 时，会自动部署
+- 工作流会将 `src/ccgp/data/tender_items.csv` 复制到 `site/data/tender_items.csv` 后发布
+
 ## LLM 配置说明
 
 当前 `src/ccgp/llm_requirements.py` 中使用 Moonshot 兼容接口。
