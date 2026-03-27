@@ -44,11 +44,13 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/ccgp/data/tender_items.csv
+          mkdir -p docs/data
+          cp src/ccgp/data/tender_items.csv docs/data/tender_items.csv
+          git add src/ccgp/data/tender_items.csv docs/data/tender_items.csv
           if git diff --cached --quiet; then
             echo "No CSV changes to commit."
           else
-            git commit -m "chore: update tender_items.csv [skip ci]"
+            git commit -m "chore: update tender_items.csv"
             git status --porcelain
             git pull --rebase --autostash origin main
             git push
