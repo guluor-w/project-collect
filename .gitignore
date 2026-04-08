@@ -9,3 +9,6 @@ src/__pycache__/*
 
 # Environment variables
 .env
+
+# Generated output files
+src/ccgp/data/cleaned_requirements.csv
