@@ -35,6 +35,7 @@ OUTPUT_COLUMNS = [
     "市区名称",
     "预算金额",
     "参考地址",
+    "来源链接",
 ]
 
 
@@ -139,6 +140,7 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
         new_row["省份名称"] = row.get("province", "")
         new_row["市区名称"] = row.get("city", "")
         new_row["参考地址"] = row.get("location_text", "")
+        new_row["来源链接"] = row.get("announcement_url", "")
 
         # 日期格式标准化
         new_row["发布时间"] = parse_datetime(row.get("pub_time", ""))
