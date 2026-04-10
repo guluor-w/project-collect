@@ -20,6 +20,7 @@
 import os
 import re
 import csv
+import tempfile
 from datetime import datetime
 from typing import Dict, Set, Tuple
 
@@ -278,10 +279,21 @@ def writeback_to_input(
             row["city"] = city
             updated_count += 1
 
-    with open(input_file, "w", newline="", encoding="utf-8-sig") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
+    # 先写入同目录下的临时文件，写入成功后原子替换原文件，避免中途异常导致源文件损坏
+    dir_name = os.path.dirname(os.path.abspath(input_file))
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=dir_name, suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w", newline="", encoding="utf-8-sig") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(rows)
+        os.replace(tmp_path, input_file)
+    except Exception:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
 
     print(f"已将 {updated_count} 条标准化省市回填至: {input_file}")
 
