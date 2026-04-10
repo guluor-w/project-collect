@@ -473,10 +473,13 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
 
         # 固定默认值
         new_row["活动主题"] = "供需对接活动"
+        new_row["所有分类名称"] = "行业应用"
+        new_row["需求分类名称"] = "其它行业"
+        new_row["需求子类名称"] = "其它环节"
 
         # 字段映射
         new_row["需求主题"] = row.get("ai_project_title", "")
-        new_row["需求简介"] = row.get("requirement_brief", "")
+        new_row["需求简介"] = truncate_desc_for_limit(row.get("requirement_brief", ""), 200)
         new_row["发布单位名称"] = row.get("company_name", "")
         new_row["发布人姓名"] = row.get("contact_name", "")
         new_row["发布人电话"] = row.get("contact_phone", "")
