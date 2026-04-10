@@ -29,9 +29,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# 从同目录下的 excel_rich_text_processing 模块导入富文本转换函数
-from excel_rich_text_processing import plaintext_to_richtext
-
 INPUT_FILE = os.path.join(os.path.dirname(__file__), "tender_items.csv")
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), "cleaned_requirements.csv")
 PROVINCE_CITY_CODES_FILE = os.path.join(os.path.dirname(__file__), "province_city_codes.csv")
@@ -265,6 +262,70 @@ def parse_budget(value: str) -> str:
     return f"{amount:.2f}"
 
 
+def plaintext_to_richtext(plaintext: str) -> str:
+    """将纯文本转换为富文本（HTML）格式。
+
+    支持的格式：
+    - 【内容】 -> 带样式的加粗 Span
+    - **内容** -> <strong>内容</strong>
+    - 以 - 或 * 开头的行 -> 无序列表 <ul><li>...</li></ul>
+    - 以数字. 开头的行 -> 有序列表 <ol><li>...</li></ol>
+    - 其余行 -> 段落 <p>...</p>
+    """
+    if not plaintext:
+        return ""
+
+    text = str(plaintext).strip()
+    # 统一换行符
+    text = text.replace('\r\n', '\n')
+
+    # 1. 优先处理原有自定义格式：【内容】 -> 带样式的 Span
+    def replace_custom_style(match):
+        content = match.group(1)
+        return f'<span style="color: rgb(0, 0, 0); font-size: 15px;"><strong>{content}</strong></span>'
+
+    text = re.sub(r'\【(.*?)\】', replace_custom_style, text)
+
+    # 2. 增加 Markdown 风格加粗支持：**内容** -> <strong>内容</strong>
+    text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
+
+    # 3. 分段处理（按双换行符分割段落）
+    paragraphs = text.split('\n\n')
+    new_paragraphs = []
+
+    for p in paragraphs:
+        lines = [line.strip() for line in p.split('\n') if line.strip()]
+        if not lines:
+            continue
+
+        first_line = lines[0]
+
+        # 检测是否为无序列表 (以 - 或 * 开头)
+        if first_line.startswith('- ') or first_line.startswith('* '):
+            list_items = []
+            for line in lines:
+                # 移除列表标记
+                item_content = re.sub(r'^[-*]\s+', '', line)
+                list_items.append(f'<li>{item_content}</li>')
+            new_paragraphs.append(f'<ul>{"".join(list_items)}</ul>')
+
+        # 检测是否为有序列表 (以数字. 开头，允许数字后紧接内容)
+        elif re.match(r'^\d+\.', first_line):
+            list_items = []
+            for line in lines:
+                # 移除数字标记（允许数字后无空格）
+                item_content = re.sub(r'^\d+\.\s*', '', line)
+                list_items.append(f'<li>{item_content}</li>')
+            new_paragraphs.append(f'<ol>{"".join(list_items)}</ol>')
+
+        else:
+            # 普通段落：每一行都作为独立段落处理
+            for line in lines:
+                new_paragraphs.append(f'<p>{line}</p>')
+
+    return ''.join(new_paragraphs)
+
+
 def clean_requirement_desc(desc: str) -> str:
     """清洗需求内容字段：删除AI生成的章节标签和无关词语。
 
@@ -286,6 +347,8 @@ def truncate_desc_for_limit(desc: str, max_len: int) -> str:
     若字符串本身不超过限制则原样返回；否则在 max_len 范围内找最后一个
     中文句号（。）或换行符（\n）作为截断点；若找不到则直接截断。
     """
+    if max_len <= 0:
+        return ""
     if len(desc) <= max_len:
         return desc
     truncated = desc[:max_len]
