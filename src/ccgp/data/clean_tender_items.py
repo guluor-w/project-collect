@@ -20,6 +20,7 @@
 import os
 import re
 import csv
+import html
 import tempfile
 from datetime import datetime
 from typing import Dict, Set, Tuple
@@ -278,6 +279,8 @@ def plaintext_to_richtext(plaintext: str) -> str:
     text = str(plaintext).strip()
     # 统一换行符
     text = text.replace('\r\n', '\n')
+    # 转义 HTML 特殊字符，防止原始文本破坏 HTML 结构
+    text = html.escape(text)
 
     # 1. 优先处理原有自定义格式：【内容】 -> 带样式的 Span
     def replace_custom_style(match):
