@@ -6,15 +6,32 @@
 2. 新建数据表格，包含指定字段。
 3. 字段名称变更及默认值设置。
 4. 字段内容处理（日期格式标准化、预算金额转换、需求内容追加来源说明）。
+5. 地址标准化：
+   a. 若清洗后的省份/市区已在 province_city_codes.csv 编码表中，直接保留，跳过高德 API 调用。
+      否则通过高德地址编码接口获取 province、city、adcode（需设置 AMAP_GEOCODING_KEY），
+      请求失败时填写"待人工处理"。
+   b. 严格标准化"省份名称"和"市区名称"，依据 province_city_codes.csv 的省市编码表：
+      1) 若清洗后的省份/市区已在编码表中则保留。
+      2) 否则用高德省份/城市替换，若匹配则保留。
+      3) 否则通过高德adcode反查编码表，若找到则替换；仍找不到则填写"待人工处理"。
+6. 将标准化成功（非"待人工处理"）的省市回填到 tender_items.csv 的 province/city 字段。
 """
 
 import os
 import re
 import csv
+import tempfile
 from datetime import datetime
+from typing import Dict, Set, Tuple
+
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 INPUT_FILE = os.path.join(os.path.dirname(__file__), "tender_items.csv")
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), "cleaned_requirements.csv")
+PROVINCE_CITY_CODES_FILE = os.path.join(os.path.dirname(__file__), "province_city_codes.csv")
 
 OUTPUT_COLUMNS = [
     "所有分类名称",
@@ -36,7 +53,146 @@ OUTPUT_COLUMNS = [
     "预算金额",
     "参考地址",
     "来源链接",
+    "高德省份",
+    "高德城市",
+    "高德adcode",
 ]
+
+AMAP_GEO_URL = "https://restapi.amap.com/v3/geocode/geo"
+FALLBACK_VALUE = "待人工处理"
+
+# 共享的 HTTP Session，复用底层 TCP 连接，降低每次请求的开销
+_SESSION = requests.Session()
+
+# 省级行政区和地级市常见后缀，用于将简称补全为编码表规范全称（长后缀在前以避免部分匹配）
+_PROV_SUFFIXES = ("壮族自治区", "维吾尔自治区", "回族自治区", "自治区", "省", "市")
+_CITY_SUFFIXES = ("自治州", "地区", "市", "区", "县", "盟", "旗")
+
+
+def _canonicalize(raw: str, known: frozenset, suffixes: tuple) -> str:
+    """尝试将简称补全为编码表中的规范全称。
+
+    如 "北京" → "北京市"，"河北" → "河北省"。
+    若 raw 已在 known 中则直接返回；否则逐一追加后缀后查找；均不命中时原样返回。
+    """
+    if not raw or raw in known:
+        return raw
+    for suf in suffixes:
+        candidate = raw + suf
+        if candidate in known:
+            return candidate
+    return raw
+
+
+# --------------- 省市编码表加载 ---------------
+
+def load_province_city_codes(
+    codes_file: str = PROVINCE_CITY_CODES_FILE,
+) -> Tuple[Set[Tuple[str, str]], Dict[str, Tuple[str, str]]]:
+    """加载省市编码 CSV，返回两个查询结构。
+
+    Returns:
+        valid_pairs: set of (省, 市) tuples that are valid in the reference.
+        adcode_map: dict mapping 编码 -> (省, 市).
+    """
+    valid_pairs: Set[Tuple[str, str]] = set()
+    adcode_map: Dict[str, Tuple[str, str]] = {}
+
+    try:
+        with open(codes_file, newline="", encoding="utf-8-sig") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                province = (row.get("省") or "").strip()
+                city = (row.get("市") or "").strip()
+                code = (row.get("编码") or "").strip()
+                if province and city:
+                    valid_pairs.add((province, city))
+                if code and province and city:
+                    if code in adcode_map:
+                        print(f"警告：省市编码表中存在重复编码 {code!r}，保留首次出现的记录。")
+                    else:
+                        adcode_map[code] = (province, city)
+    except Exception as e:
+        print(f"警告：加载省市编码表失败: {e}")
+
+    return valid_pairs, adcode_map
+
+
+def normalize_location(
+    province: str,
+    city: str,
+    amap_province: str,
+    amap_city: str,
+    amap_adcode: str,
+    valid_pairs: Set[Tuple[str, str]],
+    adcode_map: Dict[str, Tuple[str, str]],
+) -> Tuple[str, str]:
+    """根据三步规则严格标准化省份名称和市区名称。
+
+    步骤：
+    1. 若 (province, city) 在编码表中，直接保留。
+    2. 若 (amap_province, amap_city) 在编码表中，用它们替换。
+    3. 用 amap_adcode 在编码表中反查；找到则使用对应省市，否则返回"待人工处理"。
+    """
+    # 步骤 1：原始省市已在编码表中
+    if province and city and (province, city) in valid_pairs:
+        return province, city
+
+    # 步骤 2：高德省市在编码表中
+    if amap_province and amap_city and (amap_province, amap_city) in valid_pairs:
+        return amap_province, amap_city
+
+    # 步骤 3：通过高德 adcode 反查编码表
+    if amap_adcode and amap_adcode != FALLBACK_VALUE:
+        result = adcode_map.get(amap_adcode)
+        if result:
+            return result
+
+    return FALLBACK_VALUE, FALLBACK_VALUE
+
+
+def geocode_address(address: str, api_key: str) -> tuple:
+    """使用高德地图地理编码接口获取省份、城市和adcode。
+
+    Args:
+        address: 待编码的地址字符串（对应"参考地址"字段）。
+        api_key: 高德地图 Web 服务 API Key（环境变量 AMAP_GEOCODING_KEY）。
+
+    Returns:
+        (province, city, adcode) 三元组。
+        当地址或 key 为空、请求失败或返回结果为空时，三个字段均返回"待人工处理"。
+    """
+    if not address or not api_key:
+        return FALLBACK_VALUE, FALLBACK_VALUE, FALLBACK_VALUE
+
+    try:
+        resp = _SESSION.get(
+            AMAP_GEO_URL,
+            params={"address": address, "key": api_key, "output": "json"},
+            timeout=10,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+
+        if data.get("status") != "1" or not data.get("geocodes"):
+            return FALLBACK_VALUE, FALLBACK_VALUE, FALLBACK_VALUE
+
+        geo = data["geocodes"][0]
+
+        def _str_field(value) -> str:
+            """Convert a field that may be a list or string to a plain string."""
+            if isinstance(value, list):
+                value = value[0] if value else ""
+            return str(value).strip() if value else ""
+
+        province = _str_field(geo.get("province")) or FALLBACK_VALUE
+        city_raw = _str_field(geo.get("city"))
+        # 直辖市等场景下 Amap 返回 city 为空；按接口语义以省份值回填，避免误标为失败
+        city = city_raw if city_raw else (_str_field(geo.get("province")) or FALLBACK_VALUE)
+        adcode = _str_field(geo.get("adcode")) or FALLBACK_VALUE
+        return province, city, adcode
+    except (requests.RequestException, ValueError, KeyError):
+        return FALLBACK_VALUE, FALLBACK_VALUE, FALLBACK_VALUE
 
 
 def parse_datetime(value: str) -> str:
@@ -114,8 +270,72 @@ def build_requirement_content(desc: str, announcement_url: str) -> str:
     return source_note
 
 
+def writeback_to_input(
+    input_file: str,
+    writeback_map: Dict[str, Tuple[str, str]],
+) -> None:
+    """将标准化后的省市回填到 tender_items.csv 的 province/city 字段。
+
+    只回填标准化成功（非"待人工处理"）的记录，以 announcement_url 作为匹配键。
+
+    Args:
+        input_file: tender_items.csv 文件路径。
+        writeback_map: announcement_url -> (province, city) 的映射，
+                       仅包含已成功标准化的条目。
+    """
+    if not writeback_map:
+        return
+
+    with open(input_file, newline="", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        fieldnames = reader.fieldnames or []
+        rows = list(reader)
+
+    updated_count = 0
+    for row in rows:
+        url = row.get("announcement_url", "")
+        if url in writeback_map:
+            prov, city = writeback_map[url]
+            row["province"] = prov
+            row["city"] = city
+            updated_count += 1
+
+    # 先写入同目录下的临时文件，写入成功后原子替换原文件，避免中途异常导致源文件损坏
+    dir_name = os.path.dirname(os.path.abspath(input_file))
+    tmp_fd, tmp_path = tempfile.mkstemp(dir=dir_name, suffix=".tmp")
+    try:
+        with os.fdopen(tmp_fd, "w", newline="", encoding="utf-8-sig") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(rows)
+        os.replace(tmp_path, input_file)
+    except Exception:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
+
+    print(f"已将 {updated_count} 条标准化省市回填至: {input_file}")
+
+
 def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_FILE) -> None:
-    """读取 tender_items.csv，清洗数据后写入 cleaned_requirements.csv。"""
+    """读取 tender_items.csv，清洗数据后写入 cleaned_requirements.csv，并将标准化省市回填到输入文件。"""
+    amap_key = os.getenv("AMAP_GEOCODING_KEY", "")
+    if not amap_key:
+        print("警告：未设置环境变量 AMAP_GEOCODING_KEY，地址标准化字段将全部填写'待人工处理'。")
+
+    # 加载省市编码表
+    valid_pairs, adcode_map = load_province_city_codes()
+    print(f"已加载省市编码表：{len(valid_pairs)} 个有效省市对，{len(adcode_map)} 个 adcode 映射。")
+
+    # 构建省份/城市规范化查找集合，用于将简称补全为编码表全称（如 "北京" → "北京市"）
+    known_provinces = frozenset(p for p, _ in valid_pairs)
+    known_cities = frozenset(c for _, c in valid_pairs)
+
+    # 地址编码结果内存缓存，避免对相同地址重复发起 HTTP 请求
+    _geocode_cache: Dict[str, Tuple[str, str, str]] = {}
+
     with open(input_file, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         rows = list(reader)
@@ -125,6 +345,9 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
     print(f"原始数据行数: {len(rows)}，筛选后行数: {len(filtered_rows)}")
 
     output_rows = []
+    # announcement_url -> (province, city) 回填映射，仅记录标准化成功的条目
+    writeback_map: Dict[str, Tuple[str, str]] = {}
+
     for row in filtered_rows:
         new_row = {col: "" for col in OUTPUT_COLUMNS}
 
@@ -137,8 +360,6 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
         new_row["发布单位名称"] = row.get("company_name", "")
         new_row["发布人姓名"] = row.get("contact_name", "")
         new_row["发布人电话"] = row.get("contact_phone", "")
-        new_row["省份名称"] = row.get("province", "")
-        new_row["市区名称"] = row.get("city", "")
         new_row["参考地址"] = row.get("location_text", "")
         new_row["来源链接"] = row.get("announcement_url", "")
 
@@ -155,6 +376,46 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
             row.get("announcement_url", ""),
         )
 
+        # 提前获取原始省市，将简称规范化为编码表全称后用于判断是否需要调用高德 API
+        raw_province = row.get("province", "")
+        raw_city = row.get("city", "")
+        # 将简称规范化为编码表全称（如 "北京" → "北京市"，"河北" → "河北省"），
+        # 确保跳过 API 调用的优化在实际数据上能够命中
+        canon_province = _canonicalize(raw_province, known_provinces, _PROV_SUFFIXES)
+        canon_city = _canonicalize(raw_city, known_cities, _CITY_SUFFIXES)
+
+        # 地址标准化：若规范化后的省市已符合编码表，跳过高德 API 调用
+        if canon_province and canon_city and (canon_province, canon_city) in valid_pairs:
+            amap_province, amap_city, amap_adcode = "", "", ""
+        else:
+            reference_address = row.get("location_text", "")
+            if reference_address not in _geocode_cache:
+                _geocode_cache[reference_address] = geocode_address(reference_address, amap_key)
+            amap_province, amap_city, amap_adcode = _geocode_cache[reference_address]
+
+        new_row["高德省份"] = amap_province
+        new_row["高德城市"] = amap_city
+        new_row["高德adcode"] = amap_adcode
+
+        # 严格标准化省份名称和市区名称（用规范化后的省市做步骤1匹配）
+        norm_province, norm_city = normalize_location(
+            canon_province,
+            canon_city,
+            amap_province,
+            amap_city,
+            amap_adcode,
+            valid_pairs,
+            adcode_map,
+        )
+        new_row["省份名称"] = norm_province
+        new_row["市区名称"] = norm_city
+
+        # 记录标准化成功的省市，用于回填输入文件
+        if norm_province != FALLBACK_VALUE and norm_city != FALLBACK_VALUE:
+            url = row.get("announcement_url", "")
+            if url:
+                writeback_map[url] = (norm_province, norm_city)
+
         output_rows.append(new_row)
 
     with open(output_file, "w", newline="", encoding="utf-8-sig") as f:
@@ -163,6 +424,9 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
         writer.writerows(output_rows)
 
     print(f"清洗完成，结果已保存至: {output_file}")
+
+    # 将标准化省市回填到输入文件
+    writeback_to_input(input_file, writeback_map)
 
 
 if __name__ == "__main__":

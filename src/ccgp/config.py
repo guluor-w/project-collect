@@ -125,3 +125,6 @@ CSV_OUTPUT_DIR = "src/ccgp/data/tender_items.csv"
 
 LOGGING_DIR = "src/ccgp/data/logs/"
 LOGGING_LEVEL = "DEBUG"
+
+# 高德地图地理编码 API Key（通过环境变量 AMAP_GEOCODING_KEY 设置）
+AMAP_GEOCODING_KEY = os.getenv("AMAP_GEOCODING_KEY", "")
