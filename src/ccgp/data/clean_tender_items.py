@@ -5,7 +5,7 @@
 1. 筛选 requirement_brief 不为"无相关要求"的数据。
 2. 新建数据表格，包含指定字段。
 3. 字段名称变更及默认值设置。
-4. 字段内容处理（日期格式标准化、预算金额转换、需求内容追加来源说明）。
+4. 字段内容处理（日期格式标准化、预算金额转换、需求内容清洗/截断/追加来源说明/富文本格式转换）。
 5. 地址标准化：
    a. 若清洗后的省份/市区已在 province_city_codes.csv 编码表中，直接保留，跳过高德 API 调用。
       否则通过高德地址编码接口获取 province、city、adcode（需设置 AMAP_GEOCODING_KEY），
@@ -20,6 +20,7 @@
 import os
 import re
 import csv
+import html
 import tempfile
 from datetime import datetime
 from typing import Dict, Set, Tuple
@@ -262,12 +263,131 @@ def parse_budget(value: str) -> str:
     return f"{amount:.2f}"
 
 
+def plaintext_to_richtext(plaintext: str) -> str:
+    """将纯文本转换为富文本（HTML）格式。
+
+    支持的格式：
+    - 【内容】 -> 带样式的加粗 Span
+    - **内容** -> <strong>内容</strong>
+    - 以 - 或 * 开头的行 -> 无序列表 <ul><li>...</li></ul>
+    - 以数字. 开头的行 -> 有序列表 <ol><li>...</li></ol>
+    - 其余行 -> 段落 <p>...</p>
+    """
+    if not plaintext:
+        return ""
+
+    text = str(plaintext).strip()
+    # 统一换行符
+    text = text.replace('\r\n', '\n')
+    # 转义 HTML 特殊字符，防止原始文本破坏 HTML 结构
+    text = html.escape(text)
+
+    # 1. 优先处理原有自定义格式：【内容】 -> 带样式的 Span
+    def replace_custom_style(match):
+        content = match.group(1)
+        return f'<span style="color: rgb(0, 0, 0); font-size: 15px;"><strong>{content}</strong></span>'
+
+    text = re.sub(r'\【(.*?)\】', replace_custom_style, text)
+
+    # 2. 增加 Markdown 风格加粗支持：**内容** -> <strong>内容</strong>
+    text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
+
+    # 3. 分段处理（按双换行符分割段落）
+    paragraphs = text.split('\n\n')
+    new_paragraphs = []
+
+    for p in paragraphs:
+        lines = [line.strip() for line in p.split('\n') if line.strip()]
+        if not lines:
+            continue
+
+        first_line = lines[0]
+
+        # 检测是否为无序列表 (以 - 或 * 开头)
+        if first_line.startswith('- ') or first_line.startswith('* '):
+            list_items = []
+            for line in lines:
+                # 移除列表标记
+                item_content = re.sub(r'^[-*]\s+', '', line)
+                list_items.append(f'<li>{item_content}</li>')
+            new_paragraphs.append(f'<ul>{"".join(list_items)}</ul>')
+
+        # 检测是否为有序列表 (以数字. 开头，允许数字后紧接内容)
+        elif re.match(r'^\d+\.', first_line):
+            list_items = []
+            for line in lines:
+                # 移除数字标记（允许数字后无空格）
+                item_content = re.sub(r'^\d+\.\s*', '', line)
+                list_items.append(f'<li>{item_content}</li>')
+            new_paragraphs.append(f'<ol>{"".join(list_items)}</ol>')
+
+        else:
+            # 普通段落：每一行都作为独立段落处理
+            for line in lines:
+                new_paragraphs.append(f'<p>{line}</p>')
+
+    return ''.join(new_paragraphs)
+
+
+def clean_requirement_desc(desc: str) -> str:
+    """清洗需求内容字段：删除AI生成的章节标签和无关词语。
+
+    - 删除形如 【xxx】、【xxx】：、【xxx】: 的章节标签（含可选冒号和尾随空白）。
+    - 删除"本项目"、"本项目的"、"该项目"、"该项目的"、"旨在"等无关词语。
+    """
+    if not desc:
+        return desc
+    # 删除【xxx】类章节标签（含可选中文或英文冒号及尾随空白）
+    desc = re.sub(r'【.*?】[：:]?\s*', '', desc)
+    # 删除特定无关词语（顺序：先删带"的"的形式，再删不带"的"的形式，避免部分匹配遗漏）
+    desc = re.sub(r'本项目的|本项目|该项目的|该项目|旨在', '', desc)
+    return desc.strip()
+
+
+def truncate_desc_for_limit(desc: str, max_len: int) -> str:
+    """将字符串截断到不超过 max_len 个字符，在中文句号或换行符处截断。
+
+    若字符串本身不超过限制则原样返回；否则在 max_len 范围内找最后一个
+    中文句号（。）或换行符（\n）作为截断点；若找不到则直接截断。
+    """
+    if max_len <= 0:
+        return ""
+    if len(desc) <= max_len:
+        return desc
+    truncated = desc[:max_len]
+    for i in range(len(truncated) - 1, -1, -1):
+        if truncated[i] in ('。', '\n'):
+            return truncated[:i + 1]
+    return truncated
+
+
 def build_requirement_content(desc: str, announcement_url: str) -> str:
-    """在需求内容末尾追加来源说明段落。"""
+    """清洗需求内容、截断至1000字符限制、追加来源说明并转换为富文本格式。
+
+    处理步骤：
+    1. 删除AI生成的章节标签和无关词语。
+    2. 确保拼合后的总长度不超过1000字符（在中文句号或换行符处截断）。
+    3. 在需求内容末尾追加来源说明段落。
+    4. 将拼合结果转换为富文本（HTML）格式。
+    """
     source_note = f"本需求来源于中国政府采购网，详情请见招标信息 {announcement_url}"
-    if desc:
-        return f"{desc}\n\n{source_note}"
-    return source_note
+    # 1. 清洗
+    cleaned_desc = clean_requirement_desc(desc)
+    if cleaned_desc:
+        # 2. 计算留给 desc 的最大字符数，确保拼合后不超过1000字符
+        suffix = f"\n\n{source_note}"
+        max_desc_len = 1000 - len(suffix)
+        if max_desc_len <= 0:
+            # source_note 本身已超出限制，截断 source_note 至1000字符后使用
+            combined = truncate_desc_for_limit(source_note, 1000)
+        else:
+            cleaned_desc = truncate_desc_for_limit(cleaned_desc, max_desc_len)
+            # 3. 拼合
+            combined = f"{cleaned_desc}{suffix}"
+    else:
+        combined = truncate_desc_for_limit(source_note, 1000)
+    # 4. 富文本格式转换
+    return plaintext_to_richtext(combined)
 
 
 def writeback_to_input(
