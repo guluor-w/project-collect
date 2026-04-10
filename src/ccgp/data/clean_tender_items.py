@@ -153,9 +153,16 @@ def geocode_address(address: str, api_key: str) -> tuple:
             return FALLBACK_VALUE, FALLBACK_VALUE, FALLBACK_VALUE
 
         geo = data["geocodes"][0]
-        province = geo.get("province") or FALLBACK_VALUE
-        city = geo.get("city") or FALLBACK_VALUE
-        adcode = geo.get("adcode") or FALLBACK_VALUE
+
+        def _str_field(value) -> str:
+            """Convert a field that may be a list or string to a plain string."""
+            if isinstance(value, list):
+                value = value[0] if value else ""
+            return str(value).strip() if value else ""
+
+        province = _str_field(geo.get("province")) or FALLBACK_VALUE
+        city = _str_field(geo.get("city")) or FALLBACK_VALUE
+        adcode = _str_field(geo.get("adcode")) or FALLBACK_VALUE
         return province, city, adcode
     except (requests.RequestException, ValueError, KeyError):
         return FALLBACK_VALUE, FALLBACK_VALUE, FALLBACK_VALUE
