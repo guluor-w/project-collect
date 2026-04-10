@@ -1,6 +1,7 @@
 import pandas as pd
 import re
 import os
+import html
 
 
 def plaintext_to_richtext(plaintext):
@@ -11,6 +12,8 @@ def plaintext_to_richtext(plaintext):
     text = str(plaintext).strip()
     # 统一换行符
     text = text.replace('\r\n', '\n')
+    # 转义 HTML 特殊字符，防止原始文本破坏 HTML 结构
+    text = html.escape(text)
 
     # 1. 优先处理原有自定义格式：【内容】 -> 带样式的 Span
     def replace_custom_style(match):
@@ -46,8 +49,8 @@ def plaintext_to_richtext(plaintext):
         elif re.match(r'^\d+\.', first_line):
             list_items = []
             for line in lines:
-                # 移除数字标记
-                content = re.sub(r'^\d+\.\s+', '', line)
+                # 移除数字标记（允许数字后无空格）
+                content = re.sub(r'^\d+\.\s*', '', line)
                 list_items.append(f'<li>{content}</li>')
             new_paragraphs.append(f'<ol>{"".join(list_items)}</ol>')
             
@@ -72,7 +75,7 @@ if __name__ == "__main__":
         except Exception:
             # 如果不是 Excel，尝试作为 CSV 读取
             try:
-                df = pd.read_csv(file_path, encoding='utf-8')
+                df = pd.read_csv(file_path, encoding='utf-8-sig')
             except UnicodeDecodeError:
                 df = pd.read_csv(file_path, encoding='gb18030')
 
