@@ -19,7 +19,6 @@
 
 import os
 import re
-import sys
 import csv
 import tempfile
 from datetime import datetime
@@ -31,8 +30,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # 从同目录下的 excel_rich_text_processing 模块导入富文本转换函数
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from excel_rich_text_processing import plaintext_to_richtext  # noqa: E402
+from excel_rich_text_processing import plaintext_to_richtext
 
 INPUT_FILE = os.path.join(os.path.dirname(__file__), "tender_items.csv")
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), "cleaned_requirements.csv")
@@ -276,7 +274,7 @@ def clean_requirement_desc(desc: str) -> str:
     if not desc:
         return desc
     # 删除【xxx】类章节标签（含可选中文或英文冒号及尾随空白）
-    desc = re.sub(r'【[^】]*】[：:]?\s*', '', desc)
+    desc = re.sub(r'【.*?】[：:]?\s*', '', desc)
     # 删除特定无关词语（顺序：先删带"的"的形式，再删不带"的"的形式，避免部分匹配遗漏）
     desc = re.sub(r'本项目的|本项目|该项目的|该项目|旨在', '', desc)
     return desc.strip()
@@ -313,13 +311,15 @@ def build_requirement_content(desc: str, announcement_url: str) -> str:
         # 2. 计算留给 desc 的最大字符数，确保拼合后不超过1000字符
         suffix = f"\n\n{source_note}"
         max_desc_len = 1000 - len(suffix)
-        if max_desc_len < 0:
-            max_desc_len = 0
-        cleaned_desc = truncate_desc_for_limit(cleaned_desc, max_desc_len)
-        # 3. 拼合
-        combined = f"{cleaned_desc}{suffix}"
+        if max_desc_len <= 0:
+            # source_note 本身已超出限制，截断 source_note 至1000字符后使用
+            combined = truncate_desc_for_limit(source_note, 1000)
+        else:
+            cleaned_desc = truncate_desc_for_limit(cleaned_desc, max_desc_len)
+            # 3. 拼合
+            combined = f"{cleaned_desc}{suffix}"
     else:
-        combined = source_note
+        combined = truncate_desc_for_limit(source_note, 1000)
     # 4. 富文本格式转换
     return plaintext_to_richtext(combined)
 
