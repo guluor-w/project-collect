@@ -25,6 +25,7 @@ jobs:
       CCGP_SLEEP_MIN: "1.0"
       CCGP_SLEEP_MAX: "3.0"
       CCGP_SKIP_REPEAT_FAILED_ATTACHMENTS: "true"
+      AMAP_GEOCODING_KEY: ${{ secrets.AMAP_GEOCODING_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:

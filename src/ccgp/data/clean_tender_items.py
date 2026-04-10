@@ -6,12 +6,20 @@
 2. 新建数据表格，包含指定字段。
 3. 字段名称变更及默认值设置。
 4. 字段内容处理（日期格式标准化、预算金额转换、需求内容追加来源说明）。
+5. 地址标准化：通过高德地址编码接口获取 province、city、adcode，拼合到末尾字段。
+   - 需要设置环境变量 AMAP_GEOCODING_KEY。
+   - 请求失败时填写"待人工处理"。
 """
 
 import os
 import re
 import csv
 from datetime import datetime
+
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 INPUT_FILE = os.path.join(os.path.dirname(__file__), "tender_items.csv")
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), "cleaned_requirements.csv")
@@ -36,7 +44,48 @@ OUTPUT_COLUMNS = [
     "预算金额",
     "参考地址",
     "来源链接",
+    "高德省份",
+    "高德城市",
+    "高德adcode",
 ]
+
+AMAP_GEO_URL = "https://restapi.amap.com/v3/geocode/geo"
+FALLBACK_VALUE = "待人工处理"
+
+
+def geocode_address(address: str, api_key: str) -> tuple:
+    """使用高德地图地理编码接口获取省份、城市和adcode。
+
+    Args:
+        address: 待编码的地址字符串（对应"参考地址"字段）。
+        api_key: 高德地图 Web 服务 API Key（环境变量 AMAP_GEOCODING_KEY）。
+
+    Returns:
+        (province, city, adcode) 三元组。
+        当地址或 key 为空、请求失败或返回结果为空时，三个字段均返回"待人工处理"。
+    """
+    if not address or not api_key:
+        return FALLBACK_VALUE, FALLBACK_VALUE, FALLBACK_VALUE
+
+    try:
+        resp = requests.get(
+            AMAP_GEO_URL,
+            params={"address": address, "key": api_key, "output": "json"},
+            timeout=10,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+
+        if data.get("status") != "1" or not data.get("geocodes"):
+            return FALLBACK_VALUE, FALLBACK_VALUE, FALLBACK_VALUE
+
+        geo = data["geocodes"][0]
+        province = geo.get("province") or FALLBACK_VALUE
+        city = geo.get("city") or FALLBACK_VALUE
+        adcode = geo.get("adcode") or FALLBACK_VALUE
+        return province, city, adcode
+    except (requests.RequestException, ValueError, KeyError):
+        return FALLBACK_VALUE, FALLBACK_VALUE, FALLBACK_VALUE
 
 
 def parse_datetime(value: str) -> str:
@@ -116,6 +165,10 @@ def build_requirement_content(desc: str, announcement_url: str) -> str:
 
 def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_FILE) -> None:
     """读取 tender_items.csv，清洗数据后写入 cleaned_requirements.csv。"""
+    amap_key = os.getenv("AMAP_GEOCODING_KEY", "")
+    if not amap_key:
+        print("警告：未设置环境变量 AMAP_GEOCODING_KEY，地址标准化字段将全部填写'待人工处理'。")
+
     with open(input_file, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         rows = list(reader)
@@ -154,6 +207,13 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
             row.get("requirement_desc", ""),
             row.get("announcement_url", ""),
         )
+
+        # 地址标准化（高德地理编码）
+        reference_address = row.get("location_text", "")
+        province, city, adcode = geocode_address(reference_address, amap_key)
+        new_row["高德省份"] = province
+        new_row["高德城市"] = city
+        new_row["高德adcode"] = adcode
 
         output_rows.append(new_row)
 
