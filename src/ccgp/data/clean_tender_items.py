@@ -5,7 +5,7 @@
 1. 筛选 requirement_brief 不为"无相关要求"的数据。
 2. 新建数据表格，包含指定字段。
 3. 字段名称变更及默认值设置。
-4. 字段内容处理（日期格式标准化、预算金额转换、需求内容追加来源说明）。
+4. 字段内容处理（日期格式标准化、预算金额转换、需求内容清洗/截断/追加来源说明/富文本格式转换）。
 5. 地址标准化：
    a. 若清洗后的省份/市区已在 province_city_codes.csv 编码表中，直接保留，跳过高德 API 调用。
       否则通过高德地址编码接口获取 province、city、adcode（需设置 AMAP_GEOCODING_KEY），
@@ -19,6 +19,7 @@
 
 import os
 import re
+import sys
 import csv
 import tempfile
 from datetime import datetime
@@ -28,6 +29,10 @@ import requests
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# 从同目录下的 excel_rich_text_processing 模块导入富文本转换函数
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from excel_rich_text_processing import plaintext_to_richtext  # noqa: E402
 
 INPUT_FILE = os.path.join(os.path.dirname(__file__), "tender_items.csv")
 OUTPUT_FILE = os.path.join(os.path.dirname(__file__), "cleaned_requirements.csv")
@@ -262,12 +267,61 @@ def parse_budget(value: str) -> str:
     return f"{amount:.2f}"
 
 
+def clean_requirement_desc(desc: str) -> str:
+    """清洗需求内容字段：删除AI生成的章节标签和无关词语。
+
+    - 删除形如 【xxx】、【xxx】：、【xxx】: 的章节标签（含可选冒号和尾随空白）。
+    - 删除"本项目"、"本项目的"、"该项目"、"该项目的"、"旨在"等无关词语。
+    """
+    if not desc:
+        return desc
+    # 删除【xxx】类章节标签（含可选中文或英文冒号及尾随空白）
+    desc = re.sub(r'【[^】]*】[：:]?\s*', '', desc)
+    # 删除特定无关词语（顺序：先删带"的"的形式，再删不带"的"的形式，避免部分匹配遗漏）
+    desc = re.sub(r'本项目的|本项目|该项目的|该项目|旨在', '', desc)
+    return desc.strip()
+
+
+def truncate_desc_for_limit(desc: str, max_len: int) -> str:
+    """将字符串截断到不超过 max_len 个字符，在中文句号或换行符处截断。
+
+    若字符串本身不超过限制则原样返回；否则在 max_len 范围内找最后一个
+    中文句号（。）或换行符（\n）作为截断点；若找不到则直接截断。
+    """
+    if len(desc) <= max_len:
+        return desc
+    truncated = desc[:max_len]
+    for i in range(len(truncated) - 1, -1, -1):
+        if truncated[i] in ('。', '\n'):
+            return truncated[:i + 1]
+    return truncated
+
+
 def build_requirement_content(desc: str, announcement_url: str) -> str:
-    """在需求内容末尾追加来源说明段落。"""
+    """清洗需求内容、截断至1000字符限制、追加来源说明并转换为富文本格式。
+
+    处理步骤：
+    1. 删除AI生成的章节标签和无关词语。
+    2. 确保拼合后的总长度不超过1000字符（在中文句号或换行符处截断）。
+    3. 在需求内容末尾追加来源说明段落。
+    4. 将拼合结果转换为富文本（HTML）格式。
+    """
     source_note = f"本需求来源于中国政府采购网，详情请见招标信息 {announcement_url}"
-    if desc:
-        return f"{desc}\n\n{source_note}"
-    return source_note
+    # 1. 清洗
+    cleaned_desc = clean_requirement_desc(desc)
+    if cleaned_desc:
+        # 2. 计算留给 desc 的最大字符数，确保拼合后不超过1000字符
+        suffix = f"\n\n{source_note}"
+        max_desc_len = 1000 - len(suffix)
+        if max_desc_len < 0:
+            max_desc_len = 0
+        cleaned_desc = truncate_desc_for_limit(cleaned_desc, max_desc_len)
+        # 3. 拼合
+        combined = f"{cleaned_desc}{suffix}"
+    else:
+        combined = source_note
+    # 4. 富文本格式转换
+    return plaintext_to_richtext(combined)
 
 
 def writeback_to_input(

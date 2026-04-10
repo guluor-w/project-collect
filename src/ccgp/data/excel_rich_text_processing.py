@@ -59,36 +59,36 @@ def plaintext_to_richtext(plaintext):
     return ''.join(new_paragraphs)
 
 
-# 读取 CSV 文件
-file_name = "cleaned_requirements"
-script_dir = os.path.dirname(os.path.abspath(__file__))
-file_path = os.path.join(script_dir, f'{file_name}.csv')
+if __name__ == "__main__":
+    # 读取 CSV 文件
+    file_name = "cleaned_requirements"
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(script_dir, f'{file_name}.csv')
 
-try:
-    # 尝试作为 Excel 文件读取（即使扩展名是 .csv），因为文件头显示它是 ZIP 格式（Excel .xlsx）
     try:
-        df = pd.read_excel(file_path, engine='openpyxl')
-    except Exception:
-        # 如果不是 Excel，尝试作为 CSV 读取
+        # 尝试作为 Excel 文件读取（即使扩展名是 .csv），因为文件头显示它是 ZIP 格式（Excel .xlsx）
         try:
-            df = pd.read_csv(file_path, encoding='utf-8')
-        except UnicodeDecodeError:
-            df = pd.read_csv(file_path, encoding='gb18030')
+            df = pd.read_excel(file_path, engine='openpyxl')
+        except Exception:
+            # 如果不是 Excel，尝试作为 CSV 读取
+            try:
+                df = pd.read_csv(file_path, encoding='utf-8')
+            except UnicodeDecodeError:
+                df = pd.read_csv(file_path, encoding='gb18030')
 
-    # 处理“资源描述”列
-    if '资源描述' in df.columns:
-        df['资源描述'] = df['资源描述'].apply(plaintext_to_richtext)
-        # 保存处理后的文件
-        output_file = os.path.join(script_dir, f'{file_name}_处理后.csv')
-        df.to_csv(output_file, index=False, encoding='utf-8-sig')
-        print(f'处理完成，结果已保存到 {output_file}')
-    else:
+        # 处理“资源描述”列
+        if '资源描述' in df.columns:
+            df['资源描述'] = df['资源描述'].apply(plaintext_to_richtext)
+            # 保存处理后的文件
+            output_file = os.path.join(script_dir, f'{file_name}_处理后.csv')
+            df.to_csv(output_file, index=False, encoding='utf-8-sig')
+            print(f'处理完成，结果已保存到 {output_file}')
+        else:
+            print('错误：文件中未找到“资源描述”列')
+
+    except FileNotFoundError:
+        print(f'错误：未找到文件 {file_path}')
+    except KeyError:
         print('错误：文件中未找到“资源描述”列')
-
-except FileNotFoundError:
-    print(f'错误：未找到文件 {file_path}')
-except KeyError:
-    print('错误：文件中未找到“资源描述”列')
-except Exception as e:
-    print(f'发生未知错误：{e}')
-    
+    except Exception as e:
+        print(f'发生未知错误：{e}')
