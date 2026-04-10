@@ -7,12 +7,14 @@
 3. 字段名称变更及默认值设置。
 4. 字段内容处理（日期格式标准化、预算金额转换、需求内容追加来源说明）。
 5. 地址标准化：
-   a. 通过高德地址编码接口获取 province、city、adcode，拼合到末尾字段。
-      需要设置环境变量 AMAP_GEOCODING_KEY；请求失败时填写"待人工处理"。
+   a. 若清洗后的省份/市区已在 province_city_codes.csv 编码表中，直接保留，跳过高德 API 调用。
+      否则通过高德地址编码接口获取 province、city、adcode（需设置 AMAP_GEOCODING_KEY），
+      请求失败时填写"待人工处理"。
    b. 严格标准化"省份名称"和"市区名称"，依据 province_city_codes.csv 的省市编码表：
       1) 若清洗后的省份/市区已在编码表中则保留。
       2) 否则用高德省份/城市替换，若匹配则保留。
       3) 否则通过高德adcode反查编码表，若找到则替换；仍找不到则填写"待人工处理"。
+6. 将标准化成功（非"待人工处理"）的省市回填到 tender_items.csv 的 province/city 字段。
 """
 
 import os
@@ -246,8 +248,46 @@ def build_requirement_content(desc: str, announcement_url: str) -> str:
     return source_note
 
 
+def writeback_to_input(
+    input_file: str,
+    writeback_map: Dict[str, Tuple[str, str]],
+) -> None:
+    """将标准化后的省市回填到 tender_items.csv 的 province/city 字段。
+
+    只回填标准化成功（非"待人工处理"）的记录，以 announcement_url 作为匹配键。
+
+    Args:
+        input_file: tender_items.csv 文件路径。
+        writeback_map: announcement_url -> (province, city) 的映射，
+                       仅包含已成功标准化的条目。
+    """
+    if not writeback_map:
+        return
+
+    with open(input_file, newline="", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        fieldnames = reader.fieldnames or []
+        rows = list(reader)
+
+    updated_count = 0
+    for row in rows:
+        url = row.get("announcement_url", "")
+        if url in writeback_map:
+            prov, city = writeback_map[url]
+            row["province"] = prov
+            row["city"] = city
+            updated_count += 1
+
+    with open(input_file, "w", newline="", encoding="utf-8-sig") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    print(f"已将 {updated_count} 条标准化省市回填至: {input_file}")
+
+
 def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_FILE) -> None:
-    """读取 tender_items.csv，清洗数据后写入 cleaned_requirements.csv。"""
+    """读取 tender_items.csv，清洗数据后写入 cleaned_requirements.csv，并将标准化省市回填到输入文件。"""
     amap_key = os.getenv("AMAP_GEOCODING_KEY", "")
     if not amap_key:
         print("警告：未设置环境变量 AMAP_GEOCODING_KEY，地址标准化字段将全部填写'待人工处理'。")
@@ -268,6 +308,9 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
     print(f"原始数据行数: {len(rows)}，筛选后行数: {len(filtered_rows)}")
 
     output_rows = []
+    # announcement_url -> (province, city) 回填映射，仅记录标准化成功的条目
+    writeback_map: Dict[str, Tuple[str, str]] = {}
+
     for row in filtered_rows:
         new_row = {col: "" for col in OUTPUT_COLUMNS}
 
@@ -296,18 +339,24 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
             row.get("announcement_url", ""),
         )
 
-        # 地址标准化（高德地理编码，相同地址命中缓存直接返回）
-        reference_address = row.get("location_text", "")
-        if reference_address not in _geocode_cache:
-            _geocode_cache[reference_address] = geocode_address(reference_address, amap_key)
-        amap_province, amap_city, amap_adcode = _geocode_cache[reference_address]
+        # 提前获取原始省市，用于判断是否需要调用高德 API
+        raw_province = row.get("province", "")
+        raw_city = row.get("city", "")
+
+        # 地址标准化：若原始省市已符合编码表，跳过高德 API 调用
+        if raw_province and raw_city and (raw_province, raw_city) in valid_pairs:
+            amap_province, amap_city, amap_adcode = "", "", ""
+        else:
+            reference_address = row.get("location_text", "")
+            if reference_address not in _geocode_cache:
+                _geocode_cache[reference_address] = geocode_address(reference_address, amap_key)
+            amap_province, amap_city, amap_adcode = _geocode_cache[reference_address]
+
         new_row["高德省份"] = amap_province
         new_row["高德城市"] = amap_city
         new_row["高德adcode"] = amap_adcode
 
         # 严格标准化省份名称和市区名称
-        raw_province = row.get("province", "")
-        raw_city = row.get("city", "")
         norm_province, norm_city = normalize_location(
             raw_province,
             raw_city,
@@ -320,6 +369,12 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
         new_row["省份名称"] = norm_province
         new_row["市区名称"] = norm_city
 
+        # 记录标准化成功的省市，用于回填输入文件
+        if norm_province != FALLBACK_VALUE and norm_city != FALLBACK_VALUE:
+            url = row.get("announcement_url", "")
+            if url:
+                writeback_map[url] = (norm_province, norm_city)
+
         output_rows.append(new_row)
 
     with open(output_file, "w", newline="", encoding="utf-8-sig") as f:
@@ -328,6 +383,9 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
         writer.writerows(output_rows)
 
     print(f"清洗完成，结果已保存至: {output_file}")
+
+    # 将标准化省市回填到输入文件
+    writeback_to_input(input_file, writeback_map)
 
 
 if __name__ == "__main__":
