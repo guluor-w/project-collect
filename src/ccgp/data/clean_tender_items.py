@@ -58,6 +58,9 @@ OUTPUT_COLUMNS = [
 AMAP_GEO_URL = "https://restapi.amap.com/v3/geocode/geo"
 FALLBACK_VALUE = "待人工处理"
 
+# 共享的 HTTP Session，复用底层 TCP 连接，降低每次请求的开销
+_SESSION = requests.Session()
+
 
 # --------------- 省市编码表加载 ---------------
 
@@ -141,7 +144,7 @@ def geocode_address(address: str, api_key: str) -> tuple:
         return FALLBACK_VALUE, FALLBACK_VALUE, FALLBACK_VALUE
 
     try:
-        resp = requests.get(
+        resp = _SESSION.get(
             AMAP_GEO_URL,
             params={"address": address, "key": api_key, "output": "json"},
             timeout=10,
@@ -253,6 +256,9 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
     valid_pairs, adcode_map = load_province_city_codes()
     print(f"已加载省市编码表：{len(valid_pairs)} 个有效省市对，{len(adcode_map)} 个 adcode 映射。")
 
+    # 地址编码结果内存缓存，避免对相同地址重复发起 HTTP 请求
+    _geocode_cache: Dict[str, Tuple[str, str, str]] = {}
+
     with open(input_file, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         rows = list(reader)
@@ -290,9 +296,11 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
             row.get("announcement_url", ""),
         )
 
-        # 地址标准化（高德地理编码）
+        # 地址标准化（高德地理编码，相同地址命中缓存直接返回）
         reference_address = row.get("location_text", "")
-        amap_province, amap_city, amap_adcode = geocode_address(reference_address, amap_key)
+        if reference_address not in _geocode_cache:
+            _geocode_cache[reference_address] = geocode_address(reference_address, amap_key)
+        amap_province, amap_city, amap_adcode = _geocode_cache[reference_address]
         new_row["高德省份"] = amap_province
         new_row["高德城市"] = amap_city
         new_row["高德adcode"] = amap_adcode
