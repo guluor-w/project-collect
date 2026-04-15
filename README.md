@@ -67,6 +67,9 @@ src/
       attachments/         # 附件下载目录
   utils/
     mylogger.py            # 日志初始化
+docs/
+  index.html               # GitHub Pages 静态页面
+  assets/                  # 前端脚本与样式
 ```
 
 ## 运行环境
@@ -150,7 +153,7 @@ pip install openai PyPDF2 python-docx openpyxl
 - 页面源文件：`docs/index.html`
 - 前端脚本：`docs/assets/app.js`
 - 样式文件：`docs/assets/style.css`
-- 页面数据文件（部署时自动生成）：`docs/data/tender_items.csv`
+- 页面数据文件（部署时由工作流从 `src/ccgp/data/tender_items.csv` 自动生成）：`site/data/tender_items.csv`
 
 功能说明：
 
@@ -169,7 +172,17 @@ pip install openai PyPDF2 python-docx openpyxl
 
 - 已新增工作流：`.github/workflows/pages.yml`
 - 当 `docs/**` 或 `src/ccgp/data/tender_items.csv` 变化并推送到 `main` 时，会自动部署
-- 工作流会将 `src/ccgp/data/tender_items.csv` 复制到 `site/data/tender_items.csv` 后发布
+- 工作流会将 `src/ccgp/data/tender_items.csv` 复制到 `site/data/tender_items.csv` 后发布（`docs/data/` 无需纳入版本控制）
+
+本地预览说明：
+
+`docs/data/` 已被 `.gitignore` 排除，本地直接打开 `docs/index.html` 时需手动准备数据：
+
+```bash
+mkdir -p docs/data
+cp src/ccgp/data/tender_items.csv docs/data/tender_items.csv
+# 然后用静态服务器预览（如 python3 -m http.server 8080 --directory docs）
+```
 
 ## LLM 配置说明
 
@@ -196,6 +209,7 @@ client = OpenAI(
 - 字段提取为空：公告模板差异导致，优先补充 `FIELD_ALIASES`；若市字段为空，可能是该市为少数名族自治区，格式不是“xx市”的形式出现
 - 提取附件文本失败：下载了不支持的格式或文件过大
 - LLM 失败：检查 API Key、网络可达性、模型名与配额
+- search.ccgp.gov.cn 不可达（如 GitHub Actions 环境）：程序会自动检测到所有关键词搜索均失败，并自动回退至 `--no-search` 列表页模式（访问 `www.ccgp.gov.cn`），无需人工干预
 
 ## 以下为优化速度相关配置（主要用于GitHub Actions）
 ### Runtime Env Variables

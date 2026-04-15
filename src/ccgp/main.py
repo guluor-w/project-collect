@@ -30,6 +30,13 @@ from ccgp.config import (
     SKIP_REPEATED_FAILED_ATTACHMENTS,
     USER_AGENT,
 )
+
+
+class SearchNetworkError(RuntimeError):
+    """搜索阶段所有关键词请求均失败，search 预筛选不可用；可能包含网络连接失败、HTTP 状态错误等请求异常。"""
+    pass
+
+
 from ccgp.llm_requirements import generate_requirements, llm_second_filter_by_combined
 from ccgp.model import TenderItem
 from ccgp.parse_detail import parse_detail_page
@@ -151,12 +158,19 @@ def _build_search_url(keyword: str, page_index: int, start_date: str, end_date: 
 
 def _collect_entries_from_search(
     session: requests.Session,
-    keywords: List[str],
+    keywords: Optional[List[str]],
     start_date: str,
     end_date: str,
     max_pages: int,
-) -> List[dict]:
+) -> Tuple[List[dict], bool]:
+    """搜索预筛选：按关键词遍历 search.ccgp.gov.cn 获取候选公告列表。
 
+    Returns:
+        entries (List[dict]): 去重后的公告条目列表。
+        all_network_failed (bool): 若所有关键词的请求均因网络/连接错误失败（即
+            search.ccgp.gov.cn 整体不可达），则为 True；若存在至少一次 HTTP 成功
+            响应（包含 4xx/5xx）或部分关键词成功，则为 False。
+    """
     dedup = {}
     norm_keywords = [k.strip() for k in (keywords or []) if (k or "").strip()]
     get_logger().debug(
@@ -164,19 +178,32 @@ def _collect_entries_from_search(
     )
 
     stop_all_search = False
+    keywords_attempted = 0
+    network_failed_kws = 0
     # 使用 tqdm 显示关键词搜索进度
     for kw in tqdm(norm_keywords, desc="关键词搜索进度", unit="kw"):
         # 已经被封禁了，就不再继续后续关键词的查找。 
         if stop_all_search: 
             break
 
+        keywords_attempted += 1
+        had_connection_success = False  # True if at least one request reached the server (even 4xx/5xx)
         keyword_count = 0
         blocked_once_for_kw = False
         for page_index in range(1, max_pages + 1):
             url = _build_search_url(kw, page_index, start_date, end_date)
             try:
                 html = http_get(url, session, timeout=REQUEST_TIMEOUT_SEC)
+                had_connection_success = True
+            except requests.ConnectionError as e:
+                get_logger().warning(f"搜索页网络连接失败: 关键词={kw} 页码={page_index} -> {e}")
+                break
+            except requests.Timeout as e:
+                get_logger().warning(f"搜索页请求超时: 关键词={kw} 页码={page_index} -> {e}")
+                break
             except Exception as e:
+                # HTTP 状态错误（4xx/5xx）或其他异常：服务器可达，但本次请求失败
+                had_connection_success = True
                 get_logger().warning(f"搜索页请求失败: 关键词={kw} 页码={page_index} -> {e}")
                 break
 
@@ -247,6 +274,8 @@ def _collect_entries_from_search(
                 time.sleep(long_pause)
 
         get_logger().debug(f"关键词搜索完成: 关键词={kw}, 新增条目={keyword_count}")
+        if not had_connection_success:
+            network_failed_kws += 1
         # 每个关键词查找之间随机长休眠，避免过快访问引发封禁；
         # 如果已经被封禁了，就不再继续后续关键词的查找。
         if not stop_all_search:
@@ -255,8 +284,12 @@ def _collect_entries_from_search(
             time.sleep(kw_pause)
 
     out = list(dedup.values())
-    get_logger().debug(f"搜索预筛选完成: 唯一条目数={len(out)}, 是否提前终止={stop_all_search}")
-    return out
+    all_network_failed = keywords_attempted > 0 and network_failed_kws == keywords_attempted
+    get_logger().debug(
+        f"搜索预筛选完成: 唯一条目数={len(out)}, 是否提前终止={stop_all_search}, "
+        f"尝试关键词数={keywords_attempted}, 网络失败数={network_failed_kws}"
+    )
+    return out, all_network_failed
 
 
 def scrape_ccgp(
@@ -296,13 +329,21 @@ def scrape_ccgp(
     # 如果启用 use_search_prefilter，通过站内搜索接口获取近期公告以缩小范围
     # 否则，退化为传统方式，从指定列表页逐页查询
     if use_search_prefilter:
-        entries = _collect_entries_from_search(
+        entries, all_network_failed = _collect_entries_from_search(
             session=session,
             keywords=keywords,
             start_date=(cutoff.date().strftime("%Y:%m:%d")),
             end_date=(now.date().strftime("%Y:%m:%d")),
             max_pages=max_pages,
         )
+        if all_network_failed:
+            get_logger().warning(
+                "所有搜索关键词均因连接错误失败（search.ccgp.gov.cn 整体不可达），"
+                "抛出 SearchNetworkError 以便调用方回退至列表页模式"
+            )
+            raise SearchNetworkError(
+                "search.ccgp.gov.cn 不可达：所有关键词均遭遇网络连接/超时错误"
+            )
     else:
         list_urls = norm_list_page_urls(start_list_url, max_pages=max_pages)
         entries = []

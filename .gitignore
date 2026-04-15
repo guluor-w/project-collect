@@ -13,3 +13,6 @@ src/__pycache__/*
 
 # Generated output files
 src/ccgp/data/cleaned_requirements.csv
+
+# docs/data/ 中的 CSV 由 pages.yml 在部署时从 src/ccgp/data/ 复制，无需纳入版本控制
+docs/data/

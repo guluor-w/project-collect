@@ -45,9 +45,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          mkdir -p docs/data
-          cp src/ccgp/data/tender_items.csv docs/data/tender_items.csv
-          git add src/ccgp/data/tender_items.csv docs/data/tender_items.csv
+          git add src/ccgp/data/tender_items.csv
           if git diff --cached --quiet; then
             echo "No CSV changes to commit."
           else
