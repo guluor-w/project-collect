@@ -316,6 +316,13 @@ def plaintext_to_richtext(plaintext: str) -> str:
     # 转义 HTML 特殊字符，防止原始文本破坏 HTML 结构
     text = html.escape(text)
 
+    # 将纯文本中的 URL 转为可点击链接
+    def _linkify_urls(match):
+        url = match.group(0)
+        return f'<a href="{url}" target="_blank" rel="noopener noreferrer">{url}</a>'
+
+    text = re.sub(r'(https?://[^\s<]+)', _linkify_urls, text)
+
     # 1. 优先处理原有自定义格式：【内容】 -> 带样式的 Span
     def replace_custom_style(match):
         content = match.group(1)
