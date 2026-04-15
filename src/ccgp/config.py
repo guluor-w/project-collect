@@ -95,7 +95,7 @@ RE_DATE_YMD_HM = re.compile(
 
 # 解析金额
 RE_MONEY = re.compile(
-    r"(?P<num>\d{1,3}(?:,\d{3})*(?:\.\d+)?|\d+(?:\.\d+)?)\s*(?P<unit>万元|万|元)?"
+    r"(?P<num>\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s*(?P<unit>万元|万|元)?"
 )
 
 # 开关
