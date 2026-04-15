@@ -53,7 +53,7 @@ def _env_float(name: str, default: float) -> float:
         return default
     try:
         return float(raw)
-    except (TypeError, ValueError):
+    except ValueError:
         print(f"[WARN] 环境变量 {name}={raw!r} 不是合法数字，回退到默认值 {default}")
         return default
 
@@ -65,7 +65,7 @@ def _env_int(name: str, default: int) -> int:
         return default
     try:
         return int(raw)
-    except (TypeError, ValueError):
+    except ValueError:
         print(f"[WARN] 环境变量 {name}={raw!r} 不是合法整数，回退到默认值 {default}")
         return default
 
