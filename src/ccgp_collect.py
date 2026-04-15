@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 
 from ccgp.config import ATTACHMENTS_DIR, CLEAN_THRESHOLD
-from ccgp.main import main
+from ccgp.main import main, SearchNetworkError
 
 
 def should_delete_folder(folder_name: str, days_threshold: int = 3) -> bool:
@@ -52,9 +52,11 @@ def cleanup_old_folders(attachments_path: str, days_threshold: int = 3) -> None:
 
 def run_multiple_main_calls() -> None:
     """
-    Sync behavior with main.py:
-    - Default (search mode): call main() once. Do NOT iterate old start_urls.
-    - Legacy list mode (--no-search): keep old behavior and iterate two start_urls.
+    执行采集任务，支持两种模式：
+
+    - 默认（search 模式）：调用一次 main()，使用 search.ccgp.gov.cn 预筛选。
+      若 search.ccgp.gov.cn 不可达（SearchNetworkError），自动回退至列表页模式。
+    - 列表页模式（--no-search 或自动回退）：对地方/中央两个入口各调用一次 main()。
     """
     original_argv = sys.argv.copy()
 
@@ -65,9 +67,13 @@ def run_multiple_main_calls() -> None:
         try:
             main()
             print("搜索预筛选运行完成")
+        except SearchNetworkError as e:
+            print(f"search.ccgp.gov.cn 不可达，自动切换至列表页模式: {e}")
+            use_legacy_list_mode = True
         except Exception as e:
             print(f"搜索预筛选运行失败: {e}")
-    else:
+
+    if use_legacy_list_mode:
         start_urls = [
             "https://www.ccgp.gov.cn/cggg/dfgg/gkzb/index.htm",
             "https://www.ccgp.gov.cn/cggg/zygg/gkzb/index.htm",
@@ -79,8 +85,13 @@ def run_multiple_main_calls() -> None:
             if original_argv[i] == "--start":
                 i += 2
                 continue
+            if original_argv[i] == "--no-search":
+                i += 1
+                continue  # 跳过原有标志，在下方统一补充，避免重复
             preserved_args.append(original_argv[i])
             i += 1
+        # 无论是手动指定还是自动回退，均确保 --no-search 排在最前以触发列表页模式
+        preserved_args = ["--no-search"] + preserved_args
 
         for idx, url in enumerate(start_urls, 1):
             print(f"运行传统列表模式 {idx}/{len(start_urls)}: {url}")
