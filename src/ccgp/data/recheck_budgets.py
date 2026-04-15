@@ -5,11 +5,11 @@
 
 用法：
     cd <项目根目录>
-    python -m ccgp.data.recheck_budgets
+    PYTHONPATH=src python src/ccgp/data/recheck_budgets.py
 
 可选环境变量：
-    CCGP_SLEEP_MIN   两次请求之间的最小等待时间（秒），默认 2.0
-    CCGP_SLEEP_MAX   两次请求之间的最大等待时间（秒），默认 4.0
+    CCGP_SLEEP_MIN    两次请求之间的最小等待时间（秒），默认 2.0
+    CCGP_SLEEP_MAX    两次请求之间的最大等待时间（秒），默认 4.0
     CCGP_HTTP_TIMEOUT 单次 HTTP 请求超时（秒），默认 15
 """
 
@@ -45,9 +45,34 @@ DOCS_CSV = os.path.join(_REPO_ROOT, "docs", "data", "tender_items.csv")
 # ---------------------------------------------------------------------------
 # 访问间隔（可通过环境变量覆盖）
 # ---------------------------------------------------------------------------
-_SLEEP_MIN = float(os.getenv("CCGP_SLEEP_MIN", "2.0"))
-_SLEEP_MAX = float(os.getenv("CCGP_SLEEP_MAX", "4.0"))
-_TIMEOUT = int(os.getenv("CCGP_HTTP_TIMEOUT", "15"))
+
+def _env_float(name: str, default: float) -> float:
+    """读取浮点型环境变量；非法时回退到默认值并打印告警。"""
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        print(f"[WARN] 环境变量 {name}={raw!r} 不是合法数字，回退到默认值 {default}")
+        return default
+
+
+def _env_int(name: str, default: int) -> int:
+    """读取整型环境变量；非法时回退到默认值并打印告警。"""
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        print(f"[WARN] 环境变量 {name}={raw!r} 不是合法整数，回退到默认值 {default}")
+        return default
+
+
+_SLEEP_MIN = _env_float("CCGP_SLEEP_MIN", 2.0)
+_SLEEP_MAX = _env_float("CCGP_SLEEP_MAX", 4.0)
+_TIMEOUT = _env_int("CCGP_HTTP_TIMEOUT", 15)
 
 _HEADERS = {
     "User-Agent": (
@@ -101,7 +126,18 @@ def recheck_budgets(src_csv: str = SRC_CSV, docs_csv: str = DOCS_CSV) -> None:
 
     with open(src_csv, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
-        fieldnames = list(reader.fieldnames or [])
+        if not reader.fieldnames:
+            raise ValueError(
+                f"CSV 文件缺少表头或为空，无法处理: {src_csv}"
+            )
+        required_fields = {"announcement_url", "budget"}
+        missing_fields = required_fields.difference(reader.fieldnames)
+        if missing_fields:
+            raise ValueError(
+                "CSV 文件缺少必需列，无法处理: "
+                f"{src_csv}；缺少列: {', '.join(sorted(missing_fields))}"
+            )
+        fieldnames = list(reader.fieldnames)
         rows = list(reader)
 
     total = len(rows)
@@ -149,9 +185,8 @@ def recheck_budgets(src_csv: str = SRC_CSV, docs_csv: str = DOCS_CSV) -> None:
     _write_csv_atomic(src_csv, fieldnames, rows)
     print(f"已写入: {src_csv}")
 
-    # 同步到 docs/data/tender_items.csv（若路径非空且父目录存在）
-    docs_parent = os.path.dirname(os.path.abspath(docs_csv)) if docs_csv else ""
-    if docs_csv and docs_parent and os.path.isdir(docs_parent):
+    # 同步到 docs/data/tender_items.csv（始终同步，_write_csv_atomic 会自动创建目录）
+    if docs_csv:
         _write_csv_atomic(docs_csv, fieldnames, rows)
         print(f"已同步: {docs_csv}")
 
