@@ -263,6 +263,40 @@ def parse_budget(value: str) -> str:
     return f"{amount:.2f}"
 
 
+def clean_contact_phone(value: str) -> str:
+    """清洗发布人电话：仅保留第一组电话。"""
+    text = (value or "").strip()
+    if not text:
+        return ""
+
+    # 先匹配手机号，再匹配带区号/分机的固话，最后兜底匹配连续数字。
+    phone_patterns = [
+        re.compile(r"(?<!\d)(?:\+?86[-\s]?)?1[3-9]\d{9}(?!\d)"),
+        re.compile(
+            r"(?<!\d)(?:0\d{2,3}[-\s]?)?\d{7,8}(?:[-\s]\d{1,6})?(?:（\d+(?:[、,，]\d+)*）|\(\d+(?:[、,，]\d+)*\))?(?!\d)"
+        ),
+        re.compile(r"(?<!\d)\d{6,}(?!\d)"),
+    ]
+
+    best_match = None
+    for pattern in phone_patterns:
+        m = pattern.search(text)
+        if not m:
+            continue
+        if best_match is None or m.start() < best_match.start():
+            best_match = m
+
+    if best_match:
+        first = best_match.group(0).strip()
+        # 去除结尾可能残留的分隔符号
+        return first.rstrip("；;，,。、. ")
+
+    # 如果没有提取到电话，按常见分隔符裁剪第一段，避免污染下游字段。
+    # 覆盖：中英文句号/逗号、分号、顿号。
+    fallback_parts = re.split(r"[；;，,。、.]", text, maxsplit=1)
+    return fallback_parts[0].strip() if fallback_parts else text
+
+
 def plaintext_to_richtext(plaintext: str) -> str:
     """将纯文本转换为富文本（HTML）格式。
 
@@ -370,7 +404,7 @@ def build_requirement_content(desc: str, announcement_url: str) -> str:
     3. 在需求内容末尾追加来源说明段落。
     4. 将拼合结果转换为富文本（HTML）格式。
     """
-    source_note = f"本需求来源于中国政府采购网，详情请见招标信息 {announcement_url}"
+    source_note = f"本需求来源于中国政府采购网，详情请见招标信息： {announcement_url}"
     # 1. 清洗
     cleaned_desc = clean_requirement_desc(desc)
     if cleaned_desc:
@@ -482,7 +516,7 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
         new_row["需求简介"] = truncate_desc_for_limit(row.get("requirement_brief", ""), 200)
         new_row["发布单位名称"] = row.get("company_name", "")
         new_row["发布人姓名"] = row.get("contact_name", "")
-        new_row["发布人电话"] = row.get("contact_phone", "")
+        new_row["发布人电话"] = clean_contact_phone(row.get("contact_phone", ""))
         new_row["参考地址"] = row.get("location_text", "")
         new_row["来源链接"] = row.get("announcement_url", "")
 
