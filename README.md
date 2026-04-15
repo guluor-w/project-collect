@@ -174,6 +174,16 @@ pip install openai PyPDF2 python-docx openpyxl
 - 当 `docs/**` 或 `src/ccgp/data/tender_items.csv` 变化并推送到 `main` 时，会自动部署
 - 工作流会将 `src/ccgp/data/tender_items.csv` 复制到 `site/data/tender_items.csv` 后发布（`docs/data/` 无需纳入版本控制）
 
+本地预览说明：
+
+`docs/data/` 已被 `.gitignore` 排除，本地直接打开 `docs/index.html` 时需手动准备数据：
+
+```bash
+mkdir -p docs/data
+cp src/ccgp/data/tender_items.csv docs/data/tender_items.csv
+# 然后用静态服务器预览（如 python3 -m http.server 8080 --directory docs）
+```
+
 ## LLM 配置说明
 
 当前 `src/ccgp/llm_requirements.py` 中使用 Moonshot 兼容接口。
