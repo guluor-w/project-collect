@@ -21,9 +21,29 @@
         <p class="hero-subtitle">CCGP 数据展示</p>
         <h1>招标需求看板</h1>
         <p class="hero-description">
-          数据源来自 <code>tender_items.csv</code>，支持搜索、排序、分页与筛选。
+          聚合中国政府采购网公开招标公告，AI 自动提取需求摘要。数据每日更新。
         </p>
+        <p class="hero-update">最后更新：<span id="lastUpdateTime">加载中…</span></p>
       </header>
+
+      <section class="stats-row" aria-label="数据概览">
+        <div class="stat-card">
+          <div class="stat-value" id="statTotal">—</div>
+          <div class="stat-label">总招标数</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statWeekNew">—</div>
+          <div class="stat-label">本周新增</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statAvgBudget">—</div>
+          <div class="stat-label">平均预算</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statProvinces">—</div>
+          <div class="stat-label">覆盖省份</div>
+        </div>
+      </section>
 
       <section class="controls" aria-label="筛选与搜索">
         <div class="control-item search-wrap">
@@ -57,7 +77,11 @@
         <div class="control-item checkbox-wrap">
           <label class="checkbox-label" for="showNoRequirement">
             <input id="showNoRequirement" type="checkbox" />
-            显示 requirement_desc 为“无相关要求”的条目
+            包含未提取需求的项目
+          </label>
+          <label class="checkbox-label" for="showExpired">
+            <input id="showExpired" type="checkbox" />
+            显示已截止的条目
           </label>
         </div>
       </section>
@@ -96,6 +120,26 @@
         <div id="pageNumbers" class="page-numbers"></div>
       </nav>
     </main>
+
+    <!-- 招标详情弹窗 -->
+    <div id="detailModal" class="modal-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-box">
+        <button class="modal-close" id="modalClose" aria-label="关闭">✕</button>
+        <h2 id="modalTitle" class="modal-title"></h2>
+        <div class="modal-meta" id="modalMeta"></div>
+        <div id="modalBriefSection">
+          <h3 class="modal-section-title">需求摘要</h3>
+          <p id="modalBrief" class="modal-content"></p>
+        </div>
+        <div id="modalDescSection">
+          <h3 class="modal-section-title">需求详情</h3>
+          <p id="modalDesc" class="modal-content"></p>
+        </div>
+        <div class="modal-actions">
+          <a id="modalLink" href="#" target="_blank" rel="noopener noreferrer" class="modal-btn-primary">查看原文 →</a>
+        </div>
+      </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <script src="assets/app.js"></script>

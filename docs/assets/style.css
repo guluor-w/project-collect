@@ -8,6 +8,10 @@
   --accent-soft: #d8efe4;
   --accent-strong: #0f4d42;
   --warning: #9f5d1e;
+  --urgent: #c0392b;
+  --urgent-bg: #fff5f5;
+  --expired-text: #999;
+  --expired-bg: #f9f9f9;
   --shadow: 0 10px 30px rgba(26, 61, 47, 0.09);
 }
 
@@ -89,6 +93,47 @@ body {
   color: #e4f2ee;
 }
 
+.hero-update {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #a8cfc6;
+}
+
+/* ── Statistics cards ──────────────────────────────────────── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+  opacity: 0;
+  animation: riseIn 0.58s ease forwards;
+  animation-delay: 0.05s;
+}
+
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 14px 18px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 600;
+  color: var(--accent-strong);
+  line-height: 1.2;
+  min-height: 1.4em;
+}
+
+.stat-label {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ── Controls ──────────────────────────────────────────────── */
 .controls,
 .meta-row,
 .table-shell,
@@ -138,6 +183,7 @@ select {
 
 .checkbox-wrap {
   justify-content: end;
+  gap: 8px;
 }
 
 .range-inputs {
@@ -162,9 +208,10 @@ select {
   background: var(--accent-soft);
   color: var(--accent-strong);
   border-radius: 10px;
-  padding: 10px 12px;
+  padding: 8px 12px;
   border: 1px solid #b9dccf;
   min-height: 44px;
+  font-size: 13px;
 }
 
 .meta-row {
@@ -221,14 +268,30 @@ tbody td {
   vertical-align: top;
 }
 
+/* Zebra striping */
+tbody tr:nth-child(odd) {
+  background: #ffffff;
+}
+
+tbody tr:nth-child(even) {
+  background: #f7faf5;
+}
+
 tbody tr:hover {
-  background: #f5faf2;
+  background: #eef5ea !important;
+}
+
+/* Budget column right-align */
+tbody td:nth-child(6),
+thead th:nth-child(6) {
+  text-align: right;
 }
 
 .title-link {
   color: var(--accent);
   text-decoration: none;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .title-link:hover {
@@ -240,12 +303,89 @@ tbody tr:hover {
   line-height: 1.5;
 }
 
+/* ── Deadline urgency ──────────────────────────────────────── */
+.badge-urgent {
+  display: inline-block;
+  background: var(--urgent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+tr.row-urgent {
+  background: var(--urgent-bg) !important;
+}
+
+tr.row-expired td {
+  color: var(--expired-text);
+}
+
+tr.row-expired td a {
+  color: #aaa;
+}
+
+.badge-expired {
+  display: inline-block;
+  background: #bbb;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* ── Keyword highlight ──────────────────────────────────────── */
+mark.hl {
+  background: #fff176;
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
+}
+
+/* ── Skeleton loading ──────────────────────────────────────── */
+@keyframes shimmer {
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
+}
+
+.skeleton-cell {
+  display: inline-block;
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #e8ede6 25%, #d4dcd2 50%, #e8ede6 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.skeleton-cell.narrow { width: 70px; }
+.skeleton-cell.medium { width: 120px; }
+.skeleton-cell.wide { width: 220px; }
+.skeleton-cell.full { width: 90%; }
+
+tr.skeleton-row td {
+  padding: 14px 10px;
+}
+
+/* ── Empty state ──────────────────────────────────────────── */
 .empty-state {
   text-align: center;
   color: var(--warning);
   padding: 24px;
 }
 
+/* ── Pagination ─────────────────────────────────────────────── */
 .pagination {
   margin-top: 12px;
   display: flex;
@@ -303,6 +443,112 @@ button:disabled {
   margin-left: 6px;
 }
 
+/* ── Detail modal ───────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+  max-width: 680px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 28px 32px 24px;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #f0f4ee;
+  color: var(--text);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 32px;
+  text-align: center;
+}
+
+.modal-close:hover {
+  background: #e0e8dd;
+}
+
+.modal-title {
+  font-family: "Noto Serif SC", serif;
+  font-size: 18px;
+  margin: 0 40px 12px 0;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.modal-meta {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.modal-section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-strong);
+  margin: 16px 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.modal-content {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.modal-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.modal-btn-primary {
+  display: inline-block;
+  background: var(--accent);
+  color: #f9fffc;
+  border-radius: 9px;
+  padding: 9px 18px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.modal-btn-primary:hover {
+  background: var(--accent-strong);
+}
+
+/* ── Animations ─────────────────────────────────────────────── */
 @keyframes riseIn {
   from {
     opacity: 0;
@@ -323,7 +569,12 @@ button:disabled {
   }
 }
 
+/* ── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 980px) {
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .controls {
     grid-template-columns: 1fr 1fr;
   }
@@ -339,6 +590,10 @@ button:disabled {
 }
 
 @media (max-width: 680px) {
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .controls {
     grid-template-columns: 1fr;
   }

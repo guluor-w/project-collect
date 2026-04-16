@@ -1,3 +1,43 @@
+// Province normalization: map variants to canonical names
+const PROVINCE_NORMALIZE = {
+  "北京市": "北京",
+  "天津市": "天津",
+  "上海市": "上海",
+  "重庆市": "重庆",
+  "河北省": "河北",
+  "山西省": "山西",
+  "辽宁省": "辽宁",
+  "吉林省": "吉林",
+  "黑龙江省": "黑龙江",
+  "江苏省": "江苏",
+  "浙江省": "浙江",
+  "安徽省": "安徽",
+  "福建省": "福建",
+  "江西省": "江西",
+  "山东省": "山东",
+  "河南省": "河南",
+  "湖北省": "湖北",
+  "湖南省": "湖南",
+  "广东省": "广东",
+  "海南省": "海南",
+  "四川省": "四川",
+  "贵州省": "贵州",
+  "云南省": "云南",
+  "陕西省": "陕西",
+  "甘肃省": "甘肃",
+  "青海省": "青海",
+  "内蒙古自治区": "内蒙古",
+  "广西壮族自治区": "广西",
+  "西藏自治区": "西藏",
+  "宁夏回族自治区": "宁夏",
+  "新疆维吾尔自治区": "新疆",
+  "香港特别行政区": "香港",
+  "澳门特别行政区": "澳门",
+};
+
+const MS_PER_DAY = 86400000;
+const DAYS_IN_WEEK = 7;
+
 const state = {
   sourceRows: [],
   filteredRows: [],
@@ -11,6 +51,7 @@ const state = {
   budgetMin: "",
   budgetMax: "",
   showNoRequirement: false,
+  showExpired: false,
 };
 
 const tableBody = document.getElementById("tableBody");
@@ -23,8 +64,11 @@ const cityFilter = document.getElementById("cityFilter");
 const budgetMinInput = document.getElementById("budgetMinInput");
 const budgetMaxInput = document.getElementById("budgetMaxInput");
 const showNoRequirementCheckbox = document.getElementById("showNoRequirement");
+const showExpiredCheckbox = document.getElementById("showExpired");
 const pageSizeSelect = document.getElementById("pageSizeSelect");
 const headers = Array.from(document.querySelectorAll("th[data-key]"));
+const detailModal = document.getElementById("detailModal");
+const modalClose = document.getElementById("modalClose");
 
 function parseBudgetToWan(rawValue) {
   const text = String(rawValue || "").trim();
@@ -67,10 +111,34 @@ function escapeHtml(text) {
     .replaceAll("'", "&#39;");
 }
 
+function highlightHtml(text, keyword) {
+  const str = String(text || "");
+  if (!keyword || keyword.length > 200) {
+    return escapeHtml(str);
+  }
+  const escapedKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const regex = new RegExp(escapedKeyword, "gi");
+  let last = 0;
+  let result = "";
+  let match;
+  while ((match = regex.exec(str)) !== null) {
+    result += escapeHtml(str.slice(last, match.index));
+    result += `<mark class="hl">${escapeHtml(match[0])}</mark>`;
+    last = match.index + match[0].length;
+  }
+  result += escapeHtml(str.slice(last));
+  return result;
+}
+
+function normalizeProvince(raw) {
+  const s = String(raw || "").trim();
+  return PROVINCE_NORMALIZE[s] || s;
+}
+
 function normalizeRow(rawRow) {
   const pubDate = toDateOnly(rawRow.pub_time);
   const deadlineDate = toDateOnly(rawRow.deadline);
-  const province = String(rawRow.province || "").trim();
+  const province = normalizeProvince(rawRow.province);
   const city = String(rawRow.city || "").trim();
 
   return {
@@ -101,6 +169,15 @@ function getSortableValue(row, key) {
   return String(row[key] || "").toLowerCase();
 }
 
+function getDaysUntilDeadline(deadlineStr) {
+  if (!deadlineStr) return null;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const deadline = new Date(deadlineStr);
+  if (Number.isNaN(deadline.getTime())) return null;
+  return Math.floor((deadline - today) / MS_PER_DAY);
+}
+
 function applyFilters() {
   const keyword = state.keyword.toLowerCase();
   const minBudget = state.budgetMin === "" ? Number.NaN : Number.parseFloat(state.budgetMin);
@@ -109,6 +186,13 @@ function applyFilters() {
   state.filteredRows = state.sourceRows.filter((row) => {
     if (!state.showNoRequirement && row.requirement_desc === "无相关要求") {
       return false;
+    }
+
+    if (!state.showExpired) {
+      const days = getDaysUntilDeadline(row.deadline);
+      if (days !== null && days < 0) {
+        return false;
+      }
     }
 
     if (state.province && row.province !== state.province) {
@@ -176,7 +260,7 @@ function renderSortIndicators() {
     const key = th.dataset.key;
     const arrow = key === state.sortKey ? (state.sortDirection === "asc" ? "▲" : "▼") : "";
     const plainText = th.textContent.replace(/[▲▼]/g, "").trim();
-    th.innerHTML = `${plainText}<span class="sort-indicator">${arrow}</span>`;
+    th.innerHTML = `${escapeHtml(plainText)}<span class="sort-indicator">${arrow}</span>`;
   });
 }
 
@@ -190,27 +274,127 @@ function renderTablePage() {
 
   const start = (state.page - 1) * state.pageSize;
   const pageRows = state.filteredRows.slice(start, start + state.pageSize);
+  const keyword = state.keyword;
 
   tableBody.innerHTML = pageRows
-    .map((row) => {
-      const titleHtml = row.announcement_url
-        ? `<a class="title-link" href="${escapeHtml(row.announcement_url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(row.project_name || "(无标题)")}</a>`
-        : escapeHtml(row.project_name || "(无标题)");
+    .map((row, i) => {
+      const filteredIdx = start + i;
+      const days = getDaysUntilDeadline(row.deadline);
+      const isExpired = days !== null && days < 0;
+      const isUrgent = days !== null && days >= 0 && days <= 3;
 
-      return `<tr>
-        <td>${escapeHtml(row.pub_time)}</td>
-        <td>${escapeHtml(row.deadline)}</td>
+      let rowClass = "";
+      if (isUrgent) rowClass = "row-urgent";
+      else if (isExpired) rowClass = "row-expired";
+
+      let deadlineBadge = "";
+      if (isUrgent) {
+        deadlineBadge = `<span class="badge-urgent">即将截止</span>`;
+      } else if (isExpired) {
+        deadlineBadge = `<span class="badge-expired">已截止</span>`;
+      }
+
+      const titleText = highlightHtml(row.project_name || "(无标题)", keyword);
+      const titleHtml = row.announcement_url
+        ? `<a class="title-link" data-row-index="${filteredIdx}" href="${escapeHtml(row.announcement_url)}">${titleText}</a>`
+        : `<span class="title-link" data-row-index="${filteredIdx}">${titleText}</span>`;
+
+      return `<tr class="${rowClass}">
+        <td>${highlightHtml(row.pub_time, keyword)}</td>
+        <td>${highlightHtml(row.deadline, keyword)}${deadlineBadge}</td>
         <td>${titleHtml}</td>
-        <td>${escapeHtml(row.province_city)}</td>
-        <td>${escapeHtml(row.company_name)}</td>
-        <td>${escapeHtml(row.budget)}</td>
-        <td class="summary-cell">${escapeHtml(row.requirement_brief || "-")}</td>
+        <td>${highlightHtml(row.province_city, keyword)}</td>
+        <td>${highlightHtml(row.company_name, keyword)}</td>
+        <td>${highlightHtml(row.budget, keyword)}</td>
+        <td class="summary-cell">${highlightHtml(row.requirement_brief || "-", keyword)}</td>
       </tr>`;
     })
     .join("");
 
   emptyState.hidden = pageRows.length > 0;
   renderPagination(totalPages);
+}
+
+function renderSkeletonRows(count = 5) {
+  tableBody.innerHTML = Array.from({ length: count }, () => `<tr class="skeleton-row">
+    <td><span class="skeleton-cell narrow"></span></td>
+    <td><span class="skeleton-cell narrow"></span></td>
+    <td><span class="skeleton-cell wide"></span></td>
+    <td><span class="skeleton-cell medium"></span></td>
+    <td><span class="skeleton-cell medium"></span></td>
+    <td><span class="skeleton-cell narrow"></span></td>
+    <td><span class="skeleton-cell full"></span></td>
+  </tr>`).join("");
+  emptyState.hidden = true;
+}
+
+function renderStats() {
+  const total = state.sourceRows.length;
+
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const weekAgo = new Date(now);
+  weekAgo.setDate(weekAgo.getDate() - DAYS_IN_WEEK);
+  const weekAgoStr = weekAgo.toISOString().slice(0, 10);
+  const weekNew = state.sourceRows.filter((r) => r.pub_time >= weekAgoStr).length;
+
+  const budgets = state.sourceRows.map((r) => r.budget_wan).filter((b) => Number.isFinite(b));
+  const avgBudget = budgets.length ? budgets.reduce((a, b) => a + b, 0) / budgets.length : 0;
+  const avgBudgetStr = avgBudget > 0 ? `${Math.round(avgBudget).toLocaleString("zh-CN")} 万元` : "—";
+
+  const provinces = new Set(state.sourceRows.map((r) => r.province).filter(Boolean));
+
+  const maxPubTime = state.sourceRows
+    .map((r) => r.pub_time)
+    .filter(Boolean)
+    .sort()
+    .slice(-1)[0] || "—";
+
+  document.getElementById("statTotal").textContent = total.toLocaleString("zh-CN");
+  document.getElementById("statWeekNew").textContent = weekNew.toLocaleString("zh-CN");
+  document.getElementById("statAvgBudget").textContent = avgBudgetStr;
+  document.getElementById("statProvinces").textContent = provinces.size;
+  document.getElementById("lastUpdateTime").textContent = maxPubTime;
+}
+
+function openDetailModal(row) {
+  document.getElementById("modalTitle").textContent = row.project_name || "(无标题)";
+
+  const metaParts = [
+    row.pub_time ? `发布：${escapeHtml(row.pub_time)}` : "",
+    row.deadline ? `截止：${escapeHtml(row.deadline)}` : "",
+    row.province_city ? `地区：${escapeHtml(row.province_city)}` : "",
+    row.company_name ? `采购单位：${escapeHtml(row.company_name)}` : "",
+    row.budget ? `预算：${escapeHtml(row.budget)}` : "",
+  ].filter(Boolean);
+  document.getElementById("modalMeta").innerHTML = metaParts.map((p) => `<span>${p}</span>`).join("");
+
+  const brief = row.requirement_brief;
+  const briefSection = document.getElementById("modalBriefSection");
+  briefSection.hidden = !brief || brief === "-";
+  document.getElementById("modalBrief").textContent = brief || "";
+
+  const desc = row.requirement_desc;
+  const descSection = document.getElementById("modalDescSection");
+  const hideDesc = !desc || desc === "无相关要求" || desc === "-";
+  descSection.hidden = hideDesc;
+  document.getElementById("modalDesc").textContent = desc || "";
+
+  const modalLink = document.getElementById("modalLink");
+  if (row.announcement_url) {
+    modalLink.href = row.announcement_url;
+    modalLink.hidden = false;
+  } else {
+    modalLink.hidden = true;
+  }
+
+  detailModal.hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+function closeDetailModal() {
+  detailModal.hidden = true;
+  document.body.style.overflow = "";
 }
 
 function refillProvinceOptions() {
@@ -285,6 +469,38 @@ function renderPagination(totalPages) {
     .join("");
 }
 
+function syncStateToUrl() {
+  const params = new URLSearchParams();
+  if (state.keyword) params.set("q", state.keyword);
+  if (state.province) params.set("province", state.province);
+  if (state.city) params.set("city", state.city);
+  if (state.budgetMin) params.set("budgetMin", state.budgetMin);
+  if (state.budgetMax) params.set("budgetMax", state.budgetMax);
+  if (state.showNoRequirement) params.set("showNoReq", "1");
+  if (state.showExpired) params.set("showExpired", "1");
+  const str = params.toString();
+  window.history.replaceState(null, "", str ? `?${str}` : window.location.pathname);
+}
+
+function loadStateFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("q")) state.keyword = params.get("q");
+  if (params.has("province")) state.province = params.get("province");
+  if (params.has("city")) state.city = params.get("city");
+  if (params.has("budgetMin")) state.budgetMin = params.get("budgetMin");
+  if (params.has("budgetMax")) state.budgetMax = params.get("budgetMax");
+  if (params.has("showNoReq")) state.showNoRequirement = true;
+  if (params.has("showExpired")) state.showExpired = true;
+}
+
+function applyUrlStateToInputs() {
+  if (state.keyword) searchInput.value = state.keyword;
+  if (state.budgetMin) budgetMinInput.value = state.budgetMin;
+  if (state.budgetMax) budgetMaxInput.value = state.budgetMax;
+  if (state.showNoRequirement) showNoRequirementCheckbox.checked = true;
+  if (state.showExpired) showExpiredCheckbox.checked = true;
+}
+
 function refreshTable() {
   applyFilters();
   applySort();
@@ -298,6 +514,7 @@ function bindEvents() {
     state.keyword = event.target.value.trim();
     state.page = 1;
     refreshTable();
+    syncStateToUrl();
   });
 
   provinceFilter.addEventListener("change", (event) => {
@@ -306,30 +523,42 @@ function bindEvents() {
     refillCityOptions();
     state.page = 1;
     refreshTable();
+    syncStateToUrl();
   });
 
   cityFilter.addEventListener("change", (event) => {
     state.city = event.target.value;
     state.page = 1;
     refreshTable();
+    syncStateToUrl();
   });
 
   budgetMinInput.addEventListener("input", (event) => {
     state.budgetMin = event.target.value.trim();
     state.page = 1;
     refreshTable();
+    syncStateToUrl();
   });
 
   budgetMaxInput.addEventListener("input", (event) => {
     state.budgetMax = event.target.value.trim();
     state.page = 1;
     refreshTable();
+    syncStateToUrl();
   });
 
   showNoRequirementCheckbox.addEventListener("change", (event) => {
     state.showNoRequirement = event.target.checked;
     state.page = 1;
     refreshTable();
+    syncStateToUrl();
+  });
+
+  showExpiredCheckbox.addEventListener("change", (event) => {
+    state.showExpired = event.target.checked;
+    state.page = 1;
+    refreshTable();
+    syncStateToUrl();
   });
 
   pageSizeSelect.addEventListener("change", (event) => {
@@ -362,9 +591,38 @@ function bindEvents() {
       renderTablePage();
     }
   });
+
+  // Detail modal: open on title click
+  tableBody.addEventListener("click", (event) => {
+    const link = event.target.closest(".title-link");
+    if (!link) return;
+    event.preventDefault();
+    const idx = Number.parseInt(link.dataset.rowIndex || "", 10);
+    if (Number.isFinite(idx) && state.filteredRows[idx]) {
+      openDetailModal(state.filteredRows[idx]);
+    }
+  });
+
+  modalClose.addEventListener("click", closeDetailModal);
+
+  detailModal.addEventListener("click", (event) => {
+    if (event.target === detailModal) {
+      closeDetailModal();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !detailModal.hidden) {
+      closeDetailModal();
+    }
+  });
 }
 
 function loadCsvAndInit() {
+  loadStateFromUrl();
+  applyUrlStateToInputs();
+  renderSkeletonRows();
+
   Papa.parse("data/tender_items.csv", {
     download: true,
     header: true,
@@ -373,11 +631,15 @@ function loadCsvAndInit() {
       const rows = Array.isArray(result.data) ? result.data : [];
       state.sourceRows = rows.map(normalizeRow);
       refillProvinceOptions();
+      if (state.province) provinceFilter.value = state.province;
       refillCityOptions();
+      if (state.city) cityFilter.value = state.city;
+      renderStats();
       refreshTable();
     },
     error: () => {
       summaryText.textContent = "数据加载失败，请稍后刷新重试。";
+      tableBody.innerHTML = "";
       emptyState.hidden = false;
     },
   });
