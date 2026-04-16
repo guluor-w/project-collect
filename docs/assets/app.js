@@ -33,6 +33,8 @@ const PROVINCE_NORMALIZE = {
   "新疆维吾尔自治区": "新疆",
   "香港特别行政区": "香港",
   "澳门特别行政区": "澳门",
+  "台湾省": "台湾",
+  "台湾": "台湾",
 };
 
 const MS_PER_DAY = 86400000;
@@ -169,12 +171,33 @@ function getSortableValue(row, key) {
   return String(row[key] || "").toLowerCase();
 }
 
+function parseLocalDateOnly(dateStr) {
+  if (!dateStr) return null;
+  const match = String(dateStr).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (match) {
+    const year = Number.parseInt(match[1], 10);
+    const month = Number.parseInt(match[2], 10);
+    const day = Number.parseInt(match[3], 10);
+    const date = new Date(year, month - 1, day);
+    if (
+      date.getFullYear() !== year ||
+      date.getMonth() !== month - 1 ||
+      date.getDate() !== day
+    ) {
+      return null;
+    }
+    return date;
+  }
+  const fallback = new Date(dateStr);
+  return Number.isNaN(fallback.getTime()) ? null : fallback;
+}
+
 function getDaysUntilDeadline(deadlineStr) {
   if (!deadlineStr) return null;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const deadline = new Date(deadlineStr);
-  if (Number.isNaN(deadline.getTime())) return null;
+  const deadline = parseLocalDateOnly(deadlineStr);
+  if (!deadline) return null;
   return Math.floor((deadline - today) / MS_PER_DAY);
 }
 
@@ -295,7 +318,8 @@ function renderTablePage() {
       }
 
       const titleText = highlightHtml(row.project_name || "(无标题)", keyword);
-      const titleHtml = row.announcement_url
+      const isSafeTitleUrl = row.announcement_url && /^https?:\/\//i.test(row.announcement_url);
+      const titleHtml = isSafeTitleUrl
         ? `<a class="title-link" data-row-index="${filteredIdx}" href="${escapeHtml(row.announcement_url)}">${titleText}</a>`
         : `<span class="title-link" data-row-index="${filteredIdx}">${titleText}</span>`;
 
@@ -381,7 +405,8 @@ function openDetailModal(row) {
   document.getElementById("modalDesc").textContent = desc || "";
 
   const modalLink = document.getElementById("modalLink");
-  if (row.announcement_url) {
+  const isSafeUrl = row.announcement_url && /^https?:\/\//i.test(row.announcement_url);
+  if (isSafeUrl) {
     modalLink.href = row.announcement_url;
     modalLink.hidden = false;
   } else {
@@ -631,7 +656,13 @@ function loadCsvAndInit() {
       const rows = Array.isArray(result.data) ? result.data : [];
       state.sourceRows = rows.map(normalizeRow);
       refillProvinceOptions();
-      if (state.province) provinceFilter.value = state.province;
+      const availableProvinces = Array.from(provinceFilter.options).map((opt) => opt.value);
+      if (state.province && !availableProvinces.includes(state.province)) {
+        state.province = "";
+        provinceFilter.value = "";
+      } else if (state.province) {
+        provinceFilter.value = state.province;
+      }
       refillCityOptions();
       if (state.city) cityFilter.value = state.city;
       renderStats();

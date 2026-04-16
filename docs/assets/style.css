@@ -321,6 +321,10 @@ tr.row-urgent {
   background: var(--urgent-bg) !important;
 }
 
+tr.row-expired {
+  background: var(--expired-bg) !important;
+}
+
 tr.row-expired td {
   color: var(--expired-text);
 }
