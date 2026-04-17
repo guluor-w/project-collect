@@ -207,7 +207,7 @@ function applyFilters() {
   const maxBudget = state.budgetMax === "" ? Number.NaN : Number.parseFloat(state.budgetMax);
 
   state.filteredRows = state.sourceRows.filter((row) => {
-    if (!state.showNoRequirement && row.requirement_desc === "无相关要求") {
+    if (!state.showNoRequirement && (row.requirement_desc === "无相关要求" || row.requirement_brief === "无相关要求")) {
       return false;
     }
 
