@@ -40,10 +40,9 @@ docs/
 
 ```bash
 pip install -r requirements.txt
-pip install openai PyPDF2 python-docx openpyxl
 ```
 
-说明：第二行是附件解析与 LLM 功能需要的额外依赖，未安装时对应功能会报错或不可用。
+（`requirements.txt` 已包含 `openai`、`PyPDF2`、`python-docx`、`openpyxl` 等全部所需依赖。）
 
 ---
 
@@ -84,9 +83,9 @@ FILTER_EXCLUDE_KEYWORDS = [
 采集范围与开关配置示例：
 
 ```python
-# 收集日期和最大页数
+# 收集日期和最大页数（按需修改）
 DAYS = 1
-PAGES = 30
+PAGES = 20
 
 # 开关
 ENABLE_READ_ATTACHMENTS = _env_bool("CCGP_ENABLE_ATTACHMENTS", True)
@@ -97,14 +96,24 @@ ENABLE_LLM_REQUIREMENTS = _env_bool("CCGP_ENABLE_LLM", True)
 
 ## LLM 配置说明
 
-当前 `src/ccgp/llm_requirements.py` 中使用 Moonshot 兼容接口：
+`src/ccgp/llm_requirements.py` 支持多 Provider 自动故障转移，按以下优先级依次尝试：
 
-```python
-client = OpenAI(
-    api_key=MOONSHOT_API_KEY,
-    base_url=BASE_URL
-)
+| 优先级 | Provider | 环境变量 |
+|--------|----------|----------|
+| 1 | Moonshot AI (Kimi) | `MOONSHOT_API_KEY` |
+| 2 | Volcengine (Doubao/Ark) | `VOLC_API_KEY` |
+| 3 | DeepSeek | `DEEPSEEK_API_KEY` |
+
+配置方式：在环境变量（或 `.env` 文件）中设置对应的 API Key，程序将自动使用已配置的 Provider。至少配置一个即可运行；同时配置多个时，前一个失败后会自动切换到下一个。
+
+```bash
+# 示例 .env
+MOONSHOT_API_KEY=your_moonshot_key
+VOLC_API_KEY=your_volcengine_key
+DEEPSEEK_API_KEY=your_deepseek_key
 ```
+
+若所有 Provider 均未配置，LLM 相关功能（需求摘要生成、二轮语义筛选）将不可用，程序会记录错误日志并跳过相关步骤。
 
 ---
 
