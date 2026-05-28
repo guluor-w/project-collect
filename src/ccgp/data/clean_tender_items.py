@@ -548,29 +548,53 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
         canon_province = _canonicalize(raw_province, known_provinces, _PROV_SUFFIXES)
         canon_city = _canonicalize(raw_city, known_cities, _CITY_SUFFIXES)
 
-        # 地址标准化：若规范化后的省市已符合编码表，跳过高德 API 调用
+        # 地址标准化：若规范化后的省市已符合编码表，直接保留，跳过高德 API 调用
         if canon_province and canon_city and (canon_province, canon_city) in valid_pairs:
             amap_province, amap_city, amap_adcode = "", "", ""
+            norm_province, norm_city = canon_province, canon_city
         else:
             reference_address = row.get("location_text", "")
+
+            # 第一次查询：原始地址
             if reference_address not in _geocode_cache:
                 _geocode_cache[reference_address] = geocode_address(reference_address, amap_key)
-            amap_province, amap_city, amap_adcode = _geocode_cache[reference_address]
+            result1 = _geocode_cache[reference_address]
+
+            # 第二次查询：增强地址（原始省+原始市+原始地址）
+            enhanced_parts = [p for p in [raw_province, raw_city, reference_address] if p.strip()]
+            enhanced_address = "".join(enhanced_parts)
+            if enhanced_address != reference_address:
+                if enhanced_address not in _geocode_cache:
+                    _geocode_cache[enhanced_address] = geocode_address(enhanced_address, amap_key)
+                result2 = _geocode_cache[enhanced_address]
+            else:
+                # 拼接后无变化，复用第一次结果，避免冗余查询
+                result2 = result1
+
+            # 对两组结果分别标准化，取第一个匹配编码表的结果
+            norm_province, norm_city = FALLBACK_VALUE, FALLBACK_VALUE
+            amap_province, amap_city, amap_adcode = "", "", ""
+            for p, c, a in (result1, result2):
+                np, nc = normalize_location(
+                    canon_province,
+                    canon_city,
+                    p, c, a,
+                    valid_pairs,
+                    adcode_map,
+                )
+                if np != FALLBACK_VALUE and nc != FALLBACK_VALUE:
+                    norm_province, norm_city = np, nc
+                    amap_province, amap_city, amap_adcode = p, c, a
+                    break
+
+            # 若两次都失败，回显原始查询结果便于人工排查
+            if norm_province == FALLBACK_VALUE:
+                amap_province, amap_city, amap_adcode = result1
 
         new_row["高德省份"] = amap_province
         new_row["高德城市"] = amap_city
         new_row["高德adcode"] = amap_adcode
 
-        # 严格标准化省份名称和市区名称（用规范化后的省市做步骤1匹配）
-        norm_province, norm_city = normalize_location(
-            canon_province,
-            canon_city,
-            amap_province,
-            amap_city,
-            amap_adcode,
-            valid_pairs,
-            adcode_map,
-        )
         new_row["省份名称"] = norm_province
         new_row["市区名称"] = norm_city
 
