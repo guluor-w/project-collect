@@ -101,6 +101,8 @@ RE_MONEY = re.compile(
 # 开关
 ENABLE_READ_ATTACHMENTS = _env_bool("CCGP_ENABLE_ATTACHMENTS", True)
 ENABLE_LLM_REQUIREMENTS = _env_bool("CCGP_ENABLE_LLM", True)
+# 数据清洗阶段是否将需求内容转换为富文本（HTML）格式；默认关闭以保持纯文本
+ENABLE_RICH_TEXT = _env_bool("CCGP_ENABLE_RICH_TEXT", False)
 
 # Runtime tuning knobs for CI / GitHub Actions
 REQUEST_TIMEOUT_SEC = _env_int("CCGP_HTTP_TIMEOUT", 15)

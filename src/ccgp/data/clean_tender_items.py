@@ -402,14 +402,17 @@ def truncate_desc_for_limit(desc: str, max_len: int) -> str:
     return truncated
 
 
-def build_requirement_content(desc: str, announcement_url: str) -> str:
-    """清洗需求内容、截断至1000字符限制、追加来源说明并转换为富文本格式。
+def build_requirement_content(
+    desc: str, announcement_url: str, enable_rich_text: bool = False
+) -> str:
+    """清洗需求内容、截断至1000字符限制、追加来源说明并可选转换为富文本格式。
 
     处理步骤：
     1. 删除AI生成的章节标签和无关词语。
     2. 确保拼合后的总长度不超过1000字符（在中文句号或换行符处截断）。
     3. 在需求内容末尾追加来源说明段落。
-    4. 将拼合结果转换为富文本（HTML）格式。
+    4. 若 enable_rich_text 为 True，将拼合结果转换为富文本（HTML）格式；
+       否则保持纯文本返回。
     """
     source_note = f"本需求来源于中国政府采购网，详情请见招标信息： {announcement_url}"
     # 1. 清洗
@@ -427,8 +430,10 @@ def build_requirement_content(desc: str, announcement_url: str) -> str:
             combined = f"{cleaned_desc}{suffix}"
     else:
         combined = truncate_desc_for_limit(source_note, 1000)
-    # 4. 富文本格式转换
-    return plaintext_to_richtext(combined)
+    # 4. 按需进行富文本格式转换
+    if enable_rich_text:
+        return plaintext_to_richtext(combined)
+    return combined
 
 
 def writeback_to_input(
@@ -480,8 +485,19 @@ def writeback_to_input(
     print(f"已将 {updated_count} 条标准化省市回填至: {input_file}")
 
 
-def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_FILE) -> None:
-    """读取 tender_items.csv，清洗数据后写入 cleaned_requirements.csv，并将标准化省市回填到输入文件。"""
+def clean_tender_items(
+    input_file: str = INPUT_FILE,
+    output_file: str = OUTPUT_FILE,
+    enable_rich_text: bool = False,
+) -> None:
+    """读取 tender_items.csv，清洗数据后写入 cleaned_requirements.csv，并将标准化省市回填到输入文件。
+
+    Args:
+        input_file: 输入 CSV 路径。
+        output_file: 输出 CSV 路径。
+        enable_rich_text: 是否将"需求内容"字段转换为富文本（HTML）格式；
+                          默认关闭，输出纯文本。
+    """
     amap_key = os.getenv("AMAP_GEOCODING_KEY", "")
     if not amap_key:
         print("警告：未设置环境变量 AMAP_GEOCODING_KEY，地址标准化字段将全部填写'待人工处理'。")
@@ -534,10 +550,11 @@ def clean_tender_items(input_file: str = INPUT_FILE, output_file: str = OUTPUT_F
         # 预算金额转换
         new_row["预算金额"] = parse_budget(row.get("budget", ""))
 
-        # 需求内容（追加来源说明）
+        # 需求内容（追加来源说明，按需富文本转换）
         new_row["需求内容"] = build_requirement_content(
             row.get("requirement_desc", ""),
             row.get("announcement_url", ""),
+            enable_rich_text=enable_rich_text,
         )
 
         # 提前获取原始省市，将简称规范化为编码表全称后用于判断是否需要调用高德 API

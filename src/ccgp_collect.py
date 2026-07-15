@@ -4,7 +4,8 @@ import sys
 import time
 from datetime import datetime
 
-from ccgp.config import ATTACHMENTS_DIR, CLEAN_THRESHOLD
+from ccgp.config import ATTACHMENTS_DIR, CLEAN_THRESHOLD, ENABLE_RICH_TEXT
+from ccgp.data.clean_tender_items import clean_tender_items
 from ccgp.main import main, SearchNetworkError
 
 
@@ -106,6 +107,15 @@ def run_multiple_main_calls() -> None:
                 time.sleep(5)
 
     sys.argv = original_argv
+
+    # 数据清洗：生成 cleaned_requirements.csv；富文本转换默认关闭
+    try:
+        print(f"开始数据清洗（富文本转换: {'开启' if ENABLE_RICH_TEXT else '关闭'}）")
+        clean_tender_items(enable_rich_text=ENABLE_RICH_TEXT)
+        print("数据清洗完成")
+    except Exception as e:
+        print(f"数据清洗失败: {e}")
+
     print("所有运行结束，正在清理旧附件文件夹...")
     cleanup_old_folders(ATTACHMENTS_DIR, CLEAN_THRESHOLD)
     print("清理完成")
