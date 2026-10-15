@@ -403,7 +403,7 @@ def truncate_desc_for_limit(desc: str, max_len: int) -> str:
 
 
 def build_requirement_content(
-    desc: str, announcement_url: str, enable_rich_text: bool = False
+    desc: str, announcement_url: str, enable_rich_text: bool = True
 ) -> str:
     """清洗需求内容、截断至1000字符限制、追加来源说明并可选转换为富文本格式。
 
@@ -488,7 +488,7 @@ def writeback_to_input(
 def clean_tender_items(
     input_file: str = INPUT_FILE,
     output_file: str = OUTPUT_FILE,
-    enable_rich_text: bool = False,
+    enable_rich_text: bool = True,
 ) -> None:
     """读取 tender_items.csv，清洗数据后写入 cleaned_requirements.csv，并将标准化省市回填到输入文件。
 
@@ -496,7 +496,7 @@ def clean_tender_items(
         input_file: 输入 CSV 路径。
         output_file: 输出 CSV 路径。
         enable_rich_text: 是否将"需求内容"字段转换为富文本（HTML）格式；
-                          默认关闭，输出纯文本。
+                          默认开启。
     """
     amap_key = os.getenv("AMAP_GEOCODING_KEY", "")
     if not amap_key:
@@ -641,4 +641,6 @@ def clean_tender_items(
 
 
 if __name__ == "__main__":
-    clean_tender_items()
+    # 独立运行时读取 CCGP_ENABLE_RICH_TEXT，默认值与 ccgp.config.ENABLE_RICH_TEXT 保持一致（开启）
+    _rich = os.getenv("CCGP_ENABLE_RICH_TEXT", "true").strip().lower() in {"1", "true", "yes", "on"}
+    clean_tender_items(enable_rich_text=_rich)

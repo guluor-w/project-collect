@@ -1,4 +1,4 @@
-﻿import os
+import os
 import shutil
 import sys
 import time
@@ -108,7 +108,7 @@ def run_multiple_main_calls() -> None:
 
     sys.argv = original_argv
 
-    # 数据清洗：生成 cleaned_requirements.csv；富文本转换默认关闭
+    # 数据清洗：生成 cleaned_requirements.csv；富文本转换默认开启（CCGP_ENABLE_RICH_TEXT）
     try:
         print(f"开始数据清洗（富文本转换: {'开启' if ENABLE_RICH_TEXT else '关闭'}）")
         clean_tender_items(enable_rich_text=ENABLE_RICH_TEXT)
