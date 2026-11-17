@@ -1,0 +1,62 @@
+name: Probe CCGP Browser Headers
+
+on:
+  pull_request:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - name: Compare browser headers
+        shell: bash
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, "src")
+          import requests
+          from ccgp.config import USER_AGENT
+          from ccgp.main import _build_search_url
+          from ccgp.parse_index import parse_list_page, parse_search_page
+          from ccgp.tools import http_get
+
+          windows_chrome = (
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+              "AppleWebKit/537.36 (KHTML, like Gecko) "
+              "Chrome/131.0.0.0 Safari/537.36"
+          )
+          windows_edge = windows_chrome + " Edg/131.0.0.0"
+          cases = {
+              "current-linux": USER_AGENT,
+              "windows-chrome": windows_chrome,
+              "windows-edge": windows_edge,
+          }
+          urls = {
+              "list": "https://www.ccgp.gov.cn/cggg/dfgg/gkzb/index.htm",
+              "search": _build_search_url("智能制造", 1, "2026:11:16", "2026:11:17"),
+          }
+          for name, user_agent in cases.items():
+              session = requests.Session()
+              session.headers.update({
+                  "User-Agent": user_agent,
+                  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+                  "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
+                  "Cache-Control": "no-cache",
+                  "Pragma": "no-cache",
+                  "Referer": "https://www.ccgp.gov.cn/",
+                  "Upgrade-Insecure-Requests": "1",
+              })
+              for kind, url in urls.items():
+                  try:
+                      html = http_get(url, session, timeout=20, max_retries=1)
+                      entries = (parse_search_page(html) if kind == "search" else parse_list_page(html, url)) or []
+                      blocked = any(x in html for x in ("访问过于频繁", "频繁访问", "事件ID", "请求被阻断"))
+                      print(f"PROBE {name} {kind} entries={len(entries)} blocked={blocked}")
+                  except Exception as exc:
+                      print(f"PROBE {name} {kind} error={type(exc).__name__}: {exc}")
+          PY
