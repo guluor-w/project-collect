@@ -156,6 +156,21 @@ def _build_search_url(keyword: str, page_index: int, start_date: str, end_date: 
     return f"{SEARCH_BASE_URL}?{urlencode(params)}"
 
 
+def _fetch_list_page(
+    list_url: str, session: requests.Session
+) -> Tuple[str, str]:
+    try:
+        return http_get(list_url, session, timeout=REQUEST_TIMEOUT_SEC), list_url
+    except requests.HTTPError as exc:
+        status_code = exc.response.status_code if exc.response is not None else None
+        if status_code != 403 or not list_url.startswith("https://www.ccgp.gov.cn/"):
+            raise
+
+    http_url = "http://" + list_url.removeprefix("https://")
+    get_logger().warning(f"HTTPS 列表页返回 403，尝试官方 HTTP 地址: {http_url}")
+    return http_get(http_url, session, timeout=REQUEST_TIMEOUT_SEC), http_url
+
+
 def _collect_entries_from_search(
     session: requests.Session,
     keywords: Optional[List[str]],
@@ -350,7 +365,7 @@ def scrape_ccgp(
         entries = []
         for list_url in list_urls:
             try:
-                list_html = http_get(list_url, session, timeout=REQUEST_TIMEOUT_SEC)
+                list_html, list_url = _fetch_list_page(list_url, session)
             except Exception as e:
                 get_logger().warning(f"列表页请求失败: {list_url} -> {e}")
                 raise RuntimeError(f"列表页请求失败: {list_url}") from e

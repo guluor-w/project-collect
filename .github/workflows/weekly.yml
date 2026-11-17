@@ -42,6 +42,7 @@ jobs:
         run: python src/ccgp_collect.py --days 1
 
       - name: Commit updated CSV
+        if: github.ref_name == 'main'
         run: |
           git config user.name "youngfish42"
           git config user.email "youngfish42@users.noreply.github.com"
