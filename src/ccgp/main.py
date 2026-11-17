@@ -1,12 +1,13 @@
 ﻿import argparse
 import csv
+import json
 import os
 import random
 import time
 import requests
 from datetime import datetime, timedelta
 from hashlib import sha1
-from typing import List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 from tqdm import tqdm
 from urllib.parse import urlencode, urlparse
 
@@ -15,6 +16,8 @@ from ccgp.config import (
     ATTACHMENT_BLOCKLIST_HOSTS,
     ATTACHMENT_BLOCKLIST_KEYWORDS,
     ATTACHMENTS_DIR,
+    COLLECTION_CHECKPOINT_PATH,
+    COLLECTION_TIME_BUDGET_SEC,
     CSV_OUTPUT_DIR,
     DAYS,
     DETAIL_SLEEP_MAX_SEC,
@@ -26,6 +29,11 @@ from ccgp.config import (
     MAX_ATTACHMENTS_PER_NOTICE,
     PAGES,
     REQUEST_TIMEOUT_SEC,
+    SEARCH_COOLDOWN_SCHEDULE_SEC,
+    SEARCH_KEYWORD_SLEEP_MAX_SEC,
+    SEARCH_KEYWORD_SLEEP_MIN_SEC,
+    SEARCH_PAGE_SLEEP_MAX_SEC,
+    SEARCH_PAGE_SLEEP_MIN_SEC,
     SG_TZ,
     SKIP_REPEATED_FAILED_ATTACHMENTS,
     USER_AGENT,
@@ -55,6 +63,7 @@ from utils.mylogger import get_logger, setup_logging
 
 
 SEARCH_BASE_URL = "https://search.ccgp.gov.cn/bxsearch"
+COLLECTION_STARTED_AT = time.monotonic()
 
 
 def _load_processed_urls(csv_file: str) -> set[str]:
@@ -74,6 +83,48 @@ def _load_processed_urls(csv_file: str) -> set[str]:
         get_logger().error(f"Failed to load processed URLs from {csv_file}: {e}")
         
     return seen
+
+
+def _load_pending_entries() -> List[dict]:
+    if not os.path.exists(COLLECTION_CHECKPOINT_PATH):
+        return []
+    try:
+        with open(COLLECTION_CHECKPOINT_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        entries = data.get("entries", [])
+        return [
+            entry for entry in entries
+            if isinstance(entry, dict) and (entry.get("url") or "").strip()
+        ]
+    except Exception as e:
+        get_logger().error(f"读取采集断点失败: {COLLECTION_CHECKPOINT_PATH} -> {e}")
+        return []
+
+
+def _write_pending_entries(entries: List[dict]) -> None:
+    dedup = {}
+    for entry in entries:
+        ann_url = (entry.get("url") or "").strip()
+        if ann_url:
+            dedup[ann_url] = entry
+    directory = os.path.dirname(COLLECTION_CHECKPOINT_PATH)
+    if directory:
+        os.makedirs(directory, exist_ok=True)
+    tmp_path = COLLECTION_CHECKPOINT_PATH + ".tmp"
+    with open(tmp_path, "w", encoding="utf-8") as f:
+        json.dump({"entries": list(dedup.values())}, f, ensure_ascii=False, indent=2)
+    os.replace(tmp_path, COLLECTION_CHECKPOINT_PATH)
+
+
+def _check_deadline(deadline: Optional[float]) -> None:
+    if deadline is not None and time.monotonic() >= deadline:
+        raise TimeoutError("已达到采集时间预算，保留当前断点")
+
+
+def _sleep_with_deadline(seconds: float, deadline: Optional[float]) -> None:
+    if deadline is not None and time.monotonic() + seconds >= deadline:
+        raise TimeoutError("采集时间预算不足以完成本次等待，保留当前断点")
+    time.sleep(seconds)
 
 
 def _get_filter_trace_file() -> str:
@@ -162,6 +213,8 @@ def _collect_entries_from_search(
     start_date: str,
     end_date: str,
     max_pages: int,
+    on_update: Optional[Callable[[List[dict]], None]] = None,
+    deadline: Optional[float] = None,
 ) -> Tuple[List[dict], bool]:
     """搜索预筛选：按关键词遍历 search.ccgp.gov.cn 获取候选公告列表。
 
@@ -171,6 +224,11 @@ def _collect_entries_from_search(
             频率限制、冷却后重试失败而提前终止时为 True。
     """
     dedup = {}
+
+    def notify_update() -> None:
+        if on_update:
+            on_update(list(dedup.values()))
+
     norm_keywords = [k.strip() for k in (keywords or []) if (k or "").strip()]
     get_logger().debug(
         f"搜索预筛选开始: 关键词数={len(norm_keywords)} 日期={start_date}..{end_date} 最大页数={max_pages}"
@@ -181,6 +239,7 @@ def _collect_entries_from_search(
     network_failed_kws = 0
     # 使用 tqdm 显示关键词搜索进度
     for kw in tqdm(norm_keywords, desc="关键词搜索进度", unit="kw"):
+        _check_deadline(deadline)
         # 已经被封禁了，就不再继续后续关键词的查找。 
         if stop_all_search: 
             break
@@ -188,7 +247,7 @@ def _collect_entries_from_search(
         keywords_attempted += 1
         had_connection_success = False  # True if at least one request reached the server (even 4xx/5xx)
         keyword_count = 0
-        blocked_once_for_kw = False
+        blocked_attempts = 0
         for page_index in range(1, max_pages + 1):
             url = _build_search_url(kw, page_index, start_date, end_date)
             try:
@@ -201,42 +260,34 @@ def _collect_entries_from_search(
                 get_logger().warning(f"搜索页请求超时: 关键词={kw} 页码={page_index} -> {e}")
                 break
             except Exception as e:
-                # HTTP 状态错误（4xx/5xx）或其他异常：服务器可达，但本次请求失败
                 had_connection_success = True
                 get_logger().warning(f"搜索页请求失败: 关键词={kw} 页码={page_index} -> {e}")
                 break
 
-            if ("访问过于频繁" in html) or ("频繁访问" in html) or ("事件ID" in html):
-                cooldown = random.uniform(150, 380)
-                get_logger().warning(
-                    f"搜索因频率限制被阻: 关键词={kw} 页码={page_index}, 冷却={cooldown:.1f}秒"
-                )
-                time.sleep(cooldown)
-
-                if blocked_once_for_kw:
+            while any(marker in html for marker in ("访问过于频繁", "频繁访问", "事件ID")):
+                if blocked_attempts >= len(SEARCH_COOLDOWN_SCHEDULE_SEC):
                     get_logger().warning(
-                        f"搜索两次被阻，停止所有预筛选: 关键词={kw} 页码={page_index}"
+                        f"长等待重试后仍被限制，停止搜索并保留候选: 关键词={kw} 页码={page_index}"
                     )
                     stop_all_search = True
                     break
-                blocked_once_for_kw = True
-                
-                # 如果是第一次被封禁，休眠后重试一次，看看是否恢复了；如果仍然被封禁，则停止整个预筛选过程，不再继续后续关键词的搜索。
+                base_cooldown = SEARCH_COOLDOWN_SCHEDULE_SEC[blocked_attempts]
+                blocked_attempts += 1
+                cooldown = base_cooldown * random.uniform(0.8, 1.2)
+                notify_update()
+                get_logger().warning(
+                    f"搜索限流，第 {blocked_attempts}/{len(SEARCH_COOLDOWN_SCHEDULE_SEC)} 次长等待: "
+                    f"关键词={kw} 页码={page_index} 等待={cooldown / 60:.1f}分钟"
+                )
+                _sleep_with_deadline(cooldown, deadline)
                 try:
                     html = http_get(url, session, timeout=REQUEST_TIMEOUT_SEC)
                 except Exception as e:
-                    get_logger().warning(
-                        f"冷却后重试搜索失败: 关键词={kw} 页码={page_index} -> {e}"
-                    )
+                    get_logger().warning(f"长等待后重试搜索失败: 关键词={kw} 页码={page_index} -> {e}")
                     stop_all_search = True
                     break
-
-                if ("访问过于频繁" in html) or ("频繁访问" in html) or ("事件ID" in html):
-                    get_logger().warning(
-                        f"冷却重试后仍被阻止，停止所有预筛选: 关键词={kw} 页码={page_index}"
-                    )
-                    stop_all_search = True
-                    break
+            if stop_all_search:
+                break
 
             entries = parse_search_page(html, base_url="https://search.ccgp.gov.cn/")
             have_find_new = False
@@ -263,26 +314,27 @@ def _collect_entries_from_search(
                     get_logger().debug(f"搜索无新条目: 关键词={kw} 页码={page_index}")
                 break
 
-            # 每页查找之间随机短暂休眠，避免过快访问引发封禁；每10页长休眠一次。
-            time.sleep(random.uniform(5, 8))
+            _sleep_with_deadline(
+                random.uniform(SEARCH_PAGE_SLEEP_MIN_SEC, SEARCH_PAGE_SLEEP_MAX_SEC), deadline
+            )
             if page_index % 5 == 0:
                 long_pause = random.uniform(10, 15)
                 get_logger().debug(
                     f"搜索周期性冷却: 关键词={kw} 页码={page_index} 休眠={long_pause:.1f}秒"
                 )
-                time.sleep(long_pause)
+                _sleep_with_deadline(long_pause, deadline)
 
         get_logger().debug(f"关键词搜索完成: 关键词={kw}, 新增条目={keyword_count}")
+        notify_update()
         if not had_connection_success:
             network_failed_kws += 1
-        # 每个关键词查找之间随机长休眠，避免过快访问引发封禁；
-        # 如果已经被封禁了，就不再继续后续关键词的查找。
         if not stop_all_search:
-            kw_pause = random.uniform(5, 8)
+            kw_pause = random.uniform(SEARCH_KEYWORD_SLEEP_MIN_SEC, SEARCH_KEYWORD_SLEEP_MAX_SEC)
             get_logger().debug(f"关键词冷却: 关键词={kw} 休眠={kw_pause:.1f}秒")
-            time.sleep(kw_pause)
+            _sleep_with_deadline(kw_pause, deadline)
 
     out = list(dedup.values())
+    notify_update()
     search_unavailable = stop_all_search or (
         keywords_attempted > 0 and network_failed_kws == keywords_attempted
     )
@@ -321,29 +373,38 @@ def scrape_ccgp(
 
     now = datetime.now(tz=SG_TZ)
     cutoff = now - timedelta(days=days)
+    deadline = (
+        COLLECTION_STARTED_AT + COLLECTION_TIME_BUDGET_SEC
+        if COLLECTION_TIME_BUDGET_SEC > 0 else None
+    )
 
     # 加载之前处理过的 URL，避免重复处理和保存
     processed_urls = _load_processed_urls(CSV_OUTPUT_DIR)
     get_logger().info(f"Loaded {len(processed_urls)} processed URLs from {CSV_OUTPUT_DIR}")
 
-    # 第一步：收集公告列表
-    # 如果启用 use_search_prefilter，通过站内搜索接口获取近期公告以缩小范围
-    # 否则，退化为传统方式，从指定列表页逐页查询
-    if use_search_prefilter:
+    # 第一步：收集公告列表，优先处理上次未完成的候选
+    pending_entries = _load_pending_entries()
+    resume_from_checkpoint = bool(pending_entries)
+    if resume_from_checkpoint:
+        entries = pending_entries
+        get_logger().info(f"从断点继续处理 {len(entries)} 条候选")
+    elif use_search_prefilter:
         entries, search_unavailable = _collect_entries_from_search(
             session=session,
             keywords=keywords,
             start_date=(cutoff.date().strftime("%Y:%m:%d")),
             end_date=(now.date().strftime("%Y:%m:%d")),
             max_pages=max_pages,
+            on_update=_write_pending_entries,
+            deadline=deadline,
         )
         if search_unavailable:
             get_logger().warning(
                 "搜索预筛选因网络请求失败或持续频率限制而不可用，"
-                "抛出 SearchNetworkError 以便调用方回退至列表页模式"
+                "已保存候选断点，抛出 SearchNetworkError 以便调用方回退至列表页模式"
             )
             raise SearchNetworkError(
-                "search.ccgp.gov.cn 不可达或冷却重试后仍受频率限制"
+                "search.ccgp.gov.cn 不可达或长等待重试后仍受频率限制"
             )
     else:
         list_urls = norm_list_page_urls(start_list_url, max_pages=max_pages)
@@ -352,12 +413,14 @@ def scrape_ccgp(
             try:
                 list_html = http_get(list_url, session, timeout=REQUEST_TIMEOUT_SEC)
             except Exception as e:
+                _write_pending_entries(entries)
                 get_logger().warning(f"列表页请求失败: {list_url} -> {e}")
                 raise RuntimeError(f"列表页请求失败: {list_url}") from e
             if any(
                 marker in list_html
                 for marker in ("访问过于频繁", "频繁访问", "事件ID", "请求被阻断")
             ):
+                _write_pending_entries(entries)
                 get_logger().warning(f"列表页访问被限制: {list_url}")
                 raise RuntimeError(f"列表页访问被限制: {list_url}")
             base_url = list_url.rsplit("/", 1)[0] + "/"
@@ -373,6 +436,21 @@ def scrape_ccgp(
             page_pub_times = [pub_dt for pub_dt in page_pub_times if pub_dt]
             if len(page_pub_times) == len(page_entries) and max(page_pub_times) < cutoff:
                 break
+
+    _write_pending_entries(entries)
+    pending_urls = {
+        (entry.get("url") or "").strip() for entry in entries if entry.get("url")
+    }
+
+    def mark_entry_done(ann_url: str) -> None:
+        if ann_url not in pending_urls:
+            return
+        pending_urls.remove(ann_url)
+        remaining = [
+            entry for entry in entries
+            if (entry.get("url") or "").strip() in pending_urls
+        ]
+        _write_pending_entries(remaining)
 
     # 初始化关键词统计
     keyword_stats = {}
@@ -407,6 +485,7 @@ def scrape_ccgp(
             continue
 
         if ann_url in seen_urls:
+            mark_entry_done(ann_url)
             continue
 
         # 初始化本条过滤追踪记录
@@ -419,21 +498,24 @@ def scrape_ccgp(
 
         # 时间过滤：对于列表页模式，剔除超过时间窗口的数据
         pub_dt = parse_pub_datetime(ent.get("pub_raw", ""))
-        if pub_dt and pub_dt < cutoff and not use_search_prefilter:
+        if pub_dt and pub_dt < cutoff and (not use_search_prefilter or resume_from_checkpoint):
             _set_trace_result(filter_trace_records, ann_url, False, "older than DAYS window")
             _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
+            mark_entry_done(ann_url)
             continue
 
         if ann_url in processed_urls:
             _set_trace_result(filter_trace_records, ann_url, False, "processed in prev run")
             _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
+            mark_entry_done(ann_url)
             continue
 
         seen_urls.add(ann_url)
 
         # 查询详情网页，休眠控制防BAN
+        _check_deadline(deadline)
+        _sleep_with_deadline(random.uniform(*sleep_range), deadline)
         try:
-            time.sleep(random.uniform(*sleep_range))
             detail_html = http_get(ann_url, session, timeout=REQUEST_TIMEOUT_SEC)
         except Exception as e:
             _set_trace_result(filter_trace_records, ann_url, False, f"detail fetch failed: {e}")
@@ -463,6 +545,7 @@ def scrape_ccgp(
         if not keyword_hit(combined, keywords):
             _set_trace_result(filter_trace_records, ann_url, False, "基于关键词的过滤发现不匹配")
             _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
+            mark_entry_done(ann_url)
             continue
         
         # 关键词过滤通过计数
@@ -485,6 +568,7 @@ def scrape_ccgp(
                 )
                 get_logger().warning(f"通过语义分析，该项目被过滤不保留: {ann_url} -> {reason}")
                 _flush_filter_trace_csv(filter_trace_file, filter_trace_records)
+                mark_entry_done(ann_url)
                 continue
             
             # LLM 过滤通过计数
@@ -612,6 +696,8 @@ def scrape_ccgp(
                 budget=detail.get("budget", ""),
             )
         )
+        write_csv(results, CSV_OUTPUT_DIR)
+        mark_entry_done(ann_url)
         # 保存计数
         if kw in keyword_stats:
             keyword_stats[kw]["saved"] += 1

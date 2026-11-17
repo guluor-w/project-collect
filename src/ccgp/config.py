@@ -32,6 +32,17 @@ def _env_float(name: str, default: float) -> float:
     except Exception:
         return default
 
+
+def _env_float_list(name: str, default: tuple) -> tuple:
+    v = os.getenv(name)
+    if not v:
+        return default
+    try:
+        values = tuple(float(item.strip()) for item in v.split(",") if item.strip())
+        return values or default
+    except Exception:
+        return default
+
 # 收集日期和最大页数
 DAYS = 1
 PAGES = 20
@@ -108,8 +119,16 @@ ENABLE_RICH_TEXT = _env_bool("CCGP_ENABLE_RICH_TEXT", True)
 REQUEST_TIMEOUT_SEC = _env_int("CCGP_HTTP_TIMEOUT", 15)
 DOWNLOAD_TIMEOUT_SEC = _env_int("CCGP_DOWNLOAD_TIMEOUT", 30)
 MAX_ATTACHMENTS_PER_NOTICE = _env_int("CCGP_MAX_ATTACHMENTS", 3)
+COLLECTION_TIME_BUDGET_SEC = _env_int("CCGP_TIME_BUDGET_SEC", 0)
 DETAIL_SLEEP_MIN_SEC = _env_float("CCGP_SLEEP_MIN", 2.0)
 DETAIL_SLEEP_MAX_SEC = _env_float("CCGP_SLEEP_MAX", 4.0)
+SEARCH_PAGE_SLEEP_MIN_SEC = _env_float("CCGP_SEARCH_PAGE_SLEEP_MIN", 8.0)
+SEARCH_PAGE_SLEEP_MAX_SEC = _env_float("CCGP_SEARCH_PAGE_SLEEP_MAX", 15.0)
+SEARCH_KEYWORD_SLEEP_MIN_SEC = _env_float("CCGP_SEARCH_KEYWORD_SLEEP_MIN", 15.0)
+SEARCH_KEYWORD_SLEEP_MAX_SEC = _env_float("CCGP_SEARCH_KEYWORD_SLEEP_MAX", 30.0)
+SEARCH_COOLDOWN_SCHEDULE_SEC = _env_float_list(
+    "CCGP_SEARCH_COOLDOWN_SCHEDULE", (300.0, 900.0, 1800.0, 3600.0)
+)
 SKIP_REPEATED_FAILED_ATTACHMENTS = _env_bool("CCGP_SKIP_REPEAT_FAILED_ATTACHMENTS", True)
 
 # Skip known low-value or problematic attachment links to reduce long waits.
@@ -124,6 +143,7 @@ ATTACHMENT_BLOCKLIST_KEYWORDS = [
 # 路径保存
 ATTACHMENTS_DIR = "src/ccgp/data/attachments/"
 CSV_OUTPUT_DIR = "src/ccgp/data/tender_items.csv"
+COLLECTION_CHECKPOINT_PATH = "src/ccgp/data/collection_checkpoint.json"
 
 LOGGING_DIR = "src/ccgp/data/logs/"
 LOGGING_LEVEL = "DEBUG"

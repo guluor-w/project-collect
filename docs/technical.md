@@ -124,6 +124,11 @@ DEEPSEEK_API_KEY=your_deepseek_key
 - 筛选追踪文件（每次运行新建）：
   - 路径：`src/ccgp/data/filter_trace/filter_trace_YYYYMMDD_HHMMSS.csv`
   - 字段：`title`、`url`、`is_selected`、`not_selected_reason`
+- 断点文件：`src/ccgp/data/collection_checkpoint.json`
+  - 保存待处理候选，下次运行优先续跑
+  - 已过滤、已入库、已处理或超出时间窗口的候选会移除；详情请求失败的候选保留
+  - 入选公告逐条写入 CSV，CSV 使用临时文件原子替换，Actions 成功或失败都会提交 CSV 和剩余断点
+  - Daily Run 串行执行，避免并发请求和断点覆盖
 
 ---
 
@@ -150,6 +155,10 @@ DEEPSEEK_API_KEY=your_deepseek_key
 - `CCGP_MAX_ATTACHMENTS`：每条公告最多处理附件数（默认 `3`）
 - `CCGP_SLEEP_MIN`：查询详情页前最小 sleep 秒数（默认 `2.0`）
 - `CCGP_SLEEP_MAX`：查询详情页前最大 sleep 秒数（默认 `4.0`）
+- `CCGP_SEARCH_PAGE_SLEEP_MIN/MAX`：搜索分页间隔秒数（默认 `8.0/15.0`）
+- `CCGP_SEARCH_KEYWORD_SLEEP_MIN/MAX`：关键词间隔秒数（默认 `15.0/30.0`）
+- `CCGP_SEARCH_COOLDOWN_SCHEDULE`：限流后的分阶段等待秒数（默认 `300,900,1800,3600`）
+- `CCGP_TIME_BUDGET_SEC`：单轮运行时间预算秒数，默认 `0` 表示不限制；CI 设置 `20400`，为成果提交预留 20 分钟
 - `CCGP_SKIP_REPEAT_FAILED_ATTACHMENTS`：是否跳过已失败过的附件 URL（默认 `true`）
 
 说明：
@@ -166,7 +175,8 @@ DEEPSEEK_API_KEY=your_deepseek_key
 - 限制每条公告最大附件处理数量（由 `CCGP_MAX_ATTACHMENTS` 控制）
 - Search 预筛选会放慢请求节奏（页间隔、周期性长休眠、关键词间休眠）
 - Search 预筛选会将高频词后置（如 `智能/智慧/自动化`）
-- Search 触发频控后会冷却重试 1 次，仍被拦截则提前结束本轮预筛选
+- Search 触发频控后按阶段长等待重试，耗尽后保存候选断点
+- 候选和入选公告增量保存，下次运行优先处理上次未完成的候选
 
 ### Fast Mode Example
 

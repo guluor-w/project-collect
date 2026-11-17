@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: ccgp-daily-collection
+  cancel-in-progress: false
+
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -24,6 +28,12 @@ jobs:
       CCGP_MAX_ATTACHMENTS: "2"
       CCGP_SLEEP_MIN: "1.0"
       CCGP_SLEEP_MAX: "3.0"
+      CCGP_SEARCH_PAGE_SLEEP_MIN: "15"
+      CCGP_SEARCH_PAGE_SLEEP_MAX: "30"
+      CCGP_SEARCH_KEYWORD_SLEEP_MIN: "30"
+      CCGP_SEARCH_KEYWORD_SLEEP_MAX: "60"
+      CCGP_SEARCH_COOLDOWN_SCHEDULE: "300,900,1800,3600"
+      CCGP_TIME_BUDGET_SEC: "20400"
       CCGP_SKIP_REPEAT_FAILED_ATTACHMENTS: "true"
       AMAP_GEOCODING_KEY: ${{ secrets.AMAP_GEOCODING_KEY }}
     steps:
@@ -41,15 +51,19 @@ jobs:
       - name: Run script
         run: python src/ccgp_collect.py --days 1
 
-      - name: Commit updated CSV
+      - name: Commit collection progress
+        if: always() && github.ref_name == 'main'
         run: |
           git config user.name "youngfish42"
           git config user.email "youngfish42@users.noreply.github.com"
           git add src/ccgp/data/tender_items.csv
+          if [ -f src/ccgp/data/collection_checkpoint.json ]; then
+            git add src/ccgp/data/collection_checkpoint.json
+          fi
           if git diff --cached --quiet; then
-            echo "No CSV changes to commit."
+            echo "No collection progress to commit."
           else
-            git commit -m "chore: update tender_items.csv"
+            git commit -m "chore: update collection progress"
             git status --porcelain
             git pull --rebase --autostash origin main
             git push
