@@ -26,7 +26,7 @@ Pipeline (see [src/ccgp/main.py](./src/ccgp/main.py)):
 7. **Post-process** via `clean_tender_items()` (see [src/ccgp/data/clean_tender_items.py](./src/ccgp/data/clean_tender_items.py)) → produces `src/ccgp/data/cleaned_requirements.csv` (gitignored). Rich-text HTML output is off by default (`CCGP_ENABLE_RICH_TEXT`).
 8. **Cleanup** old attachment folders (`_YYYYMMDD` suffix) beyond `CLEAN_THRESHOLD` days.
 
-Scheduled runs and Pages deploy live in [.github/workflows/weekly.yml](./.github/workflows/weekly.yml) (daily 04:00 CST, Python 3.11 on `ubuntu-latest`, commits the CSV and resumable checkpoint even after collection failures, uploads `logs/` and `filter_trace/` as artifacts) and [.github/workflows/pages.yml](./.github/workflows/pages.yml) (triggered on `docs/**` / CSV changes and on successful Daily Run).
+Scheduled runs and Pages deploy live in [.github/workflows/weekly.yml](./.github/workflows/weekly.yml) (daily at 04:00 and 16:00 CST, Python 3.11 on `ubuntu-latest`, commits the CSV and resumable checkpoint even after collection failures, uploads `logs/` and `filter_trace/` as artifacts) and [.github/workflows/pages.yml](./.github/workflows/pages.yml) (triggered on `docs/**` / CSV changes and on successful Daily Run).
 
 ---
 
