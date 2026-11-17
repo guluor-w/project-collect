@@ -56,7 +56,7 @@ def run_multiple_main_calls() -> None:
     执行采集任务，支持两种模式：
 
     - 默认（search 模式）：调用一次 main()，使用 search.ccgp.gov.cn 预筛选。
-      若 search.ccgp.gov.cn 不可达（SearchNetworkError），自动回退至列表页模式。
+      若搜索服务不可达或持续触发频率限制（SearchNetworkError），自动回退至列表页模式。
     - 列表页模式（--no-search 或自动回退）：对地方/中央两个入口各调用一次 main()。
     """
     original_argv = sys.argv.copy()
@@ -69,10 +69,11 @@ def run_multiple_main_calls() -> None:
             main()
             print("搜索预筛选运行完成")
         except SearchNetworkError as e:
-            print(f"search.ccgp.gov.cn 不可达，自动切换至列表页模式: {e}")
+            print(f"搜索预筛选不可用，自动切换至列表页模式: {e}")
             use_legacy_list_mode = True
         except Exception as e:
             print(f"搜索预筛选运行失败: {e}")
+            raise
 
     if use_legacy_list_mode:
         start_urls = [
@@ -94,6 +95,7 @@ def run_multiple_main_calls() -> None:
         # 无论是手动指定还是自动回退，均确保 --no-search 排在最前以触发列表页模式
         preserved_args = ["--no-search"] + preserved_args
 
+        legacy_errors = []
         for idx, url in enumerate(start_urls, 1):
             print(f"运行传统列表模式 {idx}/{len(start_urls)}: {url}")
             sys.argv = [original_argv[0], "--start", url] + preserved_args
@@ -101,10 +103,16 @@ def run_multiple_main_calls() -> None:
                 main()
                 print(f"传统模式运行 {idx} 完成")
             except Exception as e:
+                legacy_errors.append(e)
                 print(f"传统模式运行 {idx} 失败: {e}")
 
             if idx < len(start_urls):
                 time.sleep(5)
+
+        if legacy_errors:
+            raise RuntimeError(
+                f"列表页采集失败: {len(legacy_errors)}/{len(start_urls)} 个入口异常"
+            ) from legacy_errors[-1]
 
     sys.argv = original_argv
 
