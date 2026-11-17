@@ -73,6 +73,7 @@ def run_multiple_main_calls() -> None:
             use_legacy_list_mode = True
         except Exception as e:
             print(f"搜索预筛选运行失败: {e}")
+            raise
 
     if use_legacy_list_mode:
         start_urls = [
@@ -94,6 +95,7 @@ def run_multiple_main_calls() -> None:
         # 无论是手动指定还是自动回退，均确保 --no-search 排在最前以触发列表页模式
         preserved_args = ["--no-search"] + preserved_args
 
+        legacy_errors = []
         for idx, url in enumerate(start_urls, 1):
             print(f"运行传统列表模式 {idx}/{len(start_urls)}: {url}")
             sys.argv = [original_argv[0], "--start", url] + preserved_args
@@ -101,10 +103,14 @@ def run_multiple_main_calls() -> None:
                 main()
                 print(f"传统模式运行 {idx} 完成")
             except Exception as e:
+                legacy_errors.append(e)
                 print(f"传统模式运行 {idx} 失败: {e}")
 
             if idx < len(start_urls):
                 time.sleep(5)
+
+        if len(legacy_errors) == len(start_urls):
+            raise RuntimeError("地方和中央列表页采集均失败") from legacy_errors[-1]
 
     sys.argv = original_argv
 

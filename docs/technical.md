@@ -133,7 +133,7 @@ DEEPSEEK_API_KEY=your_deepseek_key
 - 字段提取为空：公告模板差异导致，优先补充 `FIELD_ALIASES`；若市字段为空，可能是该市为少数民族自治区，格式不是"xx市"的形式出现
 - 提取附件文本失败：下载了不支持的格式或文件过大
 - LLM 失败：检查 API Key、网络可达性、模型名与配额
-- search.ccgp.gov.cn 不可达或持续触发频率限制（如 GitHub Actions 环境）：程序会在冷却重试后自动回退至 `--no-search` 列表页模式（访问 `www.ccgp.gov.cn`），无需人工干预
+- search.ccgp.gov.cn 不可达或持续触发频率限制（如 GitHub Actions 环境）：程序会在冷却重试后自动回退至 `--no-search` 列表页模式（访问 `www.ccgp.gov.cn`）；地方和中央列表入口均失败时工作流会报错，不会将空结果视为成功
 
 ---
 

@@ -353,12 +353,30 @@ def scrape_ccgp(
                 list_html = http_get(list_url, session, timeout=REQUEST_TIMEOUT_SEC)
             except Exception as e:
                 get_logger().warning(f"列表页请求失败: {list_url} -> {e}")
+                if not entries:
+                    raise RuntimeError(f"列表页首页请求失败: {list_url}") from e
+                break
+            if any(
+                marker in list_html
+                for marker in ("访问过于频繁", "频繁访问", "事件ID", "请求被阻断")
+            ):
+                get_logger().warning(f"列表页访问被限制: {list_url}")
+                if not entries:
+                    raise RuntimeError(f"列表页首页访问被限制: {list_url}")
                 break
             base_url = list_url.rsplit("/", 1)[0] + "/"
             page_entries = parse_list_page(list_html, base_url=base_url)
             if not page_entries:
+                if not entries:
+                    raise RuntimeError(f"列表页首页未解析到公告: {list_url}")
                 break
             entries.extend(page_entries)
+            page_pub_times = [
+                parse_pub_datetime(ent.get("pub_raw", "")) for ent in page_entries
+            ]
+            page_pub_times = [pub_dt for pub_dt in page_pub_times if pub_dt]
+            if len(page_pub_times) == len(page_entries) and max(page_pub_times) < cutoff:
+                break
 
     # 初始化关键词统计
     keyword_stats = {}
