@@ -127,7 +127,8 @@ DEEPSEEK_API_KEY=your_deepseek_key
 - 断点文件：`src/ccgp/data/collection_checkpoint.json`
   - 保存待处理候选，下次运行优先续跑
   - 已过滤、已入库、已处理或超出时间窗口的候选会移除；详情请求失败的候选保留
-  - 入选公告逐条写入 CSV，Actions 成功或失败都会提交 CSV 和剩余断点
+  - 入选公告逐条写入 CSV，CSV 使用临时文件原子替换，Actions 成功或失败都会提交 CSV 和剩余断点
+  - Daily Run 串行执行，避免并发请求和断点覆盖
 
 ---
 

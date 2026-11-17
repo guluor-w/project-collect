@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: ccgp-daily-collection
+  cancel-in-progress: false
+
 jobs:
   run:
     runs-on: ubuntu-latest

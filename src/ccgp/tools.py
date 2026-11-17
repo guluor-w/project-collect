@@ -209,10 +209,12 @@ def write_csv(items: List[TenderItem], out_path: str) -> None:
     all_rows.sort(key=sort_key, reverse=True)
 
     # 4. 全量覆盖写入
-    with open(out_path, "w", encoding="utf-8-sig", newline="") as f:
+    tmp_path = out_path + ".tmp"
+    with open(tmp_path, "w", encoding="utf-8-sig", newline="") as f:
         w = csv.DictWriter(f, fieldnames=cols)
         w.writeheader()
         w.writerows(all_rows)
+    os.replace(tmp_path, out_path)
 
 #------------------------------和附件相关-----------------------------------#
 def safe_filename(name: str) -> str:
