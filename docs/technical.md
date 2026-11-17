@@ -157,7 +157,7 @@ DEEPSEEK_API_KEY=your_deepseek_key
 - `CCGP_SLEEP_MAX`：查询详情页前最大 sleep 秒数（默认 `4.0`）
 - `CCGP_SEARCH_PAGE_SLEEP_MIN/MAX`：搜索分页间隔秒数（默认 `8.0/15.0`）
 - `CCGP_SEARCH_KEYWORD_SLEEP_MIN/MAX`：关键词间隔秒数（默认 `15.0/30.0`）
-- `CCGP_SEARCH_COOLDOWN_SCHEDULE`：限流后的分阶段等待秒数（默认 `300,900,1800,3600`）
+- `CCGP_SEARCH_COOLDOWN_SCHEDULE`：限流后的分阶段等待秒数（默认 `60,300`）；持续 403 时保存断点并退出，避免无效空等
 - `CCGP_TIME_BUDGET_SEC`：单轮运行时间预算秒数，默认 `0` 表示不限制；CI 设置 `20400`，为成果提交预留 20 分钟
 - `CCGP_SKIP_REPEAT_FAILED_ATTACHMENTS`：是否跳过已失败过的附件 URL（默认 `true`）
 
