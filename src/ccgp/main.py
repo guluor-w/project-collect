@@ -33,7 +33,7 @@ from ccgp.config import (
 
 
 class SearchNetworkError(RuntimeError):
-    """搜索阶段所有关键词请求均失败，search 预筛选不可用；可能包含网络连接失败、HTTP 状态错误等请求异常。"""
+    """搜索预筛选因网络请求失败或持续频率限制而不可用。"""
     pass
 
 
@@ -167,9 +167,8 @@ def _collect_entries_from_search(
 
     Returns:
         entries (List[dict]): 去重后的公告条目列表。
-        all_network_failed (bool): 若所有关键词的请求均因网络/连接错误失败（即
-            search.ccgp.gov.cn 整体不可达），则为 True；若存在至少一次 HTTP 成功
-            响应（包含 4xx/5xx）或部分关键词成功，则为 False。
+        search_unavailable (bool): 所有关键词均因网络/连接错误失败，或搜索因持续
+            频率限制、冷却后重试失败而提前终止时为 True。
     """
     dedup = {}
     norm_keywords = [k.strip() for k in (keywords or []) if (k or "").strip()]
@@ -284,12 +283,14 @@ def _collect_entries_from_search(
             time.sleep(kw_pause)
 
     out = list(dedup.values())
-    all_network_failed = keywords_attempted > 0 and network_failed_kws == keywords_attempted
+    search_unavailable = stop_all_search or (
+        keywords_attempted > 0 and network_failed_kws == keywords_attempted
+    )
     get_logger().debug(
         f"搜索预筛选完成: 唯一条目数={len(out)}, 是否提前终止={stop_all_search}, "
         f"尝试关键词数={keywords_attempted}, 网络失败数={network_failed_kws}"
     )
-    return out, all_network_failed
+    return out, search_unavailable
 
 
 def scrape_ccgp(
@@ -329,20 +330,20 @@ def scrape_ccgp(
     # 如果启用 use_search_prefilter，通过站内搜索接口获取近期公告以缩小范围
     # 否则，退化为传统方式，从指定列表页逐页查询
     if use_search_prefilter:
-        entries, all_network_failed = _collect_entries_from_search(
+        entries, search_unavailable = _collect_entries_from_search(
             session=session,
             keywords=keywords,
             start_date=(cutoff.date().strftime("%Y:%m:%d")),
             end_date=(now.date().strftime("%Y:%m:%d")),
             max_pages=max_pages,
         )
-        if all_network_failed:
+        if search_unavailable:
             get_logger().warning(
-                "所有搜索关键词均因连接错误失败（search.ccgp.gov.cn 整体不可达），"
+                "搜索预筛选因网络请求失败或持续频率限制而不可用，"
                 "抛出 SearchNetworkError 以便调用方回退至列表页模式"
             )
             raise SearchNetworkError(
-                "search.ccgp.gov.cn 不可达：所有关键词均遭遇网络连接/超时错误"
+                "search.ccgp.gov.cn 不可达或冷却重试后仍受频率限制"
             )
     else:
         list_urls = norm_list_page_urls(start_list_url, max_pages=max_pages)

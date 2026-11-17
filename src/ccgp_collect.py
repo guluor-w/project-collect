@@ -56,7 +56,7 @@ def run_multiple_main_calls() -> None:
     执行采集任务，支持两种模式：
 
     - 默认（search 模式）：调用一次 main()，使用 search.ccgp.gov.cn 预筛选。
-      若 search.ccgp.gov.cn 不可达（SearchNetworkError），自动回退至列表页模式。
+      若搜索服务不可达或持续触发频率限制（SearchNetworkError），自动回退至列表页模式。
     - 列表页模式（--no-search 或自动回退）：对地方/中央两个入口各调用一次 main()。
     """
     original_argv = sys.argv.copy()
@@ -69,7 +69,7 @@ def run_multiple_main_calls() -> None:
             main()
             print("搜索预筛选运行完成")
         except SearchNetworkError as e:
-            print(f"search.ccgp.gov.cn 不可达，自动切换至列表页模式: {e}")
+            print(f"搜索预筛选不可用，自动切换至列表页模式: {e}")
             use_legacy_list_mode = True
         except Exception as e:
             print(f"搜索预筛选运行失败: {e}")
