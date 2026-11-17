@@ -26,7 +26,7 @@ Pipeline (see [src/ccgp/main.py](./src/ccgp/main.py)):
 7. **Post-process** via `clean_tender_items()` (see [src/ccgp/data/clean_tender_items.py](./src/ccgp/data/clean_tender_items.py)) → produces `src/ccgp/data/cleaned_requirements.csv` (gitignored). Rich-text HTML output is off by default (`CCGP_ENABLE_RICH_TEXT`).
 8. **Cleanup** old attachment folders (`_YYYYMMDD` suffix) beyond `CLEAN_THRESHOLD` days.
 
-Scheduled runs and Pages deploy live in [.github/workflows/weekly.yml](./.github/workflows/weekly.yml) (daily 04:00 CST, Python 3.11 on `ubuntu-latest`, auto-commits the CSV, uploads `logs/` and `filter_trace/` as artifacts) and [.github/workflows/pages.yml](./.github/workflows/pages.yml) (triggered on `docs/**` / CSV changes and on successful Daily Run).
+Scheduled runs and Pages deploy live in [.github/workflows/weekly.yml](./.github/workflows/weekly.yml) (daily 04:00 CST, Python 3.11 on `ubuntu-latest`, commits the CSV and resumable checkpoint even after collection failures, uploads `logs/` and `filter_trace/` as artifacts) and [.github/workflows/pages.yml](./.github/workflows/pages.yml) (triggered on `docs/**` / CSV changes and on successful Daily Run).
 
 ---
 
@@ -44,7 +44,7 @@ Scheduled runs and Pages deploy live in [.github/workflows/weekly.yml](./.github
 | LLM providers, 2nd-round filter, summaries | [src/ccgp/llm_requirements.py](./src/ccgp/llm_requirements.py) |
 | Post-processing / rich-text / budget recheck | [src/ccgp/data/clean_tender_items.py](./src/ccgp/data/clean_tender_items.py), [src/ccgp/data/recheck_budgets.py](./src/ccgp/data/recheck_budgets.py), [src/ccgp/data/excel_rich_text_processing.py](./src/ccgp/data/excel_rich_text_processing.py) |
 | Logger | [src/utils/mylogger.py](./src/utils/mylogger.py) |
-| Runtime output (generated, do not edit) | `src/ccgp/data/tender_items.csv`, `src/ccgp/data/logs/`, `src/ccgp/data/attachments/`, `src/ccgp/data/filter_trace/` |
+| Runtime output (generated, do not edit) | `src/ccgp/data/tender_items.csv`, `src/ccgp/data/collection_checkpoint.json`, `src/ccgp/data/logs/`, `src/ccgp/data/attachments/`, `src/ccgp/data/filter_trace/` |
 | Static dashboard | [docs/index.html](./docs/index.html), [docs/assets/app.js](./docs/assets/app.js), [docs/assets/style.css](./docs/assets/style.css) |
 | Dependencies | [requirements.txt](./requirements.txt) |
 
@@ -78,7 +78,7 @@ Runtime env vars (full list in [docs/technical.md](./docs/technical.md)):
 
 - LLM keys (at least one): `MOONSHOT_API_KEY`, `VOLC_API_KEY`, `DEEPSEEK_API_KEY`.
 - Feature toggles: `CCGP_ENABLE_ATTACHMENTS`, `CCGP_ENABLE_LLM`, `CCGP_ENABLE_RICH_TEXT`.
-- Tuning: `CCGP_HTTP_TIMEOUT`, `CCGP_DOWNLOAD_TIMEOUT`, `CCGP_MAX_ATTACHMENTS`, `CCGP_SLEEP_MIN`, `CCGP_SLEEP_MAX`, `CCGP_SKIP_REPEAT_FAILED_ATTACHMENTS`.
+- Tuning: `CCGP_HTTP_TIMEOUT`, `CCGP_DOWNLOAD_TIMEOUT`, `CCGP_MAX_ATTACHMENTS`, `CCGP_SLEEP_MIN`, `CCGP_SLEEP_MAX`, `CCGP_SEARCH_PAGE_SLEEP_*`, `CCGP_SEARCH_KEYWORD_SLEEP_*`, `CCGP_SEARCH_COOLDOWN_SCHEDULE`, `CCGP_TIME_BUDGET_SEC`, `CCGP_SKIP_REPEAT_FAILED_ATTACHMENTS`.
 - Geocoding: `AMAP_GEOCODING_KEY`.
 
 ---
@@ -117,7 +117,7 @@ Runtime env vars (full list in [docs/technical.md](./docs/technical.md)):
 
 1. Don't create new `*.md` / README / example files unless the user asks.
 2. Don't commit secrets. `.env` and everything under `docs/data/` are gitignored — keep it that way.
-3. Don't hand-edit generated artefacts: `src/ccgp/data/tender_items.csv`, `logs/`, `attachments/`, `filter_trace/`. `weekly.yml` auto-commits the CSV.
+3. Don't hand-edit generated artefacts: `src/ccgp/data/tender_items.csv`, `src/ccgp/data/collection_checkpoint.json`, `logs/`, `attachments/`, `filter_trace/`. `weekly.yml` commits the CSV and checkpoint even after collection failures.
 4. Don't remove the search-mode auto-fallback.
 5. Don't run `git commit` / `git push` without an explicit user request.
 6. Don't weaken or delete tests / assertions to make a task "pass". If a test looks wrong, explain why first.
