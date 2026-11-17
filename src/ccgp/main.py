@@ -353,17 +353,13 @@ def scrape_ccgp(
                 list_html = http_get(list_url, session, timeout=REQUEST_TIMEOUT_SEC)
             except Exception as e:
                 get_logger().warning(f"列表页请求失败: {list_url} -> {e}")
-                if not entries:
-                    raise RuntimeError(f"列表页首页请求失败: {list_url}") from e
-                break
+                raise RuntimeError(f"列表页请求失败: {list_url}") from e
             if any(
                 marker in list_html
                 for marker in ("访问过于频繁", "频繁访问", "事件ID", "请求被阻断")
             ):
                 get_logger().warning(f"列表页访问被限制: {list_url}")
-                if not entries:
-                    raise RuntimeError(f"列表页首页访问被限制: {list_url}")
-                break
+                raise RuntimeError(f"列表页访问被限制: {list_url}")
             base_url = list_url.rsplit("/", 1)[0] + "/"
             page_entries = parse_list_page(list_html, base_url=base_url)
             if not page_entries:

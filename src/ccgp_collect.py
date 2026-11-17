@@ -109,8 +109,10 @@ def run_multiple_main_calls() -> None:
             if idx < len(start_urls):
                 time.sleep(5)
 
-        if len(legacy_errors) == len(start_urls):
-            raise RuntimeError("地方和中央列表页采集均失败") from legacy_errors[-1]
+        if legacy_errors:
+            raise RuntimeError(
+                f"列表页采集失败: {len(legacy_errors)}/{len(start_urls)} 个入口异常"
+            ) from legacy_errors[-1]
 
     sys.argv = original_argv
 
